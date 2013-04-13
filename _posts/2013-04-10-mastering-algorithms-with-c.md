@@ -2,7 +2,7 @@
 layout: post
 title: "mastering algorithms with c"
 description: "Notes about  mastering algorithms with c"
-category: [Reading, Book]
+category: Reading
 tags: [algorithm, C]
 ---
 {% include JB/setup %}
