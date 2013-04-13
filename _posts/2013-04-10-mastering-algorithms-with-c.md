@@ -17,6 +17,7 @@ Set的实现用了List来模拟。
 
 ## Chapter 8 Hash Tables
 一些哈希表的应用:
+
 1. 数据库系统
 2. 符号表（编译器中用）
 3. 标签缓冲区(Tagged buffers)
