@@ -29,7 +29,8 @@ padding: 0.2em 0.9em;
 code, pre {
 	font-family: "Consolas", "Courier New", "Courier", "FreeMono", monospace;
 	font-size:0.95em;
-	margin: 1em 0 1.5em 0;
+	margin: 0, 5px;
+    padding: 5px;
 }
 
 .highlight span

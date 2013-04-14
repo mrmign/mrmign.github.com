@@ -3,7 +3,7 @@ layout: post
 title: "object c questions"
 description: "This is records for wrong questions about OC on wenda60.com"
 category: programming
-tags: [object-c]
+tags: [objective-c]
 ---
 {% include JB/setup %}
 
@@ -18,4 +18,3 @@ tags: [object-c]
 	+ 范畴可以作用在任何已存的类上
 	+ 范畴可以为类增加新的实例变量(不对??)
 4. 指针变量可以由整数赋，不能用浮点赋(错误,意思说可以用浮点给指针变量赋值？？)
-
