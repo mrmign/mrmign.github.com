@@ -7,7 +7,7 @@ tags: [interview, algorithm]
 ---
 {% include JB/setup %}
 
-## 第25题
+## 第25题 二叉树中和为某一值的路径
 >题目:输入一棵二叉树和一个整数，打印出二叉树中结点值的和为
 输入整数的所有路径。从树的根结点开始往下一直到叶结点所经过
 的结点形成一条路径。二叉树结点定义如下：
@@ -64,3 +64,34 @@ void FindPath
     path.pop_back();
 }
 {% endhighlight %}
+
+## 第26题 复杂链表的复制
+>题目:请实现函数ComplexListNode* Clone(ComplextListNode* pHead),复制一个复杂链表。
+在复杂链表中，每个结点除了有一个m_pNext指针指向下一个结点外，还有一个m_pSibling指向链表中
+的任意结点或是NULL。
+
+结点定义如下：
+{% highlight cpp %}
+struct ComplexListNode
+{
+    int                 m_nValue;
+    ComplexListNode*    m_pNext;
+    ComplexListNode*    m_pSibling;
+};
+{% endhighlight %}
+下图为一个复杂链表
+![复杂链表](/images/sword2offer/26.png "复杂链接")
+#### 解法
+1. 一般解法：
+    1. 复制原始链表上的每个结点，用m_pNext链接起来；
+    2. 设置每个结点的m_pSibling指针。假设原始链表中的某个结点Ｎ的m_pSibling指向结点Ｓ，由于Ｓ的位置可能在Ｎ的前面也可能在Ｎ的后面，因此要从原始链表的头结点开始找。沿着m_pNext经过s步找到Ｓ，所以在复制的链表中对应的Ｎ‘也要从头结点沿着m_pNext经过s步。这样就可以设置m_pSibling指针。
+    3. 分析，在设置m_pSibling时都要从头结点开始查找，时间复杂度为Ｏ(n^2)
+2. 用空间换时间解法：
+    1. 还是按照方法１中的第一步复制链表，用m_pNext链接起来，复制的同时将<N, N'>的配对信息放到一个哈希表中；
+    2. 设置结点的m_pSibling。如果原始链表结点Ｎ的m_pSibling指向结点Ｓ，那么在复制链表中，对应的Ｎ‘应该指向Ｓ’。
+    3. 通过哈希表可以在Ｏ(1)时间内找到m_pSibling，因此时间复杂度为Ｏ(n)。
+3. 不用辅助空间的解法：
+    1. 按照原始链表的每个结点Ｎ复制结点Ｎ‘，把Ｎ’链接到Ｎ的后面。如图所示![复制链接](/images/sword2offer/26-1.png)
+    2. 设置复制的结点的m_pSibling指针。从上图可以看出复制结点Ｎ‘的m_pSibling就是Ｎ的m_pSibling的m_pNext。
+    3. 分拆成两个链表，偶数的是新复制的结点，奇数的是原始的链表。
+    4. 时间复杂度是Ｏ(n),而且不需要辅助空间。
