@@ -19,6 +19,7 @@ tags: [ml]
 **Supervised learning** is the machine learning task of inferring a function from labeled training data. The training data consist of a set of training examples.
 
 supervised learning give the "right answer" for each example in the data.
+
 + Regression Problem: predict real-valued output
 + Classification Problem: discrete-valued output
 
@@ -36,4 +37,8 @@ With the training set and learning algorithm, we get hypothesis, which we use to
 <div>
 J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^{2}
 </div>
+![cost function](/images/ml/1-1.gif)
+
+minimize θ<sub>0</sub>, θ<sub>1</sub>, J(θ<sub>0</sub>, θ<sub>1</sub>) is cost function(squared error function).
+
 **Unsupervised learning** refers to the problem of trying to find hidden structure in unlabeled data.
