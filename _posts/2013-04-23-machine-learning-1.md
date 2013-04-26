@@ -49,4 +49,22 @@ minimize θ<sub>0</sub>, θ<sub>1</sub>, J(θ<sub>0</sub>, θ<sub>1</sub>) is co
 
 **Gradient descent** to minimize some arbitrary function J.
 
+#### Outline
++ Start with some θ<sub>0</sub>,θ<sub>1</sub>
++ Keep changing θ<sub>0</sub>,θ<sub>1</sub> to reduce J(θ<sub>0</sub>,θ<sub>1</sub>) until we hopefully end up at a minimum
+
+#### Gradient descent algorithm(梯度下降)
+![gradient descent algorithm](http://latex.codecogs.com/gif.latex?repeat\&space;until\&space;convergence&space;\left\{&space;\theta_{j}&space;:=\theta_{j}&space;-&space;\alpha\frac{\partial&space;}{\partial\theta_{j}}J(\theta_{0},\theta{1})&space;\&space;(for\&space;j=0&space;\&space;and&space;\&space;j&space;=&space;1)&space;\right&space;\})
+Here α is learning rate. 
+
+We must update θ<sub>0</sub> and θ<sub>1</sub> simultaneously.
+
+Correct: Simultaneously update
+
+![simultaneously update](http://latex.codecogs.com/gif.latex?\\*&space;temp0&space;:=&space;\theta_{0}&space;-&space;\alpha\frac{\partial&space;}{\partial&space;\theta_{0}}J(\theta_{0},\theta_{1})&space;\\*&space;temp1&space;:=&space;\theta_{1}&space;-&space;\alpha\frac{\partial&space;}{\partial&space;\theta_{1}}J(\theta_{0},\theta_{1})&space;\\*&space;\theta_{0}:=temp0&space;\\*&space;\theta_{1}:=temp1)
+
+**!Incorrect**
+
+![incorrect](http://latex.codecogs.com/gif.latex?\\*&space;temp0&space;:=&space;\theta_{0}&space;-&space;\alpha\frac{\partial&space;}{\partial&space;\theta_{0}}J(\theta_{0},\theta_{1})&space;\\*&space;\theta_{0}:=temp0&space;\\*&space;temp1&space;:=&space;\theta_{1}&space;-&space;\alpha\frac{\partial&space;}{\partial&space;\theta_{1}}J(\theta_{0},\theta_{1})&space;\\*&space;\theta_{1}:=temp1)
+
 **Unsupervised learning** refers to the problem of trying to find hidden structure in unlabeled data.
