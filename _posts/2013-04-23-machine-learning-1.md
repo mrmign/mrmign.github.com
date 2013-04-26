@@ -34,11 +34,19 @@ With the training set and learning algorithm, we get hypothesis, which we use to
 
 **Hypothesis:** h<sub>θ</sub>(x) = θ<sub>0</sub> + θ<sub>1</sub>x
 
-<div>
+
 J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)}) - y^{(i)})^{2}
-</div>
+
 ![cost function](/images/ml/1-1.gif)
 
 minimize θ<sub>0</sub>, θ<sub>1</sub>, J(θ<sub>0</sub>, θ<sub>1</sub>) is cost function(squared error function).
+
+\underset{\theta_{0},\theta_{1}}{min} J(\theta_{0},\theta_{1})
+
+**Want** ![min](http://latex.codecogs.com/gif.latex?\underset{\theta_{0},\theta_{1}}{min}J(\theta_{0},\theta_{1}))
+
+
+
+**Gradient descent** to minimize some arbitrary function J.
 
 **Unsupervised learning** refers to the problem of trying to find hidden structure in unlabeled data.
