@@ -79,5 +79,25 @@ int rxsort(int *data, int size, int p, int k)
 	...
 }
 {% endhighlight %}
+A test
+{% highlight c %}
+#include <stdio.h>
+#include <math.h>
+int main()
+{
+	int a[] = {302, 253, 611, 901, 529, 102};
+	int p, pval, k, n;
+	int j, size = 6;
+	scanf("%d %d",&p, &k);
+	for(n = 0; n < p; n++)
+	{
+		pval = (int)pow((double)k, (double)n);
+		printf("pval = %d\n",pval);	
+		for(j = 0; j<size; j++)
+			printf("index = %d\n",(int)(a[j] / pval) % k);
+	}
+	return 0;
+}
+{% endhighlight %}
 
 
