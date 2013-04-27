@@ -43,7 +43,7 @@ Set的实现用了List来模拟。
 * 电子表格
 
 
-1. 在快速排序中，用median-of-three method 找用来分割的值。
+1 在快速排序中，用median-of-three method 找用来分割的值。
 {% highlight c %}
 int partition(void *data, int esize, int i, int k, int (*compare)(const void *key1, const void *key2))
 {
@@ -55,9 +55,9 @@ int partition(void *data, int esize, int i, int k, int (*compare)(const void *ke
 	....
 }
 {% endhighlight %}
-2. 计数排序
+2 计数排序
 要知道数据集中最大的元素值，设为K, 申请K大的数组count[K]，遍历数组统计每个元素出现的次数，对count中的每个加上前一个元素出现的次数，再遍历数据中的元素，放到临时数组temp的相应位置上，遍历结束后，把值复制到原来的数据集中。该算法需要额外的空间，统计数组count需要至少K个空间，临时数组需要n个空间。**可以通过遍历统计数组count找到第i小的元素。**
-3. 基数排序 对每个p位置的数值使用计数排序，如对123，p＝0,1,2，分别对0位，1位，2位上的数字进行排序。
+3 基数排序 对每个p位置的数值使用计数排序，如对123，p＝0,1,2，分别对0位，1位，2位上的数字进行排序。
 {% highlight c %}
 int rxsort(int *data, int size, int p, int k)
 {
