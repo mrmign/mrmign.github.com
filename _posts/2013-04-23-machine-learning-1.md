@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "machine learning 1"
-description: "machine learing notes"
+description: "machine learing notes 1"
 category: course
 tags: [ml]
 ---
