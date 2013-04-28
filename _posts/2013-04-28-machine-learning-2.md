@@ -38,3 +38,17 @@ x_{n}
 h_{\theta}(x)= \Theta_{0}x_{0} + \Theta_{1}x_{1} + \cdots + \Theta_{n}x_{n}
              = \Theta^{T}x
 $$ 
+
+Cost funciton: $$ J(\theta_{0},\theta_{1},\cdots,\theta_{n})=\frac(1){2m}\sum{m}{i=1}(h_{\theta}(x^(i))-y^{(i)})^{2} $$
+
+**Gradient descent:**
+
+Repeat {
+$$ \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial\theta_{j}}J(\theta_{0},\cdots,\theta_{n})
+} (simultaneously update for every $$ j=0, \cdots, n $$)
+
+New algorithm $$ (n \geq 1) $$ :
+
+Repeat {
+$$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m}\sum^{m}_{i=1}(h_{\theta}(x^{(i)})-y^{(i)})x^{(i)}_{j} $$
+} (simultaneously update $$ \theta_{j} $$ for $$ j=0, \cdots, n $$)
