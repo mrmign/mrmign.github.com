@@ -63,6 +63,7 @@ Replace $$ x_i $$ with $$ x_i - \mu_i  $$ to make features have aproximately zer
 $$ x_1 \leftarrow \frac{x_1 - \mu_1}{s_1} $$, $$ \mu_1 $$ is the average value of $$ x_1 $$ in training set, $$ s_1 $$ is the range (max-min) (or standard deviation)
 
 ### Gradient Descent in Practice 2 - Learning Rate
+
 #### Gradient descent
 $$ \theta_j := \theta_j - \alpha\frac{\partial}{\partial\theta_j}J(\theta) $$
 
@@ -75,6 +76,7 @@ Making sure gradient descent is working correctly
 * Buf if $$ \alpha $$ is too small, gradient descent can be slow to converge.
 
 **Summary**
+
 * if $$ \alpha $$ is too small: slow convergence.
 * if $$ \alpha $$ is too large: $$ J(\theta) $$ may not decrease on every iteration;may not converge.
 
