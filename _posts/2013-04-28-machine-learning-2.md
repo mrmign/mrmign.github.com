@@ -52,3 +52,31 @@ New algorithm $$ (n \geq 1) $$ :
 Repeat {
 $$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m}\sum^{m}_{i=1}(h_{\theta}(x^{(i)})-y^{(i)})x^{(i)}_{j} $$
 } (simultaneously update $$ \theta_{j} $$ for $$ j=0, \cdots, n $$)
+
+### Gradient Descent in Practice 1 -- Feature Scaling 
+#### Feature Scaling
+Get every feature into approximately a $$ -1 \le x_i \le 1 $$ range.
+
+#### Mean normalization
+Replace $$ x_i $$ with $$ x_i - \mu_i  $$ to make features have aproximately zero mean(Do not apply to  $$ x_0 = 1 $$)
+
+$$ x_1 \leftarrow \frac{x_1 - \mu_1}{s_1} $$, $$ \mu_1 $$ is the average value of $$ x_1 $$ in training set, $$ s_1 $$ is the range (max-min) (or standard deviation)
+
+### Gradient Descent in Practice 2 - Learning Rate
+#### Gradient descent
+$$ \theta_j := \theta_j - \alpha\frac{\partial}{\partial\theta_j}J(\theta) $$
+
+1. "Debugging": how to make sure gradient descent is working correctly
+2. How to choose learning rate $$ \alpha $$.
+
+Making sure gradient descent is working correctly
+
+* For sufficiently small $$ \alpha, J(\theta) $$ should decrease on every iteration
+* Buf if $$ \alpha $$ is too small, gradient descent can be slow to converge.
+
+**Summary**
+* if $$ \alpha $$ is too small: slow convergence.
+* if $$ \alpha $$ is too large: $$ J(\theta) $$ may not decrease on every iteration;may not converge.
+
+To choose $$ \alpha $$, try $$ \ldots, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, \ldots $$ 
+
