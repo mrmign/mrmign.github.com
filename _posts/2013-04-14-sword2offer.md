@@ -99,3 +99,37 @@ struct ComplexListNode
 
 ## 第29题
 Ｏ(n)算法得到数组中任意第K大的数字。
+
+## 第40题
+>题目：写一个函数，求两个整数之和，要求在函数体内不得使用+,-,＊，／四则运算符号。
+
+利用位操作：
+{% highlight c %}
+int add(int num1, int num2)
+{
+    int sum, carry;
+    do
+    {
+        sum = num1 ^ num2;
+        carry = (num1 & num2) << 1;
+        
+        num1 = sum;
+        num2 = carry;
+    }while(num2 != 0);
+    
+    return num1;
+}
+{% endhighlight %}
+
+不使用新变量，交换两个变量的值：
+
+|-------------+----------------|
+|基于加减法     |基于异或运算      |
+|:-----------:|:--------------:|
+|a = a + b    |a = a ^ b       |
+|b = a - b    |b = a ^ b       |
+|a = a - b    |a = a ^ b       |  
+
+## 第50题
+>树中两个结点的最低公共祖先
+
