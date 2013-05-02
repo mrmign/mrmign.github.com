@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "libc function code"
-description: ""
-category: 
-tags: []
+description: "Functions in libc"
+category: programming
+tags: [c]
 ---
 {% include JB/setup %}
 

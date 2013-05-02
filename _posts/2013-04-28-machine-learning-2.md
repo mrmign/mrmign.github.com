@@ -39,7 +39,8 @@ h_{\theta}(x)= \Theta_{0}x_{0} + \Theta_{1}x_{1} + \cdots + \Theta_{n}x_{n}
              = \Theta^{T}x
 $$ 
 
-Cost funciton: $$ J(\theta_{0},\theta_{1},\cdots,\theta_{n})=\frac{1}{2m}\sum_{i=1}^{m} \left( h_{\theta}(x^{(i)})-y^{(i)} \right )^{2} $$
+Cost funciton:
+$$ J(\theta_{0},\theta_{1},\ldots,\theta_{n})=\frac{1}{2m}\sum_{i=1}^{m} \left ( h_\theta(x^{(i)})-y^{(i)} \right)^2 $$
 
 **Gradient descent:**
 
@@ -50,8 +51,9 @@ $$ \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial\theta_{j}}J(\theta
 New algorithm $$ (n \geq 1) $$ :
 
 Repeat {
-$$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m}\sum_{i=1}^{m} \left( h_{\theta}(x^{(i)})-y^{(i)} \right) x^{(i)}_{j} $$
-} (simultaneously update $$ \theta_{j} $$ for $$ j=0, \cdots, n $$)
+
+$$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m}\sum_{i=1}^{m} \left( h_{\theta}(x^{(i)})-y^{(i)} \right) x^{(i)}_{j} $$ }
+(simultaneously update $$ \theta_{j} $$ for $$ j=0, \cdots, n $$)
 
 ### Gradient Descent in Practice 1 -- Feature Scaling 
 
@@ -83,3 +85,6 @@ Making sure gradient descent is working correctly
 
 To choose $$ \alpha $$, try $$ \ldots, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, \ldots $$ 
 
+### Features and Polynomial Regression
+
+#### 
