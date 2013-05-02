@@ -44,7 +44,7 @@ Cost funciton: $$ J(\theta_{0},\theta_{1},\cdots,\theta_{n})=\frac(1){2m}\sum{m}
 **Gradient descent:**
 
 Repeat {
-$$ \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial\theta_{j}}J(\theta_{0},\cdots,\theta_{n})
+$$ \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial\theta_{j}}J(\theta_{0},\cdots,\theta_{n}) $$
 } (simultaneously update for every $$ j=0, \cdots, n $$)
 
 New algorithm $$ (n \geq 1) $$ :
@@ -54,11 +54,12 @@ $$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m}\sum^{m}_{i=1}(h_{\theta}(x^{(i)
 } (simultaneously update $$ \theta_{j} $$ for $$ j=0, \cdots, n $$)
 
 ### Gradient Descent in Practice 1 -- Feature Scaling 
+
 #### Feature Scaling
 Get every feature into approximately a $$ -1 \le x_i \le 1 $$ range.
 
 #### Mean normalization
-Replace $$ x_i $$ with $$ x_i - \mu_i  $$ to make features have aproximately zero mean(Do not apply to  $$ x_0 = 1 $$)
+Replace $$ x_i $$ with $$ x_i - \mu_i $$ to make features have aproximately zero mean(Do not apply to  $$ x_0 = 1 $$)
 
 $$ x_1 \leftarrow \frac{x_1 - \mu_1}{s_1} $$, $$ \mu_1 $$ is the average value of $$ x_1 $$ in training set, $$ s_1 $$ is the range (max-min) (or standard deviation)
 
