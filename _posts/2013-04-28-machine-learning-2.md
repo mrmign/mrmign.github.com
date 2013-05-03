@@ -107,7 +107,6 @@ $$ \theta = \left( X^TX \right)^{-1}X^Ty $$
 $$ 
 m \textbf{ examples }  \left( x^{(1)}, y^{(1)} \right),\ldots, \left( x^{(m)}, y^{(m)} \right) \textbf{;} n \textbf{ features.}
 \\
-\vspace{5 mm}
 x^{(i)} = \begin{bmatrix} 
 x_0^{(i)} \\
 x_1^{(i)} \\
@@ -122,7 +121,6 @@ x_n^{(i)}
 \cdots & \left( x^{(n)}\right )^T & \cdots \\
 \end{bmatrix}
 \\
-\vspace{5 mm}
 X=\begin{bmatrix} 
 1 & x_1^{(1)} \\
 1 & x_2^{(1)} \\
@@ -144,11 +142,13 @@ $$
 m training examples, n features.
 
 Gradient Descent:
+
 * Need to choose $$ \alpha $$
 * Needs many iterations.
 * Works weel even when n is large.
 
 Normal Equation:
+
 * No need to choose $$ \alpha $$
 * Don't need to iterate.
 * Need to compute $$ \left( X^TX \right)^{-1} $$
@@ -158,6 +158,7 @@ when $$ n = 10^6 $$, we should use gradient descent, and when n is smaller than 
 
 ### Normal Equation Noninvertibility
 What if $$ X^TX $$ is non-invertible?
+
 * Redundant features(linearly dependent)
-* Too many features(e.g. $$ m \leq n $$) 
+* Too many features(e.g. $$ m \leq n $$) -
    Delete some features, or use regularization.
