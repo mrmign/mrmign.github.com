@@ -85,6 +85,79 @@ Making sure gradient descent is working correctly
 
 To choose $$ \alpha $$, try $$ \ldots, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, \ldots $$ 
 
-### Features and Polynomial Regression
+### Features and Polynomial（多项式的） Regression
 
-#### 
+#### Polynomial Regression
+
+$$ h_\theta(x)=\theta_0 + \theta_1(size) + \theta_2(size)^2 \\
+   h_\theta(x)=\theta_0 + \theta_1(size) + \theta_2\sqrt{(size)} $$
+   
+### Normal Equation
+Normal Equation: Method to solve for $$ \theta $$ analytically.
+
+$$ \theta \in \mathbb{R}^{n+1} \  
+J(\theta_{0},\theta_{1},\ldots,\theta_{n})=\frac{1}{2m}\sum_{i=1}^{m} \left ( h_\theta(x^{(i)})-y^{(i)} \right)^2 $$
+
+$$ \frac{\partial}{\partial\theta_j}J(\theta) = \ldots = 0 \textbf{for every } j \\
+\textbf{Solve for } \theta_0, \theta_1, \ldots, \theta_n
+$$
+
+$$ \theta = \left( X^TX \right)^{-1}X^Ty $$
+
+$$ 
+m \textbf{ examples }  \left( x^{(1)}, y^{(1)} \right),\ldots, \left( x^{(m)}, y^{(m)} \right) \textbf{;} n \textbf{ features.}
+\\
+\vspace{5 mm}
+x^{(i)} = \begin{bmatrix} 
+x_0^{(i)} \\
+x_1^{(i)} \\
+x_2^{(i)} \\
+\vdots \\
+x_n^{(i)} 
+\end{bmatrix} \in \mathbb{R}^{n+1} \hspace{15 mm}
+\underset{design \ matrix}{\operatorname{X}} = \begin{bmatrix}
+\cdots & \left( x^{(1)}\right )^T & \cdots \\
+\cdots & \left( x^{(2)}\right )^T & \cdots \\
+\vdots & \vdots & \vdots \\
+\cdots & \left( x^{(n)}\right )^T & \cdots \\
+\end{bmatrix}
+\\
+\vspace{5 mm}
+X=\begin{bmatrix} 
+1 & x_1^{(1)} \\
+1 & x_2^{(1)} \\
+1 & x_3^{(1)} \\
+\vdots & \vdots \\
+1 & x_m^{(1)} \\
+\end{bmatrix} \hspace{20 mm} 
+y= \begin{bmatrix} p
+y^{(1)}\\
+y^{(2)}\\
+y^{(3)}\\
+\vdots \\
+y^{(m)}\\
+\end{bmatrix}
+$$
+
+**summary**
+
+m training examples, n features.
+
+Gradient Descent:
+* Need to choose $$ \alpha $$
+* Needs many iterations.
+* Works weel even when n is large.
+
+Normal Equation:
+* No need to choose $$ \alpha $$
+* Don't need to iterate.
+* Need to compute $$ \left( X^TX \right)^{-1} $$
+* Slow if n is very large
+
+when $$ n = 10^6 $$, we should use gradient descent, and when n is smaller than that, we can use normal equation.
+
+### Normal Equation Noninvertibility
+What if $$ X^TX $$ is non-invertible?
+* Redundant features(linearly dependent)
+* Too many features(e.g. $$ m \leq n $$) 
+   Delete some features, or use regularization.

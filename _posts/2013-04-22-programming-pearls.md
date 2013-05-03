@@ -108,7 +108,7 @@ int gcd(int i, int j)
 }
 {% endhighlight %}
 
-* 方法４：镜像翻转。
+* 方法４：镜像翻转。[code](/mycode/propearl/2_mirror_array.c)
 {% highlight c%}
 reverse(0, i-1);
 reverse(i, n-1);
