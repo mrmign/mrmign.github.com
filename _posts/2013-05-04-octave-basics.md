@@ -10,39 +10,66 @@ tags: [ml, octave]
 ### Basic Operations
 
 {% highlight octave %}
-octave:2>  PS1('>> ');
->> a = 3
+octave:1>%% Change working directory in windows example: 
+octave:1>%% Note that it uses normal slashes and does not uses escape characters for the empty spaces.
+octave:1> cd ../
+octave:2> ls
+Learning From Data 2nd Ed (Wiley,2007).pdf
+Line Regression with multiple variables week 2.pdf
+octave
+Supervised and Unsupervised Learning.pdf
+octave:3> pwd
+ans = /home/arming/coursera/machinelearning
+octave:4> cd octave
+octave:5> pwd
+ans = /home/arming/coursera/machinelearning/octave
+octave:6> PS1('>> ') % Change Octave prompt
+>>%% elementary operations
+>> 5 + 6
+ans =  11
+>> 3 -2 
+ans =  1
+>> 5*8
+ans =  40
+>> 1/2
+ans =  0.50000
+>> 2^6
+ans =  64
+>> 1 == 2  % false
+ans = 0
+>> 1 ~= 2  % true.  note, not "!="
+ans =  1
+>> 1 && 0
+ans = 0
+>> 1 || 0
+ans =  1
+>> xor(1,0)
+ans =  1
+>>%% variable assignment
+>> a =3; % semicolon suppresses output
 a =  3
->> a = 3; % semlicolon superss
->> a=3
-a =  3
->> a=3;
->> a
-a =  3
->> a=pi;
->> a
+>> b ='hi'
+b = hi
+>> c = 3 >= 1
+c =  1
+>>% Displaying them:
+>> a = pi
 a =  3.1416
 >> disp(a)
  3.1416
->> disp(sprintf("%0.2f",a))
-3.14
->> format long
+>> disp(sprintf('2 decimals: %0.2f', a))
+2 decimals: 3.14
+>> disp(sprintf('6 decimals: %0.6f', a))
+6 decimals: 3.141593
+>> format long 
 >> a
 a =  3.14159265358979
 >> format short
 >> a
 a =  3.1416
->> A=[1 2; 3 4; 5 6]
+>>%%  vectors and matrices
+>> A = [1 2; 3 4; 5 6]
 A =
-
-   1   2
-   3   4
-   5   6
-
->> a = [1 2;
-> 3 4;
-> 5 6]
-a =
 
    1   2
    3   4
@@ -53,87 +80,49 @@ v =
 
    1   2   3
 
->> v =[1; 2; 3]
+>> v = [1:0.1:2] % from 1 to 2, with stepsize of 0.1. Useful for plot axes
 v =
 
-   1
-   2
-   3
+ Columns 1 through 8:
 
->> v = 1:0.1:2
-v =
+   1.0000   1.1000   1.2000   1.3000   1.4000   1.5000   1.6000   1.7000
 
- Columns 1 through 7:
+ Columns 9 through 11:
 
-    1.0000    1.1000    1.2000    1.3000    1.4000    1.5000    1.6000
+   1.8000   1.9000   2.0000
 
- Columns 8 through 11:
-
-    1.7000    1.8000    1.9000    2.0000
-
->> v =1:6
+>> v = 1:6 % from 1 to 6, assumes stepsize of 1 (row vector)
 v =
 
    1   2   3   4   5   6
 
->> ones(2,3)
-ans =
+>> C = 2*ones(2,3)  % same as C = [2 2 2; 2 2 2]
+C =
 
-   1   1   1
-   1   1   1
+   2   2   2
+   2   2   2
 
->> w = ones(1,3)
+>> w = ones(1,3) % 1x3 vector of ones
 w =
 
    1   1   1
 
->> w = zeros(1,3)
+>> w = rand(1,3) % drawn from a uniform distribution 
 w =
 
-   0   0   0
+   0.64276   0.75107   0.87499
 
->> w = rand(1,3)
+>> w = randn(1,3) % drawn from a normal distribution (mean=0, var=1)
 w =
 
-   0.713368   0.273003   0.038422
+   0.26606  -1.05041   1.34285
 
->> rand(3,3)
-ans =
-
-   0.54012   0.21376   0.83726
-   0.78187   0.39773   0.64907
-   0.44332   0.47828   0.88306
-
->> rand(3,3)
-ans =
-
-   0.253882   0.359688   0.444935
-   0.068178   0.960570   0.580992
-   0.677249   0.375301   0.844699
-
->> rand(3,3)
-ans =
-
-   0.54693   0.56135   0.70687
-   0.63751   0.34712   0.69665
-   0.48635   0.64882   0.64993
-
->> randn(1,3)
-ans =
-
-   0.22759  -0.74945  -0.32080
-
->> randn(1,3)
-ans =
-
-   0.31565  -0.36675  -0.63792
-
->> w = -6 + sqrt(10)*(randn(1,10000))
+>> w = -6 + sqrt(10)*(randn(1,10000)) % (mean = -6, var = 10)
 warning: broken pipe -- some output may be lost
->> hist(w)
->> hist(w,50)
->> eye(4)
-ans =
+>> hist(w) % plot histogram using 10 bins (default)
+>> hist(w,5) % plot histogram using 50 bins
+>> I = eye(4) % 4x4 identity matrix
+I =
 
 Diagonal Matrix
 
@@ -141,8 +130,10 @@ Diagonal Matrix
    0   1   0   0
    0   0   1   0
    0   0   0   1
-
->> help eye
+>>
+>>% help function
+>> help eye 
 >> help rand
->> 
+>> help help
+ 
 {% endhighlight %}
