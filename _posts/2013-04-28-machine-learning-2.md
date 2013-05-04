@@ -63,7 +63,7 @@ Get every feature into approximately a $$ -1 \le x_i \le 1 $$ range.
 #### Mean normalization
 Replace $$ x_i $$ with $$ x_i - \mu_i $$ to make features have aproximately zero mean(Do not apply to  $$ x_0 = 1 $$)
 
-$$ x_1 \leftarrow \frac{x_1 - \mu_1}{s_1} $$, $$ \mu_1 $$ is the average value of $$ x_1 $$ in training set, $$ s_1 $$ is the range (max-min) (or standard deviation)
+$$ x_1 \leftarrow \frac{x_1 - \mu_1}{s_1} $$, $$ \mu_1 $$ is the average value of $$ x_1 $$ in training set(all the value of feature $$ x_1 or x_i $$), $$ s_1 $$ is the range (max-min) (or standard deviation)(max and min is the two values in feature $$ x_1 or x_i$$)
 
 ### Gradient Descent in Practice 2 - Learning Rate
 
@@ -162,3 +162,4 @@ What if $$ X^TX $$ is non-invertible?
 * Redundant features(linearly dependent)
 * Too many features(e.g. $$ m \leq n $$) -
    Delete some features, or use regularization.
+   
