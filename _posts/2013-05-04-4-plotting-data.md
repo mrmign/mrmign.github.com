@@ -36,10 +36,12 @@ tags: [ml, octave]
 >>a=1,b=2,c=3
 >>a=1;b=2;c=3;
 
-利用plot生成的图：
-* ![myplot.png](/images/octave/myplot.png "sin cos")
-* ![subplot.png](/images/octave/subplot.png "")
-* ![magic.png](/images/octave/magic.png "magic picture")
-
-
 {% endhighlight %}
+利用plot生成的图：
+
+![myplot.png](/images/octave/myplot.png)
+
+![subplot.png](/images/octave/subplot.png)
+
+![magic.png](/images/octave/magic.png)
+
