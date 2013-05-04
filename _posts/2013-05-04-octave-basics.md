@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "1.Octave basics"
+title: "1. Octave basics"
 description: "This is the use of octave."
 category: course
 tags: [ml, octave]

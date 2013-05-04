@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "machine learning 2"
+title: "2 Linear Regression with Multiple Variables"
 description: "Multiple features(variables)"
 category: course 
 tags: [ml]

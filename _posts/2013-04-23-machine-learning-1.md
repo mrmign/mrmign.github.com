@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "machine learning 1"
+title: "1 Linear Regression with One Variable"
 description: "machine learing notes 1"
 category: course
 tags: [ml]
