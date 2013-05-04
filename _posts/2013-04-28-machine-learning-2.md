@@ -128,7 +128,7 @@ X=\begin{bmatrix}
 \vdots & \vdots \\
 1 & x_m^{(1)} \\
 \end{bmatrix} \hspace{20 mm} 
-y= \begin{bmatrix} p
+y= \begin{bmatrix}
 y^{(1)}\\
 y^{(2)}\\
 y^{(3)}\\
