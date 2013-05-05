@@ -7,6 +7,6 @@ tags: [algorithm]
 ---
 {% include JB/setup %}
 
-用动态规划来解，先求出字符串Ａ与字符串Ｂ的最长公共子序列lcs,然后用｀max(len(A), len(B)) - len(lcs)` 得到一个长度l,也就是Ａ与Ｂ的距离，这样就可以求出相似度 $$ \frac{1}{l + 1} $$.
+用动态规划来解，先求出字符串Ａ与字符串Ｂ的最长公共子序列lcs,然后用`max(len(A), len(B)) - len(lcs)` 得到一个长度l,也就是Ａ与Ｂ的距离，这样就可以求出相似度 $$ \frac{1}{l + 1} $$.
 
 [网上其他人的分析](http://www.cnblogs.com/yujunyong/articles/2004724.html)
