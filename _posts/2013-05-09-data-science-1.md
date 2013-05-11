@@ -7,4 +7,4 @@ tags: [data]
 ---
 {% include JB/setup %}
 
-![datacourses.png](../images/data/datacourses.png "Other courses related data")
+![datacourses.png](/images/data/datacourses.png "Other courses related data")
