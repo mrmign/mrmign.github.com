@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "3 logic regression and regularization"
+title: "3 Logic Regression and Regularization"
 description: "logic regression and regularization"
 category: course 
 tags: [ml]
