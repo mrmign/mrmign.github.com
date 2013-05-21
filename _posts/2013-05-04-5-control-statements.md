@@ -88,3 +88,5 @@ With vectorization:
 prediction = theta' * x;
 {% endhighlight %}
 If you recall the definition multiplying vectors, you'll see that this one operation does the element-wise multiplication and overall sum in a very concise notation.
+
+>When you're working in one directory, you can use`addpath(pwd)` to add current directory to octave's search path.
