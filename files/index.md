@@ -18,3 +18,6 @@ description: ""
     * [Neural Networks: Representation](4 Neural Networks: Representation.pdf)
 * Week 5
     * [nueral networks: learning](5 nueral networks: learning.pdf)
+* Week 6
+    * [Advice for applying machine learning](6-1 Advice for applying machine learning.pdf)
+    * [Machine Learning System Design](6-2 Machine Learning System Design.pdf)
