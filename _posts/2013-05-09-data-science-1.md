@@ -34,6 +34,7 @@ Releational Algebra has two semantics:
 **Online courses index:**
 
 第2部分：相关课程
+
 * http://statistics.berkeley.edu/classes/s133/ 计算数据概念，伯克利分校
 * http://www.cs.berkeley.edu/~jordan/courses/294-fall09/ 实用机器学习，伯克利分校
 * http://inst.eecs.berkeley.edu/~cs188 人工智能伯克利分校
