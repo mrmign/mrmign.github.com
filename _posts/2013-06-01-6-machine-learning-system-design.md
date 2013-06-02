@@ -21,10 +21,10 @@ tags: [ml]
 
 ![precision_recall.png](/images/ml/precision_recall.png)
 
-* Accuracy = (true positives + true negatives) / (total examples)
-* Precision = (true positives) / (true positives + false positives)
-* Recall = (true positives) / (true positives + false negatives)
-* F1 score = (2 * precision * recall) / (precision + recall)
+* $$ Accuracy = \frac{true \ positives + true \ negatives}{total\ examples} $$
+* $$ Precision = \frac{true\ positives}{true\ positives + false\ positives} $$
+* $$ Recall = \frac{true\ positives}{true\ positives + false\ negatives} $$
+* $$ F_1 score = 2 \frac{precision * recall}{precision + recall} $$
 
 用slide上的例子解释上面的图
 
