@@ -22,7 +22,7 @@ Randomly initialize K cluster centroids $$ \mu_1, \mu_2, \cdots, \mu_k \in \math
 
 Repeat {
 
-/* Cluster assignment step */
+/* Cluster assignment step */ [可以参考 pdist2](http://www.cs.columbia.edu/~mmerler/project/code/pdist2.m)
 
 for $$ i = 1 $$ to $$ m $$
 
@@ -30,7 +30,7 @@ $$ c^{(i)} $$ := index (from i to K) of cluster centroid closest to $$ x^{(i)} $
 
 $$ \boxed{min_k = \Vert x^{(i)} - \mu_k \Vert^2} $$
 
-/* Move centroid */
+/* Move centroid */ [可参考grpstats](https://www.google.com.hk/search?q=grpstats&aq=f&oq=grpstats&aqs=chrome.0.57.303j0&sourceid=chrome&ie=UTF-8)
 
 for $$ k = 1 $$ to K
 
@@ -67,3 +67,5 @@ For i = 1 to 100 {
 ### Choosing the value of K
 
 **Elbow method** 
+
+[slide](/files/8-1 Clustering.pdf)
