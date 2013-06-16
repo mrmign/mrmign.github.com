@@ -29,7 +29,7 @@ $$ \mu_j = \frac{1}{m} \sum_{i=1}^m x_j^{(i)}$$
 
 Replace each $$x_j^{(i)}$$ with $$ x_j - \mu_j $$
 
-If different features on different scales, scale features to have comparable range of values.$$ x_j^{(i)} \leftarrow \frac{x_j^{(i)} - \mu_j}{s_j} $$
+If different features on different scales, scale features to have comparable range of values.$$ x_j^{(i)} \leftarrow \frac{{x_j^{(i)} - \mu_j}}{s_j} $$
 
 **Reduce data from n-dimensions to k-dimensions**
 

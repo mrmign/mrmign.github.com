@@ -50,7 +50,7 @@ $$ J(c^{(1)},\cdots,c^{(m)},\mu_1,\cdots,\mu_k) = \frac{1}{m} \sum_{i=1}^{m} \Ve
 
 Randomly initialize K cluster centroids $$ \mu_1, \mu_2, \cdots, \mu_k \in \mathbb{R}^n $$
 
-* Should have $$ k < m $$ $$
+* Should have $$ k < m $$
 * Randomly pick K training examples
 * Set $$ \mu_1, \mu_2, \cdots, \mu_k $$ equal to these K examples
 
