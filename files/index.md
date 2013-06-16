@@ -20,4 +20,9 @@ description: ""
     * [nueral networks: learning](5 nueral networks: learning.pdf)
 * Week 6
     * [Advice for applying machine learning](6-1 Advice for applying machine learning.pdf)
-    * [Machine Learning System Design](6-2 Machine Learning System Design.pdf)
+    * [Machine Learning System Design](6-2 Machine Learning System Design.pdf)* Week 6
+* Week 7
+    * [Support Vector Machines](7 Support Vector Machines.pdf)
+* Week 8
+    * [K-means](8-1 Clustering.pdf)
+    * [Dimensionality Reduction, PCA](8-2 Dimensionality Reduction.pdf)
