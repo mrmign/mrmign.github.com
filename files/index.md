@@ -26,3 +26,10 @@ description: ""
 * Week 8
     * [K-means](8-1 Clustering.pdf)
     * [Dimensionality Reduction, PCA](8-2 Dimensionality Reduction.pdf)
+* Week9
+    * [Anomaly Detection](9-1 Anomaly Detection.pdf)
+    * [Recommender System](9-2 Recommender System.pdf)
+* Week 10
+    * [Large Scale Machine Learning](10-1 Large Scale Machine Learning.pdf)
+    * [Application Example: Photo OCR](10-2 Application Example: Photo OCR.pdf)
+* [A good note](Machine Learning note by YW.pdf)
