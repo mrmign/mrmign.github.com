@@ -1,0 +1,18 @@
+#markdown: rdiscount
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+url: http://mrmign.github.io/
+name: Arming
+author: Arming
+qq: 21575831
+email: cloudniw1@126.com
+duoshuo: MrMign
+cnzz: 1000366411
+weibo: 2106103234
+github: mrmign
+pygments: true
+safe: true
+paginate: 20
+about: "这里是 Arming 的个人博客."
+
+excerpt_separator: ""
