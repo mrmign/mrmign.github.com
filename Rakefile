@@ -56,18 +56,16 @@ task :post do
   if File.exist?(filename)
     abort("rake aborted!") if ask("#{filename} already exists. Do you want to overwrite?", ['y', 'n']) == 'n'
   end
+  #create_date = Time.new.strftime("%Y-%m-%d %H:%M:%S")
   
   puts "Creating new post: #{filename}"
   open(filename, 'w') do |post|
     post.puts "---"
     post.puts "layout: post"
+    #post.puts "date: #{create_date}"
     post.puts "title: \"#{title.gsub(/-/,' ')}\""
     post.puts "categories:"
-    post.puts "- "
     post.puts "tags:"
-    post.puts "- "
-    post.puts ""
-    post.puts ""
     post.puts "---"
   end
 end # task :post
