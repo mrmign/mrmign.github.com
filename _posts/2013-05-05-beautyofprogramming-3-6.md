@@ -5,7 +5,6 @@ description: "关于编程之美中的问题。"
 category: algorithm
 tags: [algorithm]
 ---
-{% include JB/setup %}
 
 ## 假设链表均不带环
 * **解法一：** 判断第一个链表的每个结点是否在第二个链表中，时间复杂度为Ｏ(Length(A) * Length(B))。

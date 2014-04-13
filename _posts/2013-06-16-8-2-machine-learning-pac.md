@@ -5,7 +5,6 @@ description: "PCA"
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 
 ### Data Compression
 

@@ -5,7 +5,6 @@ description: "clustering"
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 
 ### Input:
 

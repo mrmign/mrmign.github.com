@@ -5,7 +5,6 @@ description: "machine learing notes 1"
 category: course
 tags: [ml]
 ---
-{% include JB/setup %}
 
 ## Machine learning algorithms:
 1. Supervised learning

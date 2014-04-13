@@ -5,7 +5,6 @@ description: ""
 category: tool
 tags: [latex]
 ---
-{% include JB/setup %}
 
 ## LaTeX – Multiline equations, systems and matrices
 

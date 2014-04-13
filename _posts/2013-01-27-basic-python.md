@@ -5,7 +5,6 @@ category: learning
 tags: [python]
 description: This is record of python basics.
 ---
-{% include JB/setup %}
 
 ## python's 29 keywords
 {% highlight python %}

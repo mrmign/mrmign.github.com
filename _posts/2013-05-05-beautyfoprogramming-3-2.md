@@ -5,7 +5,6 @@ description: "关于编程之美中的问题。"
 category: algorithm
 tags: [algorithm]
 ---
-{% include JB/setup %}
 
 >**题目:** 对如非全键盘的手机上的数字，每个数字都对应一些字母，比如2对应ABC，3对应DEF.....，8对应TUV，9对应WXYZ，要求对一段数字，输出其代表的所有可能的字母组合，如5869，可能代表JTMW、JTMX......
 

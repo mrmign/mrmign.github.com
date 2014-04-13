@@ -5,7 +5,6 @@ description: "This is records for wrong questions about OC on wenda60.com"
 category: programming
 tags: [objective-c]
 ---
-{% include JB/setup %}
 
 1. 关于固化(archive)和解固(unarchive)的理解。
 	+ 所有的对象都支持固化

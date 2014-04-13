@@ -5,7 +5,6 @@ category: learning
 tags: [c]
 description: The code on the book, and the exercises.
 ---
-{% include JB/setup %}
 
  ### P39
 {% highlight c %}

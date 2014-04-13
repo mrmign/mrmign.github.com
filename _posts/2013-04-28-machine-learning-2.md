@@ -5,7 +5,6 @@ description: "Multiple features(variables)"
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 ## Multivariate linear regression
 
 ### Notation:

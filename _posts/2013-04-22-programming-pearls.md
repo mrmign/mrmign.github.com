@@ -5,7 +5,6 @@ description: ""
 category: algorithm
 tags: [algorithm]
 ---
-{% include JB/setup %}
 
 ## 1.2位逻辑运算实现位向量
 >输入的是一个文件，至多包含n个正整数,每个正整数都要小于n，这里n=10^7.

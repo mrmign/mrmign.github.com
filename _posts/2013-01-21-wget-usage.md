@@ -5,7 +5,6 @@ category: tool
 tags: [wget]
 description: Recorde the usual usage of wget.
 ---
-{% include JB/setup %}
 
 ## Download a certain folder and subfolders.
 Case: recursively download all the files that are in the ‘ddd’  folder for the url http://hostname/aaa/bbb/ccc/ddd/&#8217;

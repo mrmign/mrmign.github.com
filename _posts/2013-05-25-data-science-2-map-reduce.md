@@ -5,7 +5,6 @@ description: ""
 category: course
 tags: [datasci]
 ---
-{% include JB/setup %}
 
 ## MapReduce Programming Model
 

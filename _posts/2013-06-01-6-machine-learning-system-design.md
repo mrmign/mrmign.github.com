@@ -5,7 +5,6 @@ description: ""
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 
 ## Error analysis
 

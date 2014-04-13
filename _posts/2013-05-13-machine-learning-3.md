@@ -5,7 +5,6 @@ description: "logic regression and regularization"
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 
 # Logistic Regression
 

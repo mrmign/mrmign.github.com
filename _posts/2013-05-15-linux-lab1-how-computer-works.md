@@ -5,7 +5,6 @@ description: "linux课程实验1"
 category: lab
 tags: [course, linux, lab]
 ---
-{% include JB/setup %}
 
 Linux操作系统分析实验一
 

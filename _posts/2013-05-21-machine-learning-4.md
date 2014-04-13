@@ -5,7 +5,6 @@ description: "Neural Networks"
 category: course 
 tags: [ml]
 ---
-{% include JB/setup %}
 
 ## Model Representation
 

@@ -5,7 +5,6 @@ description: "This is the use of octave."
 category: course
 tags: [ml, octave]
 ---
-{% include JB/setup %}
 
 ### Basic Operations
 

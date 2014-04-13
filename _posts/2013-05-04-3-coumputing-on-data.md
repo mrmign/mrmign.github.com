@@ -5,7 +5,7 @@ description: "octave"
 category: course
 tags: [ml, octave]
 ---
-{% include JB/setup %}
+
 {% highlight octave %}
 >> A = [1 2; 3 4; 5 6]
 A =

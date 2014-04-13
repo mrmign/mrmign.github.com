@@ -5,9 +5,9 @@ description: "Functions in libc"
 category: programming
 tags: [c]
 ---
-{% include JB/setup %}
 
 ## `atoi`
+
 {% highlight c %}
 int atoi(const char *s)
 {

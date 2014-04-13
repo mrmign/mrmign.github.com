@@ -5,7 +5,6 @@ description: "octave"
 category: course
 tags: [ml, octave]
 ---
-{% include JB/setup %}
 
 ## Control statements: for, while, if statements
 

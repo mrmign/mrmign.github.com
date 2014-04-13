@@ -5,7 +5,6 @@ description: "Octave"
 category: course
 tags: [ml, octave]
 ---
-{% include JB/setup %}
 
 {% highlight octave %}
 >>%% dimensions

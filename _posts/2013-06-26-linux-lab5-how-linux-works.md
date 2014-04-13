@@ -5,7 +5,6 @@ description: ""
 category: lab
 tags: [course, linux, lab]
 ---
-{% include JB/setup %}
 
 ## Linux启动
 

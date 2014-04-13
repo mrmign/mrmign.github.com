@@ -5,7 +5,6 @@ description: "关于编程之美中的问题。"
 category: algorithm
 tags: [algorithm]
 ---
-{% include JB/setup %}
 
 > **题目：**　写一个程序求一棵二叉树中相距最远的两个结点之间的距离。这里的“距离”指两个结点之间的边的个数。
 

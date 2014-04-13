@@ -5,7 +5,6 @@ category: learning
 tags: [python, tornado]
 description: ""
 ---
-{% include JB/setup %}
 
 ## Install
 {% highlight bash %}

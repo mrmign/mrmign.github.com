@@ -5,7 +5,6 @@ description: "Passages taken from code reading"
 category: reading
 tags: [code, reading]
 ---
-{% include JB/setup %}
 
 # **Make it a habbit to spend time reading high-quality code that others have written.**
 

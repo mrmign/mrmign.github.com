@@ -5,7 +5,6 @@ category: learning
 tags: [python]
 description: Reading Head First Python book notes. It's based on Python 3.
 ---
-{% include JB/setup %}
 
 ## 1 meet python  -- **Everyone loves lists**
 

@@ -5,7 +5,6 @@ description: ""
 category: interview
 tags: [interview, algorithm]
 ---
-{% include JB/setup %}
 
 ## 第25题 二叉树中和为某一值的路径
 >题目:输入一棵二叉树和一个整数，打印出二叉树中结点值的和为
