@@ -10,7 +10,7 @@ tags: [interview, algorithm]
 >题目:输入一棵二叉树和一个整数，打印出二叉树中结点值的和为
 输入整数的所有路径。从树的根结点开始往下一直到叶结点所经过
 的结点形成一条路径。二叉树结点定义如下：
-{% highlight cpp %}    
+{% highlight cpp %}
 struct BinaryTreeNode
 {
     int               m_nValue;
@@ -23,9 +23,9 @@ struct BinaryTreeNode
 {% highlight cpp %}
 void FindPath
 (
-    BinaryTreeNode*   pRoot,        
-    int               expectedSum,  
-    std::vector<int>& path,         
+    BinaryTreeNode*   pRoot,
+    int               expectedSum,
+    std::vector<int>& path,
     int&              currentSum
 )
 {
@@ -80,6 +80,7 @@ struct ComplexListNode
 {% endhighlight %}
 下图为一个复杂链表
 ![复杂链表](/images/sword2offer/26.png "复杂链接")
+
 #### 解法
 1. 一般解法：
     1. 复制原始链表上的每个结点，用m_pNext链接起来；
