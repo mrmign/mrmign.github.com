@@ -130,6 +130,8 @@ tags: iOS
 `BNROwnedAppliance *a = [[BNROwnedAppliance alloc] init]`运行正常，虽然在BNROwnedAppliance中没有实现init方法，但是在BNRAppliance有定义，将会调用`[self initWithProductName:@"Unknow"]`，self是BNROwnedAppliance的实例，因此会调用BNROwnedAppliance中的initWithProductName方法，进而调用[self initWithProductName:pn firstOwnerName:nil]方法。
 
 每个类有且仅有一个designated initializer，如果有其他的初始化方法，必须要调用指定的初始化方法。
+如图所示。
+![image](/images/ios/20140318_designated_init.png)
 
 ## Multiple initializers
 
