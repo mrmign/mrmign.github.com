@@ -16,7 +16,7 @@ viewController容器是UIViewController的子类，因此都会有view属性，�
 view添加到自己的view中。
 
 从下面图中理解view controller家族：
-![image](/images/ios/ios_bnr_17_5.png)
+![image](/images/ios/20140421_ios_bnr_17_5.png)
 
 每一个UIViewController都有一个`parentViewController`属性，它指向家族中最近的view 
 controller祖先。UIViewController访问祖先的方法有`navigationController`, `tabBarController`, `splitViewController`,在通过上面3种方法来访问祖先时，还是借助`parentViewController`来向上搜索
@@ -26,7 +26,7 @@ controller祖先。UIViewController访问祖先的方法有`navigationController
 
 Any UIViewController can present another view controller modally.在presenter和presentee
 间有两个内置的属性，`presentedViewController`和`presentingViewController`，也就是一个主动一个被动
-的关系，看图![image](/images/ios/ios_bnr_17_6.png)
+的关系，看图![image](/images/ios/20140421_ios_bnr_17_6.png)
 
 ## Inter-family relationships
 
@@ -35,7 +35,7 @@ A presented view controller and its presenter are not in the same view controlle
 
 看下面的图，有两个家族。
 
-![image](/images/ios/ios_bnr_17_7.png)
+![image](/images/ios/20140421_ios_bnr_17_7.png)
 
 **注意：** 在parent-child关系中的那些关系属性不能越过家族。因此在家族2中给某个view controller发`tabBarController`消息，不会返回家族1中的UITabBarController，而是返回nil。同样的，在家族2中给某个view controller发`navigationController`返回家族2中的UINavigationController，而不是家族1中的。
 
@@ -50,7 +50,7 @@ presenter总是UITabBarController。
 可以修改这种最老祖先行为(只在iPad有效)。通过此方法，你可以指定要显示的view controller家族的view在屏幕上的位置。为实现这个功能，每个UIViewController都有一个`definesPresentationContext`属性。默认该属性是NO，也就是说view controller会把它邻近的祖先传递出去，直到没有祖先。把该值设置YES，就打断了搜索最老祖先，允许view controller在它自己的view中展示modal view。同时，你必须设置
 要展示的view controller的`modalPresentationStyle=UIModalPresentationCurrentContext`。
 
-![image](/images/ios/ios_bnr_17_8.png)
+![image](/images/ios/20140421_ios_bnr_17_8.png)
 
 如果没有修改definesPresentationContext, 最下面的view controller的presentedViewController会是UINavigationController，现在修改了该值，则是指向显示它的view controller。
 
