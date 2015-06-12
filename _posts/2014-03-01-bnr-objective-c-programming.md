@@ -1,9 +1,10 @@
 ---
 layout: post
-title: "BNR Objective C Programming"
+title: "Objective C Programming"
 categories: iOS
 tags: iOS
 ---
+## BNR
 
 ### Basics
 * `BOOL`在`objc/objc.h`定义
@@ -110,3 +111,19 @@ NSStrng *num = [sales valueForKeyPath:@"manager.contacts.phone"];
 * KVO(key-value observing)用kvo context区分不同的通知，如子父与父类的。
 * 显示地触发通知`willChangeValueForKey:` 和 `didChangeValueForKey:`
 * 运行时查看class,methods的方法很好。
+
+> added on 2014-05-14
+
+## Programming in Objective-C 6th
+
+####class extensions
+
+只有()的叫扩展，括号中有内容的叫category。类扩展中可以增加额外的实例变量，属性，对category不允许(这时说的是不正确的，在官方文档中的 Core Data Programming Guide中的Managed Object Accessor Methods中用了对category添加属性的方式)。定义在扩展中的方法也在类的主实现部分实现，不在一个单独的实现部分。扩展中的方法是私有的，说它是私有的只是看上去是私有的，写在interface里的是公开的，但是声明在扩展中的方法虽然看上去是私有的，如果知道方法名，仍然可以调用。
+
+> You can declare a property anywhere in the method declaration list, which is in the interface of a class, or in the declaration of a protocol or category. 
+
+* Category* 通过 category扩展类的功能，影响的不只是那个类，还有该的子类。例如如果给NSObject添加新方法，所有的类都会继承这些新的方法，而不管你是不是有意的。
+
+#### 内存管理 
+
+property中的属性默认不是strong, 默认的是unsafe_unretained(等价于assign), 所以如果要使用strong，必须要指明。

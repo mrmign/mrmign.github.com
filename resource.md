@@ -20,3 +20,8 @@ description: ""
 * [Machine Learning papers](http://machinelearning.wustl.edu/mlpapers/paper_files/)
 ## Online course Materials
 [Stanford Open class room](http://openclassroom.stanford.edu/MainFolder/HomePage.php)
+
+## 源码分析 ##
+
+* [Glibc内存管理](http://mqzhuang.iteye.com/?page=3)
+

@@ -206,4 +206,6 @@ typedef objc_method *Method;
 
 ![runtime library](/images/ios/2014-05-22-runtime-library.svg)
 
+这是看书的时候做了个简要笔记，OC的runtime还有更加强大的功能，这也成了一个坑。。。。
+
 
