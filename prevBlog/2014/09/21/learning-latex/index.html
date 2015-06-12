@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>LATEX学习</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>LATEX学习</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2014-09-21">2014-09-21</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#tools" title="tools">tools</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#latex" title="latex">latex</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="mactex-">MacTex 中文显示问题</h2>
+
+<div class="highlight"><pre><code class="language-latex" data-lang="latex"><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>
+
+<span class="c">%下面两行是用来支持中文的</span>
+<span class="k">\usepackage</span><span class="nb">{</span>fontspec,xltxtra,xunicode<span class="nb">}</span>
+<span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span>
+
+<span class="k">\setmainfont</span><span class="nb">{</span>Songti SC Regular<span class="nb">}</span> <span class="c">%设置字体，字体可以从系统的字体册里查找</span>
+
+<span class="k">\newfontfamily</span><span class="nb">{</span><span class="k">\H</span><span class="nb">}{</span>Times New Roman<span class="nb">}</span> <span class="c">%字体也是从字体册里找，必须是系统里有的字体才行</span>
+
+<span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
+<span class="k">\LaTeX</span>3是一个长远的目标，在它最张骞害怕成前, <span class="k">\LaTeXe</span><span class="nb">{}</span>是标准 <span class="k">\LaTeX\ </span>版本.
+
+<span class="nb">{</span><span class="k">\H</span> this is english<span class="nb">}</span>
+
+aaabbb
+<span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span></code></pre></div>
+
+<p>一时兴起，体会了把高大上的Latex，功能是强大的很啊，可是对于我等码农不用写高深的公式，也不出书立传的，貌似用不到点上了，用markdown足矣。。。束之高阁。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/prevBlog/2014/09/21/design-code-resources/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/prevBlog/2014/10/19/swift-notes/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

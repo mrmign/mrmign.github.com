@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>【实验二】进程的创建与可执行程序的加载</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>【实验二】进程的创建与可执行程序的加载</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-05-26">2013-05-26</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#lab" title="lab">lab</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#course" title="course">course</a>&nbsp;
+  
+  <a href="/tags/#linux" title="linux">linux</a>&nbsp;
+  
+  <a href="/tags/#lab" title="lab">lab</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<p>李明(164)</p>
+
+<h2 id="section">实验要求</h2>
+
+<blockquote>
+  <ul>
+    <li>编程实现fork(创建一个进程实体) -&gt; exec（将ELF可执行文件内容加载到进程实体） -&gt; running program</li>
+    <li>分析fork和exec系统调用在内核中的执行过程</li>
+    <li>注意task_struct进程控制块，ELF文件格式与进程地址空间的联系，注意Exec系统调用返回到用户态时EIP指向的位置。</li>
+    <li>动态链接库在ELF文件格式中与进程地址空间中的表现形式</li>
+  </ul>
+</blockquote>
+
+<h2 id="section-1">实验过程</h2>
+
+<h3 id="section-2">1. 通过下面的程序创建一个进程</h3>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;stdlib.h&gt;</span>
+<span class="cp">#include &lt;unistd.h&gt;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="kt">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">pid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">execl</span><span class="p">(</span><span class="s">&quot;/bin/ls&quot;</span><span class="p">,</span><span class="s">&quot;ls&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">pid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// printf(&quot;Parent process\n&quot;);</span>
+        <span class="n">wait</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Parent process</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<p>编译执行上面的程序得到下面的结果</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">arming@Ubuntu:~/course/linux/asm-in-c<span class="nv">$ </span>gcc -o execl execl.c 
+execl.c: In <span class="k">function</span> ‘main’:
+execl.c:19:9: warning: incompatible implicit declaration of built-in <span class="k">function</span> ‘printf’ <span class="o">[</span>enabled by default<span class="o">]</span>
+arming@Ubuntu:~/course/linux/asm-in-c<span class="nv">$ </span>./execl 
+bin    etc           lib	   opt	 sbin	  tmp	   vmlinuz.old
+boot   home	       lost+found  proc  selinux  usr
+cdrom  initrd.img      media	   root  srv	  var
+dev    initrd.img.old  mnt	   run	 sys	  vmlinuz
+Parent process
+arming@Ubuntu:~/course/linux/asm-in-c<span class="err">$</span></code></pre></div>
+
+<h3 id="section-3">2. 实验过程分析</h3>
+
+<p><strong>1. 进程的创建</strong></p>
+
+<p>当调用<code>fork</code>时会创建进程，新创建的子进程几乎但不完全与父进程相同。子进程得到与父进程用户级虚拟地址空间相同的（但是独立的）一份拷贝，包括文本、数据和bss段、堆以及用户栈。子进程还获得与父进程任何打开文件描述符相同的拷贝，这就意味着当父进程调用fork时，子进程可以读写父进程中打开的任何文件。父进程和新创建的子进程之间最大的区别在于它们有不同的PID。如上面的程序，当<code>pid == 0</code>时，说明此时是在子进程中运行，若<code>pid &gt; 0</code>，则运行在父进程中，若<code>pid &lt; 0</code>,出错。</p>
+
+<p>在上面的程序中，当子进程创建后，调用<code>execl</code>对<code>ls</code>可执行文件进行调用，此时<code>ls</code>文件通过<code>execve</code>系统调用进行加载运行。</p>
+
+<p><strong>２. 可执行文件的加载</strong></p>
+
+<p>我们可以把进程定义为“执行上下文”，这就意味着进行特定的计算需要收集必要的信息，包括所访问的页，打开的文件，硬件寄存器的内容等。可执行文件是一个普通的文件，它描述了如何初始化一个新的执行上下文，也就是如何开始一个新的计算。如下图为一个典型的ELF可执行文件。
+<img src="/images/course/linux/ELF.jpg" alt="典型的ELF可执行文件" /></p>
+
+<p>fork函数在新的子进程中运行相同的程序，新的子进程是父进程的一个拷贝，execve函数在当前进程的上下文中加载并运行一个新的程序，它会覆盖当前进程的地址空间，但并没有创建一个新进程，新的程序仍然有相同的PID，并且继承了调用execve函数时打开的所有文件描述符。下面是<code>execve</code>的函数原型。</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;unistd.h&gt;</span>
+
+<span class="kt">int</span> <span class="nf">evecve</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[],</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">envp</span><span class="p">[]);</span>
+<span class="cm">/* Doesn&#39;t return if OK, returns -1 on error */</span></code></pre></div>
+
+<p><strong>关于exec函数族</strong></p>
+
+<p><code>exec</code>函数用可执行文件所描述的新上下文代替进程的上下文。每个函数的第一个参数表示被执行文件的路径名。</p>
+
+<p>所有的<code>exec</code>函数(除execve()外)都是C库定义的封装例程，并利用了<code>execve()</code>系统调用，这是Linux所提供的处理程序执行的唯一系统调用。</p>
+
+<p><code>execve</code>函数加载并运行可执行目标文件filename,且带参数列表argv和环境变量列表envp。只有当出现错误时，才返回调用程序。所以，不像fork会一次调用2次返回，execve调用一次并人不返回。</p>
+
+<p>当<code>fork</code>函数被当前进程调用时，内核为新进程创建各种数据结构，并分配给它一个唯一的PID，为了给这个新进程创建虚拟存储器，它创建了当前进程的<code>task_struct</code>、<code>mm_struct</code>、<code>vm_rea_struct</code>和页表的原样拷贝，它标记两个进程中的每个页面为只读的，并标记两个进程中的每个区域结构为私有的写时拷贝的。</p>
+
+<p>当<code>fork</code>在新进程中返回时，新进程现在的虚拟存储器刚好和调用<code>fork</code>时存在的虚拟存储器相同，当这两个进程中的任何一个后来进行写操作时，写时拷贝机制就会创建新页面，因此，也就为每个进程保持了私有地址空间的抽象概念。</p>
+
+<p>当一个新的程序开始时，用户栈的典型组织结构如图所示：</p>
+
+<p><img src="/images/course/linux/new_program_start.png" alt="new_program_start.png" />　</p>
+
+<p>假设运行在当前进程中的程序执行了如下的<code>execve</code>调用：
+<code>execve("/bin/ls",argv,environ);</code>
+<code>execve</code>函数在当前进程中加载并运行包含在可执行目标文件ls中的程序，用ls程序有效地替代了当前程序。加载并运行ls需要以下步骤：</p>
+
+<ul>
+  <li>删除已存在的用户区域。删除当前进程虚拟地址的用户部分中的已存在的区域结构。</li>
+  <li>映射私有区域。为新程序的文本、数据、bss和栈区域创建新的区域结构。
+<img src="/images/course/linux/elf-process.jpg" alt="elf-process.jpg" /></li>
+  <li>映射共享区域。如果ls程序与共享对象链接，那么这些对象是动态链接到这个程序的，并且映射到用户虚拟地址空间中的共享区域内。</li>
+  <li>设置程序计数器(PC)。<code>execve</code>做的最后一件事就是设置当前进程上下文中的程序计数器，使之指向文本区域的入口点。</li>
+</ul>
+
+<p><img src="/images/course/linux/user_address_space.jpg" alt="用户空间" /></p>
+
+<h3 id="section-4">３.　实验总结</h3>
+
+<p>当调用<code>fork</code>创建新的进程时，会对父进程有个拷贝，当在子进程中执行新的程序时，利用<code>execve</code>系统调用来加载可执行程序，此时加载的可执行程序会覆盖当前进程的相应堆栈的数据，来初始化运行上下文，初始化工作完成后子进程即可运行直到结束。</p>
+
+<p>系统中每个程序都运行在一个进程上下文中，该进程上下文有自己的虚拟地址空间，当shell运行一个程序时，父shell进程创建一个子进程，它是父进程的一个复本，子进程通过execve系统调用启动加载器，加载器删除子进程已有的虚拟存储器段，并创建一组新的代码，数据，堆和栈段，新的栈和堆段被初始化为零，通过将虚拟地址空间中的页映射到可执行文件的页大小的组块，新的代码和数据段被初始化为可执行谁的内容。最后，加载器跳转到_start地址，它最终会调用应用的main函数，除了一些头部信息，在加载过程中没有任何从磁盘到存储器的数据拷贝，直到cpu引用一个被映射的虚拟页，才会进行拷贝，此时，操作系统利用它的页面高度机制自动将页面从磁盘传送到存储器。</p>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/prevBlog/2013/05/25/data-science-2-map-reduce/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/prevBlog/2013/05/28/6-Advice-for-applying-machine-learning/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

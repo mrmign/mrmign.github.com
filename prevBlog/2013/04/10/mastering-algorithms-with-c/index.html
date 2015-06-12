@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>mastering algorithms with c</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>mastering algorithms with c</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-04-10">2013-04-10</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#reading" title="reading">reading</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+  <a href="/tags/#C" title="C">C</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="chapter-5-list">Chapter 5 List</h2>
+<p>Q&amp;A 第四个问题的答案说，如果删除一个结点用O(1)的方法会导致危险的负面影响。<code>Why???</code></p>
+
+<blockquote>
+  <p>Benign O(1) approch generates the dangerous side effect of rendering a pointer into the list invalid.</p>
+</blockquote>
+
+<h2 id="chapter-7-set">Chapter 7 Set</h2>
+<p>Set的实现用了List来模拟。</p>
+
+<h2 id="chapter-8-hash-tables">Chapter 8 Hash Tables</h2>
+<p>一些哈希表的应用:</p>
+
+<ol>
+  <li>数据库系统</li>
+  <li>符号表（编译器中用）</li>
+  <li>标签缓冲区(Tagged buffers)</li>
+  <li>数据字典(Data Dictionaries)</li>
+  <li>关联数组(Associative arrays)</li>
+</ol>
+
+<h2 id="chapter-12-sort--search">Chapter 12 Sort &amp; Search</h2>
+<ul>
+  <li>插入排序 最佳应用场景是对一个小的数据集合进行递增排序</li>
+  <li>快速排序 最佳应用场景是大数据集</li>
+  <li>归并排序 最佳应用场景是<strong>超大数据集</strong> ???</li>
+  <li>计数排序 稳定的线性时间排序算法，需要知道数据集中整数的最大值，主要用来实现基数排序</li>
+  <li>基数排序 逐位对元素进行排序的线性时间排序算法，适用于固定大小的元素集</li>
+  <li>其他排序：冒泡排序，选择排序，堆排序，<strong>内省排序</strong>(一种类似快速排序的排序算法，只是在检测时它会切换到堆排序，从而提高排序效率，由于这点改进，在某些情况下比快速排序效率略高)， 桶排序</li>
+  <li>二分查找</li>
+</ul>
+
+<p>应用：</p>
+
+<ul>
+  <li>次序统计，寻找集合中第i小的元素</li>
+  <li>二分搜索</li>
+  <li>目录列表</li>
+  <li>数据库系统</li>
+  <li>拼写检查器</li>
+  <li>电子表格</li>
+</ul>
+
+<p>1、 在快速排序中，用median-of-three method 找用来分割的值。</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">partition</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">esize</span><span class="p">,</span> <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">,</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">compare</span><span class="p">)(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key1</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key2</span><span class="p">))</span>
+<span class="p">{</span>
+	<span class="p">....</span>
+	<span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+	<span class="cm">/* 对r进行排序，取r[1]作为分割的值*/</span>
+	<span class="p">....</span>
+<span class="p">}</span></code></pre></div>
+
+<p>2、 计数排序
+要知道数据集中最大的元素值，设为K, 申请K大的数组count[K]，遍历数组统计每个元素出现的次数，对count中的每个加上前一个元素出现的次数，再遍历数据中的元素，放到临时数组temp的相应位置上，遍历结束后，把值复制到原来的数据集中。该算法需要额外的空间，统计数组count需要至少K个空间，临时数组需要n个空间。<strong>可以通过遍历统计数组count找到第i小的元素。</strong></p>
+
+<p>3、 基数排序 对每个p位置的数值使用计数排序，如对123，p＝0,1,2，分别对0位，1位，2位上的数字进行排序。</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">rxsort</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="p">...</span>
+	<span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="p">.....</span>
+		<span class="n">pval</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">pow</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="n">k</span><span class="p">,(</span><span class="kt">double</span><span class="p">)</span><span class="n">n</span><span class="p">);</span>
+		<span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="cm">/* 为什么计算index的这样做？ */</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="err">（</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="n">pval</span><span class="p">)</span> <span class="o">%</span> <span class="n">k</span><span class="p">;</span>
+			<span class="n">count</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="p">...</span>
+	<span class="p">}</span>
+	<span class="p">...</span>
+<span class="p">}</span></code></pre></div>
+
+<p>A test</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#include &lt;math.h&gt;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">302</span><span class="p">,</span> <span class="mi">253</span><span class="p">,</span> <span class="mi">611</span><span class="p">,</span> <span class="mi">901</span><span class="p">,</span> <span class="mi">529</span><span class="p">,</span> <span class="mi">102</span><span class="p">};</span>
+	<span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">j</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+	<span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">k</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">pval</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">pow</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">n</span><span class="p">);</span>
+		<span class="n">printf</span><span class="p">(</span><span class="s">&quot;pval = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">pval</span><span class="p">);</span>	
+		<span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">size</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+			<span class="n">printf</span><span class="p">(</span><span class="s">&quot;index = %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,(</span><span class="kt">int</span><span class="p">)(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="n">pval</span><span class="p">)</span> <span class="o">%</span> <span class="n">k</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/prevBlog/2013/04/08/object-c-questions/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/prevBlog/2013/04/14/sword2offer/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

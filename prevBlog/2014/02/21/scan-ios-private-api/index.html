@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Scan iOS private API</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Scan iOS private API</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2014-02-21">2014-02-21</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#iOS" title="iOS">iOS</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="ios-qzoneapi">iOS Qzone私有API扫描工作总结</h2>
+
+<h3 id="section">背景</h3>
+<p>苹果提供的iOS开发框架分PrivateFramework和Framework，PrivateFramework下的库是绝对不允许在提交的iOS应用中使用的，只允许使用Framework下那些公开的库。除了不能引入私有的库，也不能使用私有的API。如果你做了，结果很明显，你的应用就会被拒掉。</p>
+
+<h5 id="section-1">下面是几个被拒的案例：</h5>
+
+<ol>
+  <li>
+    <p><strong>案例1</strong>(<a href="http://www.cocoachina.com/bbs/read.php?tid=12514&amp;page=1">来源于网络</a>)</p>
+
+    <blockquote>
+      <p>Thank you for submitting your update to xxx to the App Store.  During our review of your application we found it is using a private API, which is in violation of the iPhone Developer Program License Agreement section 3.3.1; <code>"3.3.1 Applications may only use Documented APIs in the manner prescribed by Apple and must not use or call any private APIs."</code> <strong>While your application has not been rejected, it would be appropriate to resolve this issue in your next update.</strong></p>
+
+      <p>“3.3.1 Applications may only use Documented APIs in the manner prescribed by Apple and must not use or call any private APIs.”</p>
+
+      <p>The non-public API that is included in your application is <strong><code>terminateWithSuccess</code></strong>.</p>
+
+      <p>If you have defined a method in your source code with the same name as the above mentioned API, we suggest altering your method name so that it no longer collides with Apple’s private API to avoid your application being flagged with future submissions.</p>
+
+      <p>Please resolve this issue in your next update to xxx.</p>
+
+      <p>Regards,</p>
+
+      <p>iPhone Developer Program</p>
+    </blockquote>
+
+    <p>很幸运，使用了重名的API但是没被拒，不过Apple还是建议下次更新时要修改那个API的名字。</p>
+  </li>
+  <li>
+    <p>案例2（<a href="http://stackoverflow.com/questions/18756906/apple-reject-my-app-because-using-private-api-allowsanyhttpscertificateforhos">来源于网络</a>）</p>
+
+    <blockquote>
+      <p>We found that your app uses one or more non-public APIs, which is not in compliance with the App Store Review Guidelines. The use of non-public APIs is not permissible because it can lead to a poor user experience should these APIs change.</p>
+
+      <p>We found the following non-public API/s in your app:</p>
+
+      <p><strong><code>allowsAnyHTTPSCertificateForHost:</code></strong></p>
+
+      <p>If you have defined methods in your source code with the same names as the above-mentioned APIs, we suggest altering your method names so that they no longer collide with Apple’s private APIs to avoid your application being flagged in future submissions.</p>
+
+      <p>Additionally, one or more of the above-mentioned APIs may reside in a static library included with your application. <em>If you do not have access to the library’s source, you may be able to search the compiled binary using “<code>strings</code>” or “<code>otool</code>” command line tools.</em> The “strings” tool can output a list of the methods that the library calls and “otool -ov” will output the Objective-C class structures and their defined methods. These techniques can help you narrow down where the problematic code resides.</p>
+    </blockquote>
+
+    <p>这位就没那么幸运了，被拒了，不过Apple还算人性化，提供了方法来解决办法。</p>
+  </li>
+  <li>
+    <p>案例3</p>
+
+    <p>同样是因为	使用了一个私有的API，不过我们感觉有点冤，我们只是放那里并没有调用,<code>[self performSelector:@selector(_define:) withObject:obj afterDelay:10]</code>,一切被拒的原因都是因为<code>_define:</code>，这个api是私有的，苹果的文档里没有这个api，也不是我们自己定义的函数，被认为调用了私有api。</p>
+  </li>
+</ol>
+
+<p>这些都是教训啊，在今后iOS过程中要避免因为私有api问题而被拒啊。可怎么避免呢？哪些api又是私有的呢？私有的api又放在哪里呢？</p>
+
+<p>鉴于以上的问题有了这里针对私有api扫描的探索工作。</p>
+
+<h3 id="section-2">漫漫探索路</h3>
+
+<h4 id="apiapi">哪些是私有的api?私有的api又放在哪里？</h4>
+<p>苹果官方也没有结出明确的定义，我们估且从反面来考虑，官方给出了有文档的api(也就是建议开发者使用的)，同时也有提及没有文档的api(不建议使用的，可能随时会被修改或移除)。带文档的api我们可以方便的从Xcode的帮助里查看，不带文档的从帮助文档当然是查不到的，但是在Framework下的头文件里会有声明，可以从相应头文件里查看，例如<code>valueForPasteboardType:</code>,存在于<code>UIKit.framework/UIPasteboard.h</code>里。</p>
+
+<p>难道api就只有这些吗？答案肯定不是喽。我们还没有找到私有的api呢。在前面我们有提到PrivateFramework，这下面的库都是私有的，苹果不允许你使用的，当然里面定义的方法也自然成为了私有api的一份子。除了PrivateFramework下的api，其他的在哪呢？当然是在公开的让你使用的Framwork下了，只是没有公开，你看不到罢了。但是看不到不代表不存在啊。我们只使用了公开的库，确以使用私有api的理由拒我们。那所使用的私有api来自何方？必须来自公开的库啊。</p>
+
+<p>在公开的Framework下定义了很多不为人知的类及方法（一般人我不告诉他^-^）。但是通过一般的方法我们是看不到他们的，那我们就采取点非常手段吧。<a href="stevenygard.com/projects/class-dump/"><code>class-dump</code></a>上台，class-dump可以查看Mach-O文件里的OC运行时信息。我们就来试试水吧。class-dump请自行解决下载安装。</p>
+
+<pre><code class="language-bash">class-dump -H /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/System/Library/Frameworks/UIKit.framework -o ./UIKit
+</code></pre>
+<p>通过这条命令我们可以得到UIKit下定义的所有类的信息，并在UIKit目录(随意指定目录即可)下生成相应的头文件。统计下生成的头文件有13400个，真实情况可能没有这么多，因为class-dump为每个interface，protocol以及category都会生成一个头文件，而在<em>UIKit.framework/Header/*.h</em> 下只有137个头文件，由此可见，即使是公开的Framework,也隐藏很多不为人知的东西。</p>
+
+<p>从我们class-dump出来的头文件可以看到有些以 _ 开头，这些是私有的错不了。我们再窥探下头文件的内部都有些啥。
+下面是<code>UITextView.h</code>的部分内容。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="cp">#import &quot;UIKeyboardInput.h&quot;</span>
+<span class="p">....</span>
+<span class="k">@class</span> <span class="err">.....</span>
+<span class="k">@interface</span> <span class="bp">UITextView</span> : <span class="bp">UIScrollView</span> <span class="o">&lt;</span><span class="n">UITextLinkInteraction</span><span class="p">,</span> <span class="n">UITextInputControllerDelegate</span><span class="p">,</span> <span class="n">UITextAutoscrolling</span><span class="p">,</span> <span class="n">UIKeyboardInput</span><span class="p">,</span> <span class="bp">UITextInput</span><span class="o">&gt;</span>
+<span class="p">{</span>
+    <span class="kt">id</span> <span class="n">_private</span><span class="p">;</span>
+    <span class="bp">NSTextStorage</span> <span class="o">*</span><span class="n">_textStorage</span><span class="p">;</span>
+    <span class="p">...</span>
+    <span class="bp">UIView</span> <span class="o">*</span><span class="n">_inputAccessoryView</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nl">_bestInterpretationForDictationResult</span><span class="p">:(</span><span class="kt">id</span><span class="p">)</span><span class="n">arg1</span><span class="p">;</span>
+<span class="p">+</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">_isCompatibilityTextView</span><span class="p">;</span>
+<span class="p">+</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">_sharedHighlightView</span><span class="p">;</span>
+<span class="k">@property</span><span class="p">(</span><span class="k">readonly</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="bp">NSTextStorage</span> <span class="o">*</span><span class="n">textStorage</span><span class="p">;</span> <span class="c1">// @synthesize textStorage=_textStorage;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_resetDataDetectorsResults</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_startDataDetectors</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">automaticallySelectedOverlay</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">keyboardInputChangedSelection:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">keyboardInputChanged:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">keyboardInputShouldDelete:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_promptForReplace:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_showTextStyleOptions:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">_isDisplayingReferenceLibraryViewController</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_define:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_populateArchivedSubviews:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">encodeWithCoder:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">_commonInitWithTextContainer:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg1</span> <span class="nf">isDecoding:</span><span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nv">arg2</span> <span class="nf">isEditable:</span><span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nv">arg3</span> <span class="nf">isSelectable:</span><span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nv">arg4</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">isElementAccessibilityExposedToInterfaceBuilder</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">_Bool</span><span class="p">)</span><span class="nf">isAccessibilityElementByDefault</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">drawRect:</span><span class="p">(</span><span class="k">struct</span> <span class="bp">CGRect</span><span class="p">)</span><span class="nv">arg1</span> <span class="nf">forViewPrintFormatter:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">arg2</span><span class="p">;</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">Class</span><span class="p">)</span><span class="nf">_printFormatterClass</span><span class="p">;</span>
+<span class="k">@property</span><span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">setter</span><span class="o">=</span><span class="nl">_setDrawsDebugBaselines</span><span class="p">:)</span> <span class="kt">_Bool</span> <span class="n">_drawsDebugBaselines</span><span class="p">;</span>
+<span class="p">....</span>
+<span class="k">@end</span></code></pre></div>
+
+<p>从上面的代码中可以看到有很多函数是以 _ 开头的，这些也是私有的，像我们在案例3中提到的<code>_define:</code>，就出现在了这里。但是不以 _ 开头的也不能说不是私有的，像<code>keyboardInputShouldDelete:</code>这个，不以_开头，但是是私有的api。由此印证了我们之前的猜测，公开的库里存在大量的私有api。</p>
+
+<p>通过以上的分析，我们可以对私有api来做个总结了。</p>
+
+<h5 id="section-3">小结</h5>
+
+<ol>
+  <li><code>私有的api ＝ (class-dump Framework下的库生成的头文件中的api - (Framework下的头文件里的api = 有文档的api + 没有文档的api)) + PrivateFramework下的api</code>。</li>
+  <li>私有的api在公开的Framework及私有的PrivateFramework都有。</li>
+</ol>
+
+<h4 id="api">构建私有API库</h4>
+
+<p>既然已经知道的哪些是私有的api及私有api的位置，就可以建立私有api的专用数据库了。</p>
+
+<p>具体步骤：</p>
+
+<ol>
+  <li>用<code>class-dump</code>对所有的公开库(/Applications/Xcode.app/Contents/Developer/Platforms/
+     iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.0.sdk/System/Library/Frameworks)进行逆向工程得到所有的头文件内容。提取每个.h文件中的api得到api集合<code>set_A</code>。</li>
+  <li>获得带文档的api。Xcode自带帮助文档，从那里查到的api自然是带文档的了，怎么获得这些文档呢？记得在Xcode3的时候查个文档会特别的慢，现在的Xcode5再查某个api的时候很快就会出结果，肯定对api检索做了优化，在某处放着api的索引。这个想法也是受了<code>Dash</code>这个工具的启发，Dash中也可以查看iOS的api，但是帮助文档不是自己管理的，直接查的Xcode中带的文档，按图索骥找到Xcode的文档位置(/Users/sngTest/Library/Developer/Shared/Documentation/DocSets/
+     com.apple.adc.documentation.AppleiOS7.0.iOSLibrary.docset/Contents/Resources),在里面有个<code>docSet.dsidx</code>的文件，这就是Xcode针对api做的数据库，从这里可以获得带文档的api的各种信息了，从而有了带文档的api集合<code>set_B</code>。</li>
+  <li>现在需要获得那些没有文档的公开api了，从上面的分析知道他们存在于公开的库的头文件中，所以要对这些公开的头文件进行扫描，提取那些没有文档的api，这里得到的集合会第2步得到的集合有很大部分是重复的，这不影响最终结果，得到集合<code>set_C</code>。</li>
+  <li>得到最终的私有api集合 <code>set = set_A - set_B - set_C</code>。</li>
+</ol>
+
+<h4 id="qzone">针对Qzone进行具体的扫描工作</h4>
+
+<p>1.将Qzone.ipa解压，得到Payload文件夹，用<code>strings</code>工具对<code>Payload/Qzone.app/Qzone</code>(这是个Mach-O文件)扫描，得到程序中可见的字符串<strong><code>strings</code></strong>。这里截取部分strings结果:</p>
+
+<pre><code>encodeInt:forKey:
+rain
+setRain:
+initWithFrame:
+...
+_subscribeBtn
+...
+playing gif count statistics error
+stop gif, total playing count***********(%d)
+targetOrient
+Ti,D,N
+video
+T@"Video",&amp;,N
+zoomAspect
+TB,D,N
+context
+T@"EAGLContext",&amp;,N,Vcontext
+animationInterval
+Td,VanimationInterval
+...
+</code></pre>
+<p>这里的strings结果中有定义的OC方法，属性，hardcode字符串，及其他编译时加入的代码。可以先从已知的进行排除，像hardcode字符串，可以通过扫描代码提取这部分字符串。</p>
+
+<p>2.扫描源码，获得hardcode字符串，得到结果集<strong><code>str_set</code></strong>。</p>
+
+<p>3.获得程序中自己定义的方法。这里使用<code>otool</code>，用<code>nm</code>也可以拿到方法，但是不能拿到属性及变量，所以这里用otoo拿到方法，属性及变量。<code>otool -ov ../../../Qzone</code>,截取部分进行说明:</p>
+
+<div class="highlight"><pre><code class="language-c-objdump" data-lang="c-objdump"><span class="n">Contents</span> <span class="n">of</span> <span class="p">(</span><span class="n">__DATA</span><span class="p">,</span><span class="n">__objc_classlist</span><span class="p">)</span> <span class="n">section</span>   <span class="c1">// 这里是程序中自己定义的所有类的开始部分</span>
+<span class="mo">01</span><span class="n">dcf12c</span> <span class="mh">0x1f62b30</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QZFlowerInfo</span>
+           <span class="n">isa</span> <span class="mh">0x1f62b44</span> <span class="n">_OBJC_METACLASS_</span><span class="err">$</span><span class="n">_QZFlowerInfo</span>
+    <span class="n">superclass</span> <span class="mh">0x1f6b1b8</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QZBaseWidgetInfo</span>
+         <span class="n">cache</span> <span class="mh">0x0</span>
+        <span class="n">vtable</span> <span class="mh">0x0</span>
+          <span class="n">data</span> <span class="mh">0x1dd22c0</span> <span class="p">(</span><span class="k">struct</span> <span class="kt">class_ro_t</span> <span class="o">*</span><span class="p">)</span>
+                    <span class="n">flags</span> <span class="mh">0x184</span> <span class="n">RO_HAS_CXX_STRUCTORS</span>
+            <span class="n">instanceStart</span> <span class="mi">4</span>
+             <span class="n">instanceSize</span> <span class="mi">24</span>
+               <span class="n">ivarLayout</span> <span class="mh">0x1cc43f6</span>
+                <span class="n">layout</span> <span class="nl">map</span><span class="p">:</span> <span class="mh">0x41</span> 
+                     <span class="n">name</span> <span class="mh">0x1cc43e9</span> <span class="n">QZFlowerInfo</span>
+              <span class="n">baseMethods</span> <span class="mh">0x1dd2180</span> <span class="p">(</span><span class="k">struct</span> <span class="kt">method_list_t</span> <span class="o">*</span><span class="p">)</span>
+		   <span class="n">entsize</span> <span class="mi">12</span>
+		     <span class="n">count</span> <span class="mi">13</span>
+		      <span class="n">name</span> <span class="mh">0x1b09ceb</span> <span class="nl">encodeWithCoder</span><span class="p">:</span>  <span class="c1">//定义的一般方法</span>
+		     <span class="n">types</span> <span class="mh">0x1cd4287</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="err">@</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0xaf85</span>
+		       <span class="n">name</span> <span class="mh">0x1b09c38</span> <span class="n">sun</span>       <span class="c1">//这里是property sun 的getter方法</span>
+		     <span class="n">types</span> <span class="mh">0x1cd42a2</span> <span class="n">i8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0xb38d</span>
+		      <span class="n">name</span> <span class="mh">0x1b09c9d</span> <span class="nl">setSun</span><span class="p">:</span>   <span class="c1">//这里是property sun 的setter方法</span>
+		     <span class="n">types</span> <span class="mh">0x1cd42a9</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="n">i8</span>
+		       <span class="n">imp</span> <span class="mh">0xb3a9</span>
+		     <span class="n">name</span> <span class="mh">0x1b09c63</span> <span class="n">flowerpicurl</span>
+		     <span class="n">types</span> <span class="mh">0x1cd42b3</span> <span class="err">@</span><span class="mi">8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0xb47d</span>
+		      <span class="n">name</span> <span class="mh">0x1b09cda</span> <span class="nl">setFlowerpicurl</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd4287</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="err">@</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0xb499</span>
+            <span class="n">baseProtocols</span> <span class="mh">0x0</span>
+                    <span class="n">ivars</span> <span class="mh">0x1dd2224</span> <span class="c1">// 这里是定义的变量</span>
+                    <span class="n">entsize</span> <span class="mi">20</span>
+                      <span class="n">count</span> <span class="mi">5</span>
+			   <span class="n">offset</span> <span class="mh">0x1fbb620</span> <span class="mi">4</span>
+			     <span class="n">name</span> <span class="mh">0x1b09c38</span> <span class="n">sun</span>
+			     <span class="n">type</span> <span class="mh">0x1cd42ba</span> <span class="n">i</span>
+			<span class="n">alignment</span> <span class="mi">2</span>
+			     <span class="n">size</span> <span class="mi">4</span>
+			   <span class="n">offset</span> <span class="mh">0x1fbb624</span> <span class="mi">8</span>
+			     <span class="n">name</span> <span class="mh">0x1b09c4e</span> <span class="n">rain</span>
+			     <span class="n">type</span> <span class="mh">0x1cd42ba</span> <span class="n">i</span>
+			<span class="n">alignment</span> <span class="mi">2</span>
+			     <span class="n">size</span> <span class="mi">4</span>
+			   <span class="n">offset</span> <span class="mh">0x1fbb628</span> <span class="mi">12</span>
+			     <span class="n">name</span> <span class="mh">0x1b09c53</span> <span class="n">love</span>
+			     <span class="n">type</span> <span class="mh">0x1cd42ba</span> <span class="n">i</span>
+			<span class="n">alignment</span> <span class="mi">2</span>
+			     <span class="n">size</span> <span class="mi">4</span>
+			   <span class="n">offset</span> <span class="mh">0x1fbb62c</span> <span class="mi">16</span>
+			     <span class="n">name</span> <span class="mh">0x1b09c58</span> <span class="n">fertilizer</span>
+			     <span class="n">type</span> <span class="mh">0x1cd42ba</span> <span class="n">i</span>
+			<span class="n">alignment</span> <span class="mi">2</span>
+			     <span class="n">size</span> <span class="mi">4</span>
+			   <span class="n">offset</span> <span class="mh">0x1fbb630</span> <span class="mi">20</span>
+			     <span class="n">name</span> <span class="mh">0x1b09c63</span> <span class="n">flowerpicurl</span>
+			     <span class="n">type</span> <span class="mh">0x1cd42bc</span> <span class="err">@</span><span class="s">&quot;NSString&quot;</span>
+			<span class="n">alignment</span> <span class="mi">2</span>
+			     <span class="n">size</span> <span class="mi">4</span>
+           <span class="n">weakIvarLayout</span> <span class="mh">0x0</span>
+           <span class="n">baseProperties</span> <span class="mh">0x1dd2290</span>   <span class="c1">// 这里是定义的属性</span>
+                    <span class="n">entsize</span> <span class="mi">8</span>
+                      <span class="n">count</span> <span class="mi">5</span>
+			     <span class="n">name</span> <span class="mh">0x1ba4f40</span> <span class="n">sun</span>
+			<span class="n">attributes</span> <span class="n">x1ba4f66</span> <span class="n">Ti</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Vsun</span>
+			     <span class="n">name</span> <span class="mh">0x1ba4f44</span> <span class="n">rain</span>
+			<span class="n">attributes</span> <span class="n">x1ba4f70</span> <span class="n">Ti</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Vrain</span>
+			     <span class="n">name</span> <span class="mh">0x1ba4f49</span> <span class="n">love</span>
+			<span class="n">attributes</span> <span class="n">x1ba4f7b</span> <span class="n">Ti</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Vlove</span>
+			     <span class="n">name</span> <span class="mh">0x1ba4f4e</span> <span class="n">fertilizer</span>
+			<span class="n">attributes</span> <span class="n">x1ba4f86</span> <span class="n">Ti</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Vfertilizer</span>
+			     <span class="n">name</span> <span class="mh">0x1ba4f59</span> <span class="n">flowerpicurl</span>
+			<span class="n">attributes</span> <span class="n">x1ba4f97</span> <span class="n">T</span><span class="err">@</span><span class="s">&quot;NSString&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Vflowerpicurl</span>
+			<span class="p">.....</span>
+<span class="n">Contents</span> <span class="n">of</span> <span class="p">(</span><span class="n">__DATA</span><span class="p">,</span><span class="n">__objc_catlist</span><span class="p">)</span> <span class="n">section</span>   <span class="c1">//这里开始category</span>
+<span class="mo">01</span><span class="n">dd1878</span> <span class="mh">0x1ead610</span>    <span class="c1">//这里定义了某个类的category, 有定义属性</span>
+              <span class="n">name</span> <span class="mh">0x1cccb53</span>
+               <span class="n">cls</span> <span class="mh">0x0</span>
+   <span class="n">instanceMethods</span> <span class="mh">0x1ead5a8</span>
+		   <span class="n">entsize</span> <span class="mi">12</span>
+		     <span class="n">count</span> <span class="mi">6</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d83b</span> <span class="nl">addInfiniteScrollingWithActionHandler</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd669b</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="err">@</span><span class="o">?</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0x10feda1</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d862</span> <span class="n">triggerInfiniteScrolling</span>
+		     <span class="n">types</span> <span class="mh">0x1cd429b</span> <span class="n">v8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0x10ff0e5</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d7a0</span> <span class="nl">setInfiniteScrollingView</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd4287</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="err">@</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0x10ff19d</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d755</span> <span class="n">infiniteScrollingView</span>
+		     <span class="n">types</span> <span class="mh">0x1cd42b3</span> <span class="err">@</span><span class="mi">8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0x10ff265</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d7ba</span> <span class="nl">setShowsInfiniteScrolling</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd4581</span> <span class="n">v12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span><span class="n">c8</span>
+		       <span class="n">imp</span> <span class="mh">0x10ff285</span>
+		      <span class="n">name</span> <span class="mh">0x1b6d87b</span> <span class="n">showsInfiniteScrolling</span>
+		     <span class="n">types</span> <span class="mh">0x1cd4454</span> <span class="n">c8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0x10ff8dd</span>
+      <span class="n">classMethods</span> <span class="mh">0x0</span>
+         <span class="n">protocols</span> <span class="mh">0x0</span>
+<span class="n">instanceProperties</span> <span class="mh">0x1ead5f8</span>
+                    <span class="n">entsize</span> <span class="mi">8</span>
+                      <span class="n">count</span> <span class="mi">2</span>
+			     <span class="n">name</span> <span class="mh">0x1c388fb</span> <span class="n">infiniteScrollingView</span>   <span class="c1">// 定义某个类的私有属性</span>
+			<span class="n">attributes</span> <span class="n">x1c38911</span> <span class="n">T</span><span class="err">@</span><span class="s">&quot;SVInfiniteScrollingView&quot;</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="n">N</span>
+			     <span class="n">name</span> <span class="mh">0x1c38933</span> <span class="n">showsInfiniteScrolling</span>
+			<span class="n">attributes</span> <span class="n">x1c55f92</span> <span class="n">Tc</span><span class="p">,</span><span class="n">N</span>
+<span class="mo">01</span><span class="n">dd1784</span> <span class="mh">0x1dd89bc</span>          <span class="c1">//这里定义了某个类的category, 没有定义属性</span>
+              <span class="n">name</span> <span class="mh">0x1cc4993</span>
+               <span class="n">cls</span> <span class="mh">0x0</span>
+   <span class="n">instanceMethods</span> <span class="mh">0x1dd897c</span>
+		   <span class="n">entsize</span> <span class="mi">12</span>
+		     <span class="n">count</span> <span class="mi">2</span>
+		      <span class="n">name</span> <span class="mh">0x1b1269c</span> <span class="n">fontHeight</span>
+		     <span class="n">types</span> <span class="mh">0x1cd51a0</span> <span class="n">f8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0xbf21d</span>
+		      <span class="n">name</span> <span class="mh">0x1b126a7</span> <span class="n">defaultLineHeight</span>
+		     <span class="n">types</span> <span class="mh">0x1cd51a0</span> <span class="n">f8</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mi">4</span>
+		       <span class="n">imp</span> <span class="mh">0xbf281</span>
+      <span class="n">classMethods</span> <span class="mh">0x1dd899c</span>
+		   <span class="n">entsize</span> <span class="mi">12</span>
+		     <span class="n">count</span> <span class="mi">2</span>
+		      <span class="n">name</span> <span class="mh">0x1b126b9</span> <span class="nl">boldSystemFontVerdanaOfSize</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd5d02</span> <span class="err">@</span><span class="mi">12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mf">4f</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0xbf17d</span>
+		      <span class="n">name</span> <span class="mh">0x1b126d6</span> <span class="nl">systemFontVerdanaOfSize</span><span class="p">:</span>
+		     <span class="n">types</span> <span class="mh">0x1cd5d02</span> <span class="err">@</span><span class="mi">12</span><span class="err">@</span><span class="mi">0</span><span class="o">:</span><span class="mf">4f</span><span class="mi">8</span>
+		       <span class="n">imp</span> <span class="mh">0xbf1cd</span>
+         <span class="n">protocols</span> <span class="mh">0x0</span>
+<span class="n">instanceProperties</span> <span class="mh">0x0</span>
+<span class="p">...</span>
+<span class="n">Contents</span> <span class="n">of</span> <span class="p">(</span><span class="n">__DATA</span><span class="p">,</span><span class="n">__objc_classrefs</span><span class="p">)</span> <span class="n">section</span>  <span class="c1">//定义的类</span>
+<span class="mf">01f5e8</span><span class="n">ec</span> <span class="mh">0x1f6c3b0</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QzoneGuidePageView</span>
+<span class="mf">01f5e8</span><span class="n">f8</span> <span class="mh">0x1f66cd0</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QzoneGuideView</span>
+<span class="mf">01f5e900</span> <span class="mh">0x1f780e8</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_WnsLogger</span>
+<span class="p">...</span>
+<span class="n">Contents</span> <span class="n">of</span> <span class="p">(</span><span class="n">__DATA</span><span class="p">,</span><span class="n">__objc_superrefs</span><span class="p">)</span> <span class="n">section</span>  <span class="c1">//定义的父类</span>
+<span class="mf">01f</span><span class="mi">60</span><span class="n">b4c</span> <span class="mh">0x1f62b30</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QZFlowerInfo</span>
+<span class="mf">01f</span><span class="mi">60</span><span class="n">b50</span> <span class="mh">0x1f62b58</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QQGuideWindow</span>
+<span class="mf">01f</span><span class="mi">60</span><span class="n">b54</span> <span class="mh">0x1f62b80</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_QzoneNewFeedDetailManager</span>
+<span class="mf">01f</span><span class="mi">60</span><span class="n">b58</span> <span class="mh">0x1f62ba8</span> <span class="n">_OBJC_CLASS_</span><span class="err">$</span><span class="n">_inputBarCacheObject</span>
+<span class="p">...</span></code></pre></div>
+
+<p>从上面的分析可以提取出方法，变量(<strong><code>set_B_i</code></strong>)，属性(<strong><code>set_B_p</code></strong>)，类名(<strong><code>set_B_c</code></strong>)了。</p>
+
+<p>4.用<code>nm ../../Qzone</code>得到Mach-O中的符号表。</p>
+
+<div class="highlight"><pre><code class="language-c-objdump" data-lang="c-objdump"><span class="mf">0116f</span><span class="mi">0</span><span class="n">ac</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">AFHTTPClient</span> <span class="nl">clientWithBaseURL</span><span class="p">:]</span>
+<span class="mo">0117</span><span class="n">cb08</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">AFHTTPRequestOperation</span> <span class="n">acceptableContentTypes</span><span class="p">]</span>
+<span class="mo">0117</span><span class="n">c7c8</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">AFHTTPRequestOperation</span> <span class="n">acceptableStatusCodes</span><span class="p">]</span>
+<span class="p">...</span>
+<span class="mf">011e20</span><span class="n">fc</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">NSNumber</span><span class="p">(</span><span class="n">uniAttribute</span><span class="p">)</span> <span class="nl">boolValueWithName</span><span class="p">:</span><span class="nl">inAttributes</span><span class="p">:]</span>
+<span class="mf">011e2288</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">NSNumber</span><span class="p">(</span><span class="n">uniAttribute</span><span class="p">)</span> <span class="nl">charValueWithName</span><span class="p">:</span><span class="nl">inAttributes</span><span class="p">:]</span>
+<span class="mf">011e2</span><span class="n">a90</span> <span class="n">t</span> <span class="o">+</span><span class="p">[</span><span class="n">NSNumber</span><span class="p">(</span><span class="n">uniAttribute</span><span class="p">)</span> <span class="nl">doubleValueWithName</span><span class="p">:</span><span class="nl">inAttributes</span><span class="p">:]</span>
+<span class="p">...</span></code></pre></div>
+
+<p>很容易提取出类名与对应的方法,<strong><code>set_C</code></strong>。
+5.查看应用都使用了哪些库，<code>otool -L ../.../Qzone</code>会看到使用的库<strong><code>set_Libs</code></strong>。
+6.从上面建立的私有api库中查询所有属于<code>set_Libs</code>的api，与步骤4中得到的方法做一个交集，得到了程序中定义的与私有api重名的那些api(set_Method)，至于这些api是否真的会导致被拒，需要人工审核差建立白名单，暂且称他们为<strong>waring_apis</strong>。</p>
+
+<div class="highlight"><pre><code class="language-minid" data-lang="minid"><span class="n">APINAME</span>  <span class="n">selectionChanged</span>
+<span class="p">------------------------------------------------------------</span> <span class="err">库中定义相同方法的头文件</span>
+<span class="n">UITextInteractionAssistant</span>	<span class="n">UITextInteractionAssistant</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UITextSelection</span>	<span class="n">UITextSelection</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UITextSelectionView</span>	<span class="n">UITextSelectionView</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UIWebDocumentView</span>	<span class="n">UIWebDocumentView</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UIWebSelection</span>	<span class="n">UIWebSelection</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UIWebSelectionAssistant</span>	<span class="n">UIWebSelectionAssistant</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="n">UIWebSelectionView</span>	<span class="n">UIWebSelectionView</span><span class="p">.</span><span class="n">h</span>	<span class="n">UIKit</span><span class="p">.</span><span class="n">framework</span>
+<span class="p">------------------------------</span>   <span class="err">程序中定义该方法的类</span>
+<span class="p">=&gt;</span> 	 <span class="p">[</span><span class="n">DLTextView</span>  <span class="n">selectionChanged</span><span class="p">]</span>
+<span class="p">=&gt;</span> 	 <span class="p">[</span><span class="n">RichTextView</span>  <span class="n">selectionChanged</span><span class="p">]</span>
+<span class="p">=&gt;</span> 	 <span class="p">[</span><span class="n">DLTextContainerView</span>  <span class="n">selectionChanged</span><span class="p">]</span></code></pre></div>
+
+<p>7.现在程序中自己定义的方法已经扫描结束了，但是如果程序中引用第三方库呢，还要扫描所用的第三方库是否用了私有的api，像之前facebook开源的Three20框架，因定义了很多与私有api重名的方法，导致很多基于该框架的应用被拒。从第一步中得到的<code>rest_str = strings - str_set - set_B_i - set_B_p - set_B_c</code>。将rest_str与步骤6中查询得到的api列表相交，这个结果集(set_Rest)就是来自第三方的库，但是如果没有第三方库的源码，不容易判断这些交集是属于方法还是hardcode的字符串。为进一步确定他们是来自哪个库，可以strings每个三方库，然后与set_Rest相交，得到每个三方库中命中的strings。如：</p>
+
+<div class="highlight"><pre><code class="language-minid" data-lang="minid"><span class="n">WnsSDK</span> 
+<span class="p">--------------------------------------------------</span>
+<span class="n">pasteboard</span>
+<span class="n">random</span>
+<span class="n">tag</span><span class="p">:</span>
+<span class="n">reconnect</span>
+<span class="n">table</span>
+<span class="n">apply</span>
+<span class="n">pointer</span>
+<span class="n">generator</span>
+<span class="n">add</span>
+<span class="n">call</span>
+<span class="n">take</span>
+<span class="n">postalAddress</span>
+<span class="n">read</span>
+<span class="n">emailAddress</span>
+<span class="n">pair</span>
+<span class="n">now</span>
+<span class="n">types</span>
+<span class="n">Comment</span>
+<span class="n">Secure</span>
+<span class="n">bind</span>
+<span class="n">adapter</span>
+<span class="n">curve</span>
+<span class="n">remove</span>
+<span class="n">signature</span>
+<span class="n">order</span></code></pre></div>
+
+<p>以上即当前对Qzone进行的扫描工作。</p>
+
+<h5 id="section-4">总结</h5>
+<p>通过以上各种方法，虽然可以看到某些可能“危险”的api, 但是结果还不是非常满意，需要人工来判断。还是需要再找找其他的方法，优化扫描结果。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/prevBlog/2013/12/13/practical-vim-part-1/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/prevBlog/2014/03/01/bnr-objective-c-programming/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
