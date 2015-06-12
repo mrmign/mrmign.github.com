@@ -1,7 +1,7 @@
 #markdown: rdiscount
 markdown: kramdown
-permalink: /:year/:month/:day/:title/
-url: http://mrmign.github.io/
+permalink: prevBlog/:year/:month/:day/:title/
+url: http://mrmign.github.io/prevBlog
 name: Arming
 author: Arming
 qq: 21575831
@@ -12,7 +12,7 @@ weibo: 2106103234
 github: mrmign
 pygments: true
 safe: true
-paginate: 20
+paginate: 100
 about: "这里是 Arming 的个人博客."
 
 excerpt_separator: ""
