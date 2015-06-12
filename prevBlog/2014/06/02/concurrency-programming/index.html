@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>concurrency programming</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>concurrency programming</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2014-06-02">2014-06-02</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#并发" title="并发">并发</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="section">并发实现</h2>
+
+<ul>
+  <li>分布式计算</li>
+  <li>并行编程</li>
+  <li>多进程</li>
+  <li>多线程</li>
+</ul>
+
+<h2 id="section-1">并发挑战</h2>
+
+<ul>
+  <li>同步操作</li>
+  <li>共享信息</li>
+</ul>
+
+<h2 id="objective-c">Objective-C中的并发编程</h2>
+
+<h3 id="synchronizedatomic">1. 语言上的特点: <code>@synchronized</code>可以创建锁，<code>atomic</code>可以保证访问属性的原子操作。</h3>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@synchronized</span><span class="p">(</span><span class="n">uniquOjb</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// critical section - code protected by the directive</span>
+<span class="p">}</span></code></pre></div>
+
+<p><code>atomic</code>提供访问属性的原子操作，但不是线程安全的。如：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@interface</span> <span class="nc">Person</span> : <span class="bp">NSObject</span>
+<span class="k">@property</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">firstName</span><span class="p">;</span>
+<span class="k">@property</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">lastName</span><span class="p">;</span>
+<span class="k">@end</span></code></pre></div>
+
+<p>尽管firstName和lastName是原子操作，但是Person对象不是线程安全的，<code>@property Person *person</code>, person中的firstName和lastName可以单独修改，这个可以通过<code>@synchronized</code>指令或同步原语(synchronization primitive)实现。</p>
+
+<h3 id="nsobject">2. 消息传递: NSObject类有几个方法可以给其他线程传递消息。</h3>
+
+<p>这些方法把消息排在目标线程的run loop上，可以同步或异步地执行。</p>
+
+<ul>
+  <li><code>performSelector:onThread:withObject:waitUntilDone:</code></li>
+  <li><code>performSelector:onThread:withObject:waitUntilDone:modes:</code></li>
+  <li><code>performSelectorOnMainThread:withObject:waitUntilDone:</code></li>
+  <li><code>performSelectorOnMainThread:withObject:waitUntilDone:modes:</code></li>
+</ul>
+
+<p>当创建一个线程时，你可以配置它的运行环境，如栈大小，优先级。通过用下面的方法实现线程入口程序来配置线程上下文也很重要。</p>
+
+<ul>
+  <li>autorelease pool。在入口程序开始创建，程序最后销毁。</li>
+  <li>异常处理。入口程序应该捕获任何可能发生的异常。</li>
+  <li>run loop。为使线程处理请求动态进行，可以在入口程序创建run loop。</li>
+</ul>
+
+<p>Demo:</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">@implementation</span> <span class="nc">ConcurrentProcessor</span>
+<span class="p">...</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">downloadTask</span>
+<span class="p">{</span>
+    <span class="p">@</span><span class="n">autorelease</span>
+    <span class="p">{</span>
+        <span class="bp">NSURL</span> <span class="o">*</span><span class="n">url</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSURL</span> <span class="nl">URLWithString</span><span class="p">:</span><span class="s">@&quot;http://www.baidu.com&quot;</span><span class="p">];</span>
+        <span class="bp">NSString</span> <span class="o">*</span><span class="n">str</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSString</span> <span class="nl">stiringWithContentsOfURL</span><span class="p">:</span><span class="n">url</span> <span class="nl">encoding</span><span class="p">:</span><span class="n">NSUTF8StringEncoding</span> <span class="nl">error</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;URL Contents:</span><span class="se">\n</span><span class="s"> %@&quot;</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>
+        <span class="nb">self</span><span class="p">.</span><span class="n">isLoaded</span> <span class="o">=</span> <span class="nb">YES</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">@end</span>
+
+<span class="c1">//call demo</span>
+<span class="n">ConcurrentProcessor</span> <span class="o">*</span><span class="n">processor</span> <span class="o">=</span> <span class="p">[</span><span class="n">ConcurrentProcessor</span> <span class="n">new</span><span class="p">];</span>
+<span class="p">[</span><span class="n">processor</span> <span class="nl">performSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">downloadTask</span><span class="p">)</span> <span class="nl">onThread</span><span class="p">:</span><span class="n">secondaryThread</span> <span class="nl">withObject</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">waitUntilDone</span><span class="p">:</span><span class="nb">NO</span><span class="p">];</span></code></pre></div>
+
+<p><code>waitUntilDone</code> 指定异步/同步操作，如果是NO，当前线程立即返回。</p>
+
+<p><code>performSelector:onThread:...</code>方法往往用来从secondary线程对象往main线程对象返回值(状态，结果等)。</p>
+
+<h3 id="section-2">3. 线程: 通过基础库提供的方法直接创建和管理线程。</h3>
+
+<h3 id="operation-queue-">4. 操作队列(Operation Queue): 基于消息传递机制。</h3>
+
+<h3 id="dispatch-queue-c">5. Dispatch queue: 基于C的异步并发方法。</h3>
+
+<p>在此挖了各种坑。。。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2014/05/22/objective-c-runtime/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2014/06/27/wax-for-ios/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
