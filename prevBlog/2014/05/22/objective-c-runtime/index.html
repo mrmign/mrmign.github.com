@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Objective C Runtime</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Objective C Runtime</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2014-05-22">2014-05-22</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#runtime" title="runtime">runtime</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<blockquote>
+  <p>Pro Objective-C Chapter 7: Runtime System</p>
+</blockquote>
+
+<p>用<code>NSSelectorFromString</code>函数在运行时创建selector. 如<code>SEL sel = NSSeletorFromString(@"method::")</code>, 这里在一个selctor中可以有空的segment,名字可以不要，但是调用时参数必须提供如<code>- (int)sumAdd:(NSInteger)a :(NSInteger)b;</code>,调用要<code>[cal sumAdd:a :b]</code>这样子。</p>
+
+<p>在方法中可以通过<code>NSStringFromSelector(_cmd)</code> 打印当前的方法名。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="kt">SEL</span> <span class="n">selector1</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">sumAddend1</span><span class="p">:</span><span class="nl">addend2</span><span class="p">:);</span>
+<span class="kt">id</span> <span class="n">sum1</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend2</span><span class="p">];</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Sum of %@ + %@ = %@&quot;</span><span class="p">,</span> <span class="n">addend1</span><span class="p">,</span> <span class="n">addend2</span><span class="p">,</span> <span class="n">sum1</span><span class="p">);</span>
+<span class="kt">SEL</span> <span class="n">selector2</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@&quot;sumAddend1::&quot;</span><span class="p">);</span>
+<span class="kt">id</span> <span class="n">sum2</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector2</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend3</span><span class="p">];</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Sum of %@ + %@ = %@&quot;</span><span class="p">,</span> <span class="n">addend1</span><span class="p">,</span> <span class="n">addend3</span><span class="p">,</span> <span class="n">sum2</span><span class="p">);</span>
+
+<span class="kt">SEL</span> <span class="n">selector3</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@&quot;absoluteValue:&quot;</span><span class="p">);</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Invoking instance method %@ on object of class %@&quot;</span><span class="p">,</span>
+      <span class="n">NSStringFromSelector</span><span class="p">(</span><span class="n">selector3</span><span class="p">),</span> <span class="p">[</span><span class="n">cal</span> <span class="k">class</span><span class="p">]);</span>
+<span class="kt">id</span> <span class="n">sum3</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector3</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">sum2</span><span class="p">];</span>
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Absolute value of %@ = %@&quot;</span><span class="p">,</span> <span class="n">sum2</span><span class="p">,</span> <span class="n">sum3</span><span class="p">);</span></code></pre></div>
+
+<p>当编译上面的代码时会有<code>PerformSelector may cause a leak because its selector is unknown</code>警告，因为如果没有方法与selector匹配就会抛出异常，可能会导致内存泄露。可以通过以下方法去除警告。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="cp">#pragma clang diagnostic push </span>
+<span class="cp">#pragma clang diagnostic ignored &quot;-Warc-performSelector-leaks&quot;</span>
+        <span class="kt">SEL</span> <span class="n">selector1</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="nl">sumAddend1</span><span class="p">:</span><span class="nl">addend2</span><span class="p">:);</span>
+        <span class="kt">id</span> <span class="n">sum1</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend2</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Sum of %@ + %@ = %@&quot;</span><span class="p">,</span> <span class="n">addend1</span><span class="p">,</span> <span class="n">addend2</span><span class="p">,</span> <span class="n">sum1</span><span class="p">);</span>
+        <span class="kt">SEL</span> <span class="n">selector2</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@&quot;sumAddend1::&quot;</span><span class="p">);</span>
+        <span class="kt">id</span> <span class="n">sum2</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector2</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend1</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">addend3</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Sum of %@ + %@ = %@&quot;</span><span class="p">,</span> <span class="n">addend1</span><span class="p">,</span> <span class="n">addend3</span><span class="p">,</span> <span class="n">sum2</span><span class="p">);</span>
+        
+        <span class="kt">SEL</span> <span class="n">selector3</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@&quot;absoluteValue:&quot;</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Invoking instance method %@ on object of class %@&quot;</span><span class="p">,</span>
+              <span class="n">NSStringFromSelector</span><span class="p">(</span><span class="n">selector3</span><span class="p">),</span> <span class="p">[</span><span class="n">cal</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="kt">id</span> <span class="n">sum3</span> <span class="o">=</span> <span class="p">[</span><span class="n">cal</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">selector3</span> <span class="nl">withObject</span><span class="p">:</span><span class="n">sum2</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Absolute value of %@ = %@&quot;</span><span class="p">,</span> <span class="n">sum2</span><span class="p">,</span> <span class="n">sum3</span><span class="p">);</span>
+<span class="cp">#pragma clang diagnostic pop</span></code></pre></div>
+
+<h3 id="section">说明</h3>
+
+<ol>
+  <li>诊断的名字要在双引号中指定。在这个例子中，-Warc-performSelector-leaks 关闭了针对执行performSelector可能导致内存泄露的编译警告。</li>
+  <li>pragma clang diagnostic push 和 pragma clang diagnostic pop用来保存和恢复当前编译诊断的设置。这保证了编译器在编译其他的源文件时继续使用通常的编译选项。</li>
+</ol>
+
+<h2 id="section-1">动态类型</h2>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="p">-</span> <span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nf">computeValue:</span><span class="p">(</span><span class="bp">NSNumber</span><span class="o">&lt;</span><span class="bp">NSDecimalNumberBehaviors</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">parameter</span><span class="p">;</span></code></pre></div>
+
+<h3 id="section-2">动态提供方法实现</h3>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="cp">#import &lt;objc/runtime.h&gt;</span>
+<span class="p">+</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">resolveInstanceMethod:</span><span class="p">(</span><span class="kt">SEL</span><span class="p">)</span><span class="nv">sel</span>
+<span class="p">{</span>
+    <span class="bp">NSString</span> <span class="o">*</span><span class="n">method</span> <span class="o">=</span> <span class="n">NSStringFromSelector</span><span class="p">(</span><span class="n">sel</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">method</span> <span class="nl">hasPrefix</span><span class="p">:</span><span class="s">@&quot;absoluteValue&quot;</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">class_addMethod</span><span class="p">([</span><span class="nb">self</span> <span class="k">class</span><span class="p">],</span> <span class="n">sel</span><span class="p">,</span> <span class="p">(</span><span class="kt">IMP</span><span class="p">)</span><span class="n">absoluteValue</span><span class="p">,</span> <span class="s">&quot;@@:@&quot;</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Dynamically added instance method %@ to class %@&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="p">[</span><span class="nb">self</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">super</span> <span class="nl">resolveInstanceMethod</span><span class="p">:</span><span class="n">sel</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kt">id</span> <span class="nf">absoluteValue</span><span class="p">(</span><span class="kt">id</span> <span class="nb">self</span><span class="p">,</span> <span class="kt">SEL</span> <span class="n">_cmd</span><span class="p">,</span> <span class="kt">id</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="bp">NSInteger</span> <span class="n">intValue</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="n">intValue</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">intValue</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">NSNumber</span> <span class="nl">numberWithInteger</span><span class="p">:(</span><span class="n">intValue</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>动态添加方法可以有实例方法与类方法，resolveInstanceMethod 和 resolveClassMethod, 这里讲了添加实例方法。</p>
+
+<blockquote>
+  <p>Pro Objective-C Chapter 8: Runtime Architecture</p>
+</blockquote>
+
+<h2 id="runtime-component">Runtime Component</h2>
+
+<p>下面是一些常用的数据结构：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_class</span> <span class="o">*</span><span class="kt">Class</span>
+
+<span class="k">struct</span> <span class="n">objc_object</span>
+<span class="p">{</span>
+    <span class="kt">Class</span> <span class="n">isa</span><span class="p">;</span>
+    <span class="cm">/* ... variable length data containing instance varibale values ... */</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">objc_object</span> <span class="o">*</span><span class="kt">id</span><span class="p">;</span></code></pre></div>
+
+<p>下面的是一个关于上面结构的例子:</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="cp">#import &lt;objc/runtime.h&gt;</span>
+<span class="k">@interface</span>  <span class="nc">TestClass1</span> : <span class="bp">NSObject</span>
+<span class="p">{</span>
+<span class="k">@public</span> <span class="kt">int</span> <span class="n">myInt</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">@end</span>
+<span class="k">@implementation</span> <span class="nc">TestClass1</span>
+<span class="k">@end</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="k">@autoreleasepool</span> <span class="p">{</span>
+        <span class="n">TestClass1</span> <span class="o">*</span><span class="n">tc1A</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestClass1</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+        <span class="n">tc1A</span><span class="o">-&gt;</span><span class="n">myInt</span> <span class="o">=</span> <span class="mh">0x5a5a5a5</span><span class="p">;</span>
+        <span class="n">TestClass1</span> <span class="o">*</span><span class="n">tc1B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">TestClass1</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+        <span class="n">tc1B</span><span class="o">-&gt;</span><span class="n">myInt</span> <span class="o">=</span> <span class="mh">0x3c3c3c3</span><span class="p">;</span>
+        <span class="kt">long</span> <span class="n">tc1Size</span> <span class="o">=</span> <span class="n">class_getInstanceSize</span><span class="p">([</span><span class="n">TestClass1</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="bp">NSData</span> <span class="o">*</span><span class="n">obj1Data</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSData</span> <span class="nl">dataWithBytes</span><span class="p">:(</span><span class="k">__bridge</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">)(</span><span class="n">tc1A</span><span class="p">)</span> <span class="nl">length</span><span class="p">:</span><span class="n">tc1Size</span><span class="p">];</span>
+        <span class="bp">NSData</span> <span class="o">*</span><span class="n">obj2Data</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSData</span> <span class="nl">dataWithBytes</span><span class="p">:(</span><span class="k">__bridge</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">)(</span><span class="n">tc1B</span><span class="p">)</span> <span class="nl">length</span><span class="p">:</span><span class="n">tc1Size</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;TestClass1 object tc1 contains %@&quot;</span><span class="p">,</span> <span class="n">obj1Data</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;TestClass1 object tc2 contains %@&quot;</span><span class="p">,</span> <span class="n">obj2Data</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Testclass1 memory address = %p&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">TestClass1</span> <span class="k">class</span><span class="p">]);</span>
+        
+        <span class="kt">id</span> <span class="n">testCl</span> <span class="o">=</span> <span class="n">objc_getClass</span><span class="p">(</span><span class="s">&quot;TestClass1&quot;</span><span class="p">);</span>
+        <span class="kt">long</span> <span class="n">tcSize</span> <span class="o">=</span> <span class="n">class_getInstanceSize</span><span class="p">([</span><span class="n">testCl</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="bp">NSData</span> <span class="o">*</span><span class="n">tcData</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSData</span> <span class="nl">dataWithBytes</span><span class="p">:(</span><span class="k">__bridge</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">)(</span><span class="n">testCl</span><span class="p">)</span> <span class="nl">length</span><span class="p">:</span><span class="n">tcSize</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;TestClass1 class contains %@&quot;</span><span class="p">,</span> <span class="n">tcData</span><span class="p">);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;TestClass1 superclass memory address = %p&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">TestClass1</span> <span class="n">superclass</span><span class="p">]);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%p&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">testCl</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%p&quot;</span><span class="p">,</span> <span class="n">testCl</span><span class="p">);</span>
+
+        <span class="kt">id</span> <span class="n">metaClass</span> <span class="o">=</span> <span class="n">objc_getMetaClass</span><span class="p">(</span><span class="s">&quot;TestClass1&quot;</span><span class="p">);</span>
+        <span class="kt">long</span> <span class="n">s</span> <span class="o">=</span> <span class="n">class_getInstanceSize</span><span class="p">([</span><span class="n">metaClass</span> <span class="k">class</span><span class="p">]);</span>
+        <span class="bp">NSData</span> <span class="o">*</span><span class="n">mc</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSData</span> <span class="nl">dataWithBytes</span><span class="p">:(</span><span class="k">__bridge</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">)(</span><span class="n">metaClass</span><span class="p">)</span> <span class="nl">length</span><span class="p">:</span><span class="n">s</span><span class="p">];</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;TestClass1 metaclass contains %@&quot;</span><span class="p">,</span> <span class="n">mc</span><span class="p">);</span>
+        <span class="n">class_isMetaClass</span><span class="p">(</span><span class="n">metaClass</span><span class="p">)</span> <span class="o">?</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Class %s is a metaclass&quot;</span><span class="p">,</span> <span class="n">class_getName</span><span class="p">(</span><span class="n">metaClass</span><span class="p">))</span><span class="o">:</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Class %s is not a metaclass&quot;</span><span class="p">,</span><span class="n">class_getName</span><span class="p">(</span><span class="n">metaClass</span><span class="p">));</span>
+        
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>输出结果：</p>
+
+<div class="highlight"><pre><code class="language-console" data-lang="console"><span class="go">2014-05-23 22:56:58.085 Runtime[2759:303] TestClass1 object tc1 contains &lt;10230000 01000000 a5a5a505 00000000&gt;</span>
+<span class="go">2014-05-23 22:56:58.087 Runtime[2759:303] TestClass1 object tc2 contains &lt;10230000 01000000 c3c3c303 00000000&gt;</span>
+<span class="go">2014-05-23 22:56:58.087 Runtime[2759:303] Testclass1 memory address = 0x100002310</span>
+<span class="go">2014-05-23 22:56:58.087 Runtime[2759:303] TestClass1 class contains &lt;e8220000 01000000 10c82072 ff7f0000&gt;</span>
+<span class="go">2014-05-23 22:56:58.088 Runtime[2759:303] TestClass1 superclass memory address = 0x7fff7220c810</span>
+<span class="go">2014-05-23 22:56:58.088 Runtime[2759:303] 0x100002310</span>
+<span class="go">2014-05-23 22:56:58.088 Runtime[2759:303] 0x100002310</span>
+<span class="go">2014-05-23 22:56:58.089 Runtime[2759:303] TestClass1 metaclass contains &lt;38c82072 ff7f0000 38c82072 ff7f0000 105f2000 01000000 07000000 03000000 801d2000 01000000&gt;</span>
+<span class="go">2014-05-23 22:56:58.089 Runtime[2759:303] Class TestClass1 is a metaclass</span></code></pre></div>
+
+<p>因为Mac用的是小端，所以输出的地址与内容正好相反。</p>
+
+<p>这里的testCl的内容为什么与前面的tc1A不同的，是因为testCl是通过objc_getClass返回一个对象的类，所以它的地址指向这个类，与前面的实例的isa所指向的地址是相同的。</p>
+
+<p>metaclass是一种特殊的类对象，它存储了能够使运行时查找和触发OC类的类方法的信息。</p>
+
+<p>isa 分两种：一种指描述实例的类，可以访问它的实例方法，变量等。另一种指向描述类的metaclass，访问类方法。</p>
+
+<h2 id="runtime-library">Runtime Library</h2>
+
+<h3 id="runtime-library-data-types">runtime library data types</h3>
+
+<ol>
+  <li>Class definition data structures(class, method, ivar, category, IMP, SEL,etc)</li>
+  <li>Instance data types(id, objc_object, objc_super)</li>
+  <li>Values (BOOL)</li>
+</ol>
+
+<h3 id="functions-">functions 分类</h3>
+
+<ol>
+  <li>Object messaging</li>
+  <li>Class functions</li>
+  <li>Instance functions</li>
+  <li>Protocol functions</li>
+  <li>Property functions</li>
+  <li>Selector functions</li>
+</ol>
+
+<p>下面的图是运行时的消息操作</p>
+
+<p><img src="/images/ios/2014-05-22-runtime-message.svg" alt="runtime message" /></p>
+
+<p>方法查找是通过<code>vtable</code>,也就是分发表，在支持动态绑定的语言中常用的一种机制。一个vtable是一组IMPs,也就是OC中的方法实现。每一个运行时类实例(objc_class)有一个指向vtable的指针。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">struct</span> <span class="n">objc_method</span>
+<span class="p">{</span>
+    <span class="kt">SEL</span> <span class="n">method_name</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">method_types</span><span class="p">;</span><span class="c1">//指明参数数据类型</span>
+    <span class="kt">IMP</span> <span class="n">method_imp</span><span class="p">;</span> <span class="c1">//函数地址</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="n">objc_method</span> <span class="o">*</span><span class="n">Method</span><span class="p">;</span></code></pre></div>
+
+<p><img src="/images/ios/2014-05-22-runtime-library.svg" alt="runtime library" /></p>
+
+<p>这是看书的时候做了个简要笔记，OC的runtime还有更加强大的功能，这也成了一个坑。。。。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2014/05/08/ios-documentation-nsobject/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2014/06/02/concurrency-programming/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
