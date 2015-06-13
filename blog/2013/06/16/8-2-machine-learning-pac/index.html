@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>8.2 Dimensionality	Reduction, PCA</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>8.2 Dimensionality	Reduction, PCA</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-06-16">2013-06-16</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#course" title="course">course</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#ml" title="ml">ml</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h3 id="data-compression">Data Compression</h3>
+
+<p>从2D到1D，3D到2D</p>
+
+<h3 id="principal-component-analysispca">　Principal Component Analysis(PCA)</h3>
+
+<p>Reduce from n-dimension to k-dimension: </p>
+
+<p>Find k vectors <script type="math/tex"> \mu^{(1)}, \mu^{(2)},\cdots, \mu^{(k)}</script> onto which to project the data, so as to minimize the projection error.</p>
+
+<p><strong>PCA is not linear regression</strong></p>
+
+<p><strong>Data preprocessing</strong></p>
+
+<p>Traing set: <script type="math/tex"> x^{(1)}, x^{(2)}, \cdots, x^{(m)}</script></p>
+
+<p>Preprocessing(feature scaling/mean normalization): </p>
+
+<script type="math/tex; mode=display"> \mu_j = \frac{1}{m} \sum_{i=1}^m x_j^{(i)}</script>
+
+<p>Replace each <script type="math/tex">x_j^{(i)}</script> with <script type="math/tex"> x_j - \mu_j </script></p>
+
+<p>If different features on different scales, scale features to have comparable range of values.</p>
+
+<script type="math/tex; mode=display"> x_j^{(i)} \leftarrow \frac{x_j^{(i)} - \mu_j}{s_j} </script>
+
+<p><strong>Reduce data from n-dimensions to k-dimensions</strong></p>
+
+<ul>
+  <li>Compute”covriance matrix”: X(m*n)中的每一行是一个example</li>
+</ul>
+
+<script type="math/tex; mode=display"> Sigma \ \sum = \frac{1}{m} \sum_{i=1}^n (x^{(i)})(x^{(i)})^T \\
+Sigma = \frac{1}{m} X' * X;
+</script>
+
+<ul>
+  <li>Compute “eigenvectors” of matrix <script type="math/tex">\sum</script>:</li>
+</ul>
+
+<script type="math/tex; mode=display"> [U, S, V] = svd(Sigma); \\
+U_{reduce} = U(:,1:k); \\
+Z = U_{reduce}^T * X;
+</script>
+
+<ul>
+  <li>U是n*n的矩阵</li>
+  <li>S是n*n矩阵</li>
+  <li><script type="math/tex">U_{reduce}</script> 是n*k矩阵</li>
+  <li>Z 是　k*n</li>
+</ul>
+
+<h3 id="reconstruction-from-compressed-representation">Reconstruction from compressed representation</h3>
+
+<script type="math/tex; mode=display"> z = U_{reduce}^T x \\
+X_{approx}^{(i)} = U_{reduce} * Z^{(i)}</script>
+
+<h3 id="choosing-the-number-of-principal-components">Choosing the number of principal components</h3>
+
+<p><strong>Choose K to be smallest value so that</strong></p>
+
+<script type="math/tex; mode=display">
+\frac{ \frac{1}{m} \sum_{i=1}^{m} \Vert x^{(i)} - x_{approx}^{(i)} \Vert^2}{\frac{1}{m} \sum_{i=1}^{m} \Vert x^{(i)}\Vert^2} \leq 0.01 
+</script>
+
+<p><strong>99% of variance is retained!!</strong></p>
+
+<p><a href="/files/8-2 Dimensionality Reduction.pdf">More detail slides#24</a></p>
+
+<h3 id="advice-for-applying-pca">Advice for applying PCA</h3>
+
+<ul>
+  <li>Supervised learning speedup. <script type="math/tex"> (x_{(1)},y_{(1)}), (x_{(2)},y_{(2)}),\cdots, (x_{(m)},y_{(m)}) \longrightarrow   (z_{(1)},y_{(1)}), (z_{(2)},y_{(2)}),\cdots, (z_{(m)},y_{(m)}) </script>. New training sets have low dimensions.</li>
+</ul>
+
+<p><strong>NOTE</strong></p>
+
+<p>Mapping <script type="math/tex"> x^{(i)} \rightarrow z^{(i)} </script> should be defined by running PCA only on the training set. This mapping can be applied as well to the examples <script type="math/tex"> x_{cv}^{(i)} </script> and <script type="math/tex"> x_{test}^{(i)}</script> in the cross validation and test sets.</p>
+
+<ul>
+  <li>Reduce memory/disk needed to store data</li>
+  <li>Visualization</li>
+</ul>
+
+<p><strong>Bad use of PCA</strong></p>
+
+<ul>
+  <li>Use <script type="math/tex"> z^{(i)} </script> instead of <script type="math/tex"> x^{(i)} </script> to reduce the number of features to k&lt;n. Thus, fewer features, less likely to overfit. Use regularization instead.</li>
+</ul>
+
+<h3 id="pca">PCA正解使用</h3>
+
+<p>在使用PCA前，先用原始数据运行，如果结果不是想要的，然后再用PCA.</p>
+
+<p><a href="/files/8-2 Dimensionality Reduction.pdf">slide</a></p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/blog/2013/06/15/8-1-machine-learning-clustering/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/blog/2013/06/26/linux-lab5-how-linux-works/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

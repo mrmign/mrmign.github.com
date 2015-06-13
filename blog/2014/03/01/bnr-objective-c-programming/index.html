@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Objective C Programming</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Objective C Programming</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2014-03-01">2014-03-01</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#iOS" title="iOS">iOS</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="bnr">BNR</h2>
+
+<h3 id="basics">Basics</h3>
+<ul>
+  <li><code>BOOL</code>在<code>objc/objc.h</code>定义</li>
+  <li>if/else 最好写上花括号，别像Apple那样犯低级错误 <code>goto fail</code></li>
+  <li><code>sleep()</code> in <code>unistd.h</code>中</li>
+  <li><code>EXIT_SUCCESS</code> 和 <code>EXIT_FAILUR</code>在<code>stdlib.h</code>中</li>
+  <li><code>%zu</code> 打印 sizeof返回的<code>size_t</code></li>
+  <li>（实例变量以 _ 开头只是为了与局部变量进行区分，没有特殊含义）【好像不是这样子的！】。如果只声明property, 编译器会默认添加 _name的变量，可以显示的使用。</li>
+  <li>%@ 符号调用相应对象的的<code>description</code>方法</li>
+  <li>用 <code>@interface ClassName()...@end</code>声明实例变量或属性，只有在类内部可见，对象不可见</li>
+  <li>子类不能访问父类的类扩展</li>
+  <li><code>__weak MyObject *obj</code> 声明弱引用</li>
+  <li>数组排序 <code>NSSortDescriptor</code>, 过滤<code>NSPredicate</code></li>
+  <li><code>NSNumber</code>实例，@4, @5.6</li>
+  <li>用<code>NS_ENUM()</code>声明枚举类弄</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">([</span><span class="kt">char</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">unsinged</span> <span class="kt">long</span><span class="p">,...],</span> <span class="n">enum_name</span><span class="p">){</span>
+<span class="p">...</span>
+<span class="p">};</span></code></pre></div>
+
+<ul>
+  <li>OC中有4种形式的回调：(Demo in Callbacks)
+    <ol>
+      <li>Target-action, 用<code>target:obj selector:@selector()</code>。 <strong>为了加快运行速度，编译器为每一个方法分配唯一的数字，在运行时使用数字而不是方法名</strong></li>
+      <li>Helper-action用delegate实现</li>
+      <li>Notifications</li>
+      <li>BLocks</li>
+    </ol>
+  </li>
+  <li><code>__unused</code>  去除警告</li>
+  <li>block 会对它引用的对象保持强引用。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="n">mybolck</span> <span class="o">=</span> <span class="o">^</span><span class="p">{</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="nb">self</span><span class="p">);</span> <span class="c1">//这种方法导致强引用</span>
+    <span class="p">}</span>
+    <span class="k">__weak</span> <span class="n">MyObject</span> <span class="o">*</span><span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+    <span class="n">myblock</span> <span class="o">=</span> <span class="o">^</span><span class="p">{</span>
+        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">weakSelf</span><span class="p">);</span>
+    <span class="p">}</span></code></pre></div>
+
+<ul>
+  <li>不要直接引用实例变量,使用存取器</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="k">__weak</span> <span class="n">MyObject</span> <span class="o">*</span><span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+<span class="n">myblock</span> <span class="o">=</span> <span class="o">^</span><span class="p">{</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">_iVar</span><span class="p">);</span> <span class="c1">//直接访问实例变量</span>
+<span class="p">}</span>
+<span class="cm">/* 上面的代码编译器会编译为 */</span>
+<span class="k">__weak</span> <span class="n">MyObject</span> <span class="o">*</span><span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+<span class="n">myblock</span> <span class="o">=</span> <span class="o">^</span><span class="p">{</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="nb">self</span><span class="o">-&gt;</span><span class="n">_iVar</span><span class="p">);</span> <span class="c1">//还是会导致self的强引用</span>
+<span class="p">}</span>
+<span class="cm">/* 应该这样写 */</span>
+<span class="k">__weak</span> <span class="n">MyObject</span> <span class="o">*</span><span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+<span class="n">myblock</span> <span class="o">=</span> <span class="o">^</span><span class="p">{</span>
+    <span class="n">MyObject</span> <span class="o">*</span><span class="n">innerSelf</span> <span class="o">=</span> <span class="n">weakSelf</span><span class="p">;</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;%@&quot;</span><span class="p">,</span> <span class="n">innerself</span><span class="p">.</span><span class="n">iVar</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+
+<ul>
+  <li>block访问的外部变量默认为常量，不能修改它们的值。如果想在block中修改外部变量，要使用<code>__block</code>来声明。</li>
+  <li>是否响应某个方法<code>respondsToSelector:</code></li>
+  <li>基于事件驱动，就是应用加载完后，开启循环坐等事件到来。</li>
+  <li><code>UITableView</code> <code>[tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"]</code></li>
+</ul>
+
+<h3 id="advances">Advances</h3>
+<ul>
+  <li>init。<code>instancetype</code> 告诉编译器期望该方法所属的类的一个实例。任何你写的或是覆盖的初始化方法应该返回instancetype。在Xcode4.3之前，使用的是id, 但是instancetype是更好的选择。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">init</span>
+<span class="p">{</span>
+    <span class="c1">//self = [super init];</span>
+    <span class="c1">//if(self){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">]){</span>
+        <span class="n">_var1</span> <span class="o">=</span> <span class="p">...;</span>
+    <span class="p">}</span><span class="c1">// 养成好习惯：检查父类的初始化，用实例变量来赋值。</span>
+    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<ul>
+  <li>初始化方法的写法：
+    <ol>
+      <li>如果一个类有多个初始化方法，只有一个做真正的初始化工作，也就是指定的初始化方法。其他所有的初始化方法，直接或间接的调用该指定的初始化方法（每个类只有一个指定的初始化方法。如果一个类有其他的初始化方法，这些方法必须调用指定的初始化方法。）</li>
+      <li>指定的初始化方法在初始化它的实例变量前会调用父类指定的初始化方法</li>
+      <li>如果你的类的指定初始化方法与父类的指定的初始化方法名字不同，你必须重写父类的指定的初始化方法，并调用新的指定的初始化方法</li>
+      <li>如果有多个初始化方法，在头文件中要有明显的文档指明哪个是指定的初始化方法。</li>
+    </ol>
+  </li>
+  <li>property attributes
+    <ul>
+      <li><code>readwrite</code><strong>默认</strong> <code>readonly</code></li>
+      <li><code>assign</code>对非对象类型是<strong>默认</strong>的，只是把传过来的值赋给属性</li>
+      <li><code>strong</code> 对于对象指针是<strong>默认</strong>的</li>
+      <li><code>weak</code> 没有对所指对象的拥有权，如果这个对象被释放，属性会自动被置为nil，避免野指针。</li>
+      <li><code>unsafe_unretained</code> 跟 weak一样没有拥有权，但是当对象被释放时不会自动置为nil。</li>
+      <li><code>copy</code> 对传进的对象的副本有强引用。</li>
+      <li><code>copyWithZone:</code>和<code>mutableCopyWithZone:</code>定义在<code>NSCopying</code>和<code>NSMutableCopying</code>协议里，如果想自己的类有copy功能，要遵从这2个协议。</li>
+      <li><code>nonatomic</code> 总是使<code>readwrite</code>的属性为nonatomic. <strong>默认</strong>的为<code>atomic</code></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">copy</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">copyWithZone</span><span class="p">:</span><span class="nb">NULL</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">mutableCopy</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">mutableCopyWithZone</span><span class="p">:</span><span class="nb">NULL</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+<ul>
+  <li>key-value
+    <ul>
+      <li>key path</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="n">NSStrng</span> <span class="o">*</span><span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="n">sales</span> <span class="nl">valueForKeyPath</span><span class="p">:</span><span class="s">@&quot;manager.contacts.phone&quot;</span><span class="p">];</span>
+<span class="p">[</span><span class="n">sales</span> <span class="nl">setValue</span><span class="p">:</span><span class="s">@&quot;5555-555&quot;</span> <span class="nl">forKeyPath</span><span class="p">:</span><span class="s">@&quot;manager.contacts.phone&quot;</span><span class="p">];</span></code></pre></div>
+
+<ul>
+  <li>KVO(key-value observing)用kvo context区分不同的通知，如子父与父类的。</li>
+  <li>显示地触发通知<code>willChangeValueForKey:</code> 和 <code>didChangeValueForKey:</code></li>
+  <li>运行时查看class,methods的方法很好。</li>
+</ul>
+
+<blockquote>
+  <p>added on 2014-05-14</p>
+</blockquote>
+
+<h2 id="programming-in-objective-c-6th">Programming in Objective-C 6th</h2>
+
+<h4 id="class-extensions">class extensions</h4>
+
+<p>只有()的叫扩展，括号中有内容的叫category。类扩展中可以增加额外的实例变量，属性，对category不允许(这时说的是不正确的，在官方文档中的 Core Data Programming Guide中的Managed Object Accessor Methods中用了对category添加属性的方式)。定义在扩展中的方法也在类的主实现部分实现，不在一个单独的实现部分。扩展中的方法是私有的，说它是私有的只是看上去是私有的，写在interface里的是公开的，但是声明在扩展中的方法虽然看上去是私有的，如果知道方法名，仍然可以调用。</p>
+
+<blockquote>
+  <p>You can declare a property anywhere in the method declaration list, which is in the interface of a class, or in the declaration of a protocol or category. </p>
+</blockquote>
+
+<ul>
+  <li>Category* 通过 category扩展类的功能，影响的不只是那个类，还有该的子类。例如如果给NSObject添加新方法，所有的类都会继承这些新的方法，而不管你是不是有意的。</li>
+</ul>
+
+<h4 id="section">内存管理</h4>
+
+<p>property中的属性默认不是strong, 默认的是unsafe_unretained(等价于assign), 所以如果要使用strong，必须要指明。</p>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/blog/2014/02/21/scan-ios-private-api/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/blog/2014/03/18/init-method-in-objective-c/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

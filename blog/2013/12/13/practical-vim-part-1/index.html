@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>practical vim part 1</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>practical vim part 1</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-12-13">2013-12-13</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#tool" title="tool">tool</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#vim" title="vim">vim</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<blockquote>
+  <p>记录下自己感觉会用得到的命令。</p>
+</blockquote>
+
+<h2 id="vim-tips-from-practical-vim">Vim Tips from Practical Vim</h2>
+<p>### Normal Mode
+1.<code>&gt;G</code> 从当前 行直到文件结束，增加缩进</p>
+
+<p>2.<code>A</code>在当前行的末尾添加，如果想要多行行尾添加内容，如添加 ; 可以 <code>A;&lt;Esc&gt;</code>，然后<code>j.</code> 对后面的行执行同样的添加操作</p>
+
+<p>3.<code>f{char}</code>  行内寻找 字符，<code>;</code> 执行上次的 f 命令，找到下一个; <code>,</code> 找到上一个。</p>
+
+<p>4.<code>&amp;</code>执行上一次的替换操作</p>
+
+<p>5.<code>*</code> 搜索光标所在的词</p>
+
+<p>9.<code>daw</code> 删除单词及与单词前面相邻的空格。</p>
+
+<p>10.<code>C-a</code> 给数字加1，<code>C-x</code>给数字减1. 也可以在前面加数字，执行这个数次操作。</p>
+
+<p>12.<code>d{motion}</code> 可通过<strong><code>:h operator</code></strong>查看完整列表。</p>
+
+<h3 id="insert-mode">Insert Mode</h3>
+<p>13.在Insert模式下修正，<code>&lt;C-h&gt;</code>==<code>backspace</code> 后退删除一个字符，<code>&lt;C-w&gt;</code>后退删除一个单词，<code>&lt;C-u&gt;</code>删除到行首。</p>
+
+<p>14.<code>&lt;C-[&gt;</code> 切换到normal模式。可以将此映射为<code>&lt;Esc&gt;</code>。
+&gt;书上说的<c-o>是进入insert模式，在我的配置下不行。在跳转的时候<c-i>,<c-o>是进入退出。</c-o></c-i></c-o></p>
+
+<p>15.从寄存器粘贴</p>
+
+<ul>
+  <li><code>K</code> 查找光标所在单词的man页，<code>J</code> 连接当前行与下一行。</li>
+  <li><code>yt,</code>, <code>t{char}</code>看tip49</li>
+  <li><code>&lt;C-r&gt;{register}</code>和<code>&lt;C-r&gt;&lt;C-p&gt;{register}</code>,更多参考 <strong><code>:h i_CTRL-R_CTRL-P</code></strong> Tip62</li>
+</ul>
+
+<p>16.<code>&lt;C-r&gt;=</code>做运算，将结果插入</p>
+
+<p>17.插入特殊字符，<code>&lt;C-v&gt;{code}</code> or <code>&lt;C-v&gt;u{code}</code> 如 <c-v>u00bf **`:h i_CTRL-V_digit`**， 要查找unicode编码。</c-v></p>
+
+<p>18.插入特殊字符<code>&lt;C-k&gt;{char1}{char2}</code> 可以查看特殊字符的编码<strong><code>:h digraphs-table</code></strong>
+&gt; 我的<code>&lt;C-k&gt;</code> 不起作用。</p>
+
+<h3 id="visual-mode">Visual Mode</h3>
+<p>20.<s>`<c-g>`在visual与select间切换，在visual下选中，如`viw`选中一个单词，再`<c-g>`切换到select,就可以直接输入替换到原来的单词了。select模式没什么用，只是更像其他文本编辑器一样，先选中再输入新内容。&lt;/s&gt;</c-g></c-g></s></p>
+
+<p>23.<code>gUit</code> 和 <code>vitU</code>  it 是in tag，更多的text object后面还会有。</p>
+
+<p>24.<code>gv</code>重新选择最后一次在visual下的选择。</p>
+
+<h3 id="command-line-mode">Command-Line Mode</h3>
+<p>28.在命令行模式下<code>.</code> 表示光标所在的行，<code>%</code>当前文件的所有行。<code>'&lt;</code>表示选择的第一行，<code>'&gt;</code>表示选择的最后一行。<code>1</code>文件第一行，<code>$</code>文件最后一行，<code>0</code>在文件第一行之前不存在的一行，<code>‘m</code>包含标签m的行。</p>
+
+<p>29.移动行 <code>:[range]copy[== t ] {address}</code> 和 <code>:[range] move[== m ] {address}</code></p>
+
+<ul>
+  <li>copy
+    <ul>
+      <li><code>:6t.</code> 把第6行复制到当前行的下一行</li>
+      <li><code>:t6</code> 把当前行复制到第6行下一行，即第7行</li>
+      <li><code>:t.</code>复制当前行，即<code>yyp</code></li>
+      <li><code>:t$</code> 复制当前行到文件 尾</li>
+      <li><code>'&lt;,'&gt;t0</code> 复制所选的行到文件首</li>
+    </ul>
+  </li>
+  <li>move 与copy类似</li>
+</ul>
+
+<p>30.对于要在连续50行末尾添加 ； 如果再用2中的方法会很累的，要执行50次的<code>j.</code> 。</p>
+
+<ul>
+  <li>可以先利用2中的方法<code>A;&lt;Esc&gt;</code>添加一行</li>
+  <li>然后用<code>V{line of number}&lt;CR&gt;</code> 来选择要进行修改的行，其中{line of number}就是要选择的行数</li>
+  <li>然后按 <code>:</code> 会进行<code>:'&lt;,'&gt;</code>, 接着输入 <code>normal .</code> ,回车执行添加操作</li>
+  <li><code>:normal</code>命令，如<code>：%normal A;</code> 对整个文件的行执行添加； 这里的 % 代表整个文件，当执行这个特殊的normal命令时，vim会把光标移动行首，因此可以用<code>:%normal i//</code> 在行首添加注释符。</li>
+</ul>
+
+<p>31.自动补全Ex命令，<code>:**&lt;c-d&gt;</code> 显示可能的列表。前选<code>&lt;tab&gt;, &lt;c-n&gt;, &lt;Right&gt;</code> 后选<code>&lt;s-tab&gt;, &lt;c-p&gt;, &lt;Left&gt;</code></p>
+
+<p>34.<code>q:</code> 打开历史命令(Ex 命令)窗口， <code>q/</code> 打开历史搜索记录窗口，<code>&lt;c-f&gt;</code>从命令行模式切换到命令行窗口</p>
+
+<p>67.对连续或非连续的行执行某个操作，如替换每行中的<code>1.</code>为<code>1)</code>。</p>
+
+<pre><code>&lt;!-- lang: python --&gt;
+1. one
+2. two
+3. three
+</code></pre>
+
+<p>最终结果：</p>
+
+<pre><code>&lt;!-- lang: python --&gt;
+1) one
+2) two
+3) three
+</code></pre>
+
+<ul>
+  <li><code>qa</code> 用寄存器a开始录制宏</li>
+  <li><code>0f.r)w~</code> , 具体的替换过程</li>
+  <li><code>q</code> 结束录制</li>
+  <li><code>jVG</code> 选择要进行操作的行，可以用 30 中说过 的方法选择</li>
+  <li>按 ： 进行 <code>:'&lt;,'&gt;</code> 接着输入 <code>normal @a</code> 进行替换操作</li>
+</ul>
+
+<p>这里用 normal命令进行操作，对非连续的行也可以，即如果其中有一行并没有 X. ，如果使用如<code>5@a</code>这样的操作，如果中间有一处不能进行，后面的都会停止</p>
+
+<h3 id="vim">其他的vim技巧</h3>
+<p>1.快捷键 </p>
+
+<ul>
+  <li><code>A</code> == <code>$a</code>  行尾进入 insert 模式</li>
+  <li><code>I</code> == <code>^i</code>  行首进入 insert 模式</li>
+  <li><code>C</code> == <code>c$</code> 从光标当前位置删除到行末，并进入 insert 模式</li>
+  <li><code>s</code> == <code>cl</code> 删除光标所胡字符，进入 insert 模式</li>
+  <li><code>S</code> == <code>^C</code> 删除整行，进入 insert 模式</li>
+</ul>
+
+<p>2.<code>:h index</code> 查看绑定的key。 
+&gt; 不知道有没有插件来获取vim所有plugin绑定的键？？</p>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/blog/2013/11/30/vundlevim/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/blog/2014/02/21/scan-ios-private-api/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>剑指offer面试题</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>剑指offer面试题</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-04-14">2013-04-14</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#interview" title="interview">interview</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#interview" title="interview">interview</a>&nbsp;
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="section">第25题 二叉树中和为某一值的路径</h2>
+<blockquote>
+  <p>题目:输入一棵二叉树和一个整数，打印出二叉树中结点值的和为
+输入整数的所有路径。从树的根结点开始往下一直到叶结点所经过
+的结点形成一条路径。二叉树结点定义如下：</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="n">BinaryTreeNode</span>
+<span class="p">{</span>
+    <span class="kt">int</span>               <span class="n">m_nValue</span><span class="p">;</span>
+    <span class="n">BinaryTreeNode</span> <span class="o">*</span>  <span class="n">m_pLeft</span><span class="p">;</span>
+    <span class="n">BinaryTreeNode</span> <span class="o">*</span>  <span class="n">m_pRigth</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>题目中的解法还可以进一步优化，即在查找路径上的和是否与输入的整数相等时，如果还没有到叶结点，而此时路径上的和已经超过输入的整数，就可以直接返回上一结点，不用再判断后续的子结点了。</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">void</span> <span class="nf">FindPath</span>
+<span class="p">(</span>
+    <span class="n">BinaryTreeNode</span><span class="o">*</span>   <span class="n">pRoot</span><span class="p">,</span>
+    <span class="kt">int</span>               <span class="n">expectedSum</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">path</span><span class="p">,</span>
+    <span class="kt">int</span><span class="o">&amp;</span>              <span class="n">currentSum</span>
+<span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">currentSum</span> <span class="o">+=</span> <span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_nValue</span><span class="p">;</span>
+    <span class="cm">/*</span>
+<span class="cm">    在此判断currentSum是否大于输入的值，如果大于，就直接跳回父结点</span>
+<span class="cm">    if(currentSum &gt; expectedSum)</span>
+<span class="cm">        return;</span>
+<span class="cm">    </span>
+<span class="cm">    */</span>
+    <span class="n">path</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_nValue</span><span class="p">);</span>
+
+    <span class="c1">// 如果是叶结点，　并且路径上结点的和等于输入的值</span>
+    <span class="c1">// 打印出这条路径</span>
+    <span class="kt">bool</span> <span class="n">isLeaf</span> <span class="o">=</span> <span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pLeft</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">&amp;&amp;</span> <span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pRight</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">currentSum</span> <span class="o">==</span> <span class="n">expectedSum</span> <span class="o">&amp;&amp;</span> <span class="n">isLeaf</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;A path is found: &quot;</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">path</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+        <span class="k">for</span><span class="p">(;</span> <span class="n">iter</span> <span class="o">!=</span> <span class="n">path</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span> <span class="n">iter</span><span class="p">)</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">iter</span><span class="p">);</span>
+        
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 如果不是叶结点，则遍历它的子结点</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pLeft</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+        <span class="n">FindPath</span><span class="p">(</span><span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pLeft</span><span class="p">,</span> <span class="n">expectedSum</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">currentSum</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pRight</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+        <span class="n">FindPath</span><span class="p">(</span><span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_pRight</span><span class="p">,</span> <span class="n">expectedSum</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">currentSum</span><span class="p">);</span>
+
+    <span class="c1">// 在返回到父结点之前，在路径上删除当前结点，</span>
+    <span class="c1">// 并在currentSum中减去当前结点的值</span>
+    <span class="n">currentSum</span> <span class="o">-=</span> <span class="n">pRoot</span><span class="o">-&gt;</span><span class="n">m_nValue</span><span class="p">;</span>
+    <span class="n">path</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+
+<h2 id="section-1">第26题 复杂链表的复制</h2>
+<blockquote>
+  <p>题目:请实现函数ComplexListNode* Clone(ComplextListNode* pHead),复制一个复杂链表。
+在复杂链表中，每个结点除了有一个m_pNext指针指向下一个结点外，还有一个m_pSibling指向链表中
+的任意结点或是NULL。</p>
+</blockquote>
+
+<p>结点定义如下：</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="n">ComplexListNode</span>
+<span class="p">{</span>
+    <span class="kt">int</span>                 <span class="n">m_nValue</span><span class="p">;</span>
+    <span class="n">ComplexListNode</span><span class="o">*</span>    <span class="n">m_pNext</span><span class="p">;</span>
+    <span class="n">ComplexListNode</span><span class="o">*</span>    <span class="n">m_pSibling</span><span class="p">;</span>
+<span class="p">};</span></code></pre></div>
+
+<p>下图为一个复杂链表
+<img src="/images/sword2offer/26.png" alt="复杂链表" title="复杂链接" /></p>
+
+<h4 id="section-2">解法</h4>
+<ol>
+  <li>一般解法：
+    <ol>
+      <li>复制原始链表上的每个结点，用m_pNext链接起来；</li>
+      <li>设置每个结点的m_pSibling指针。假设原始链表中的某个结点Ｎ的m_pSibling指向结点Ｓ，由于Ｓ的位置可能在Ｎ的前面也可能在Ｎ的后面，因此要从原始链表的头结点开始找。沿着m_pNext经过s步找到Ｓ，所以在复制的链表中对应的Ｎ‘也要从头结点沿着m_pNext经过s步。这样就可以设置m_pSibling指针。</li>
+      <li>分析，在设置m_pSibling时都要从头结点开始查找，时间复杂度为Ｏ(n^2)</li>
+    </ol>
+  </li>
+  <li>用空间换时间解法：
+    <ol>
+      <li>还是按照方法１中的第一步复制链表，用m_pNext链接起来，复制的同时将&lt;N, N’&gt;的配对信息放到一个哈希表中；</li>
+      <li>设置结点的m_pSibling。如果原始链表结点Ｎ的m_pSibling指向结点Ｓ，那么在复制链表中，对应的Ｎ‘应该指向Ｓ’。</li>
+      <li>通过哈希表可以在Ｏ(1)时间内找到m_pSibling，因此时间复杂度为Ｏ(n)。</li>
+    </ol>
+  </li>
+  <li>不用辅助空间的解法：
+    <ol>
+      <li>按照原始链表的每个结点Ｎ复制结点Ｎ‘，把Ｎ’链接到Ｎ的后面。如图所示<img src="/images/sword2offer/26-1.png" alt="复制链接" /></li>
+      <li>设置复制的结点的m_pSibling指针。从上图可以看出复制结点Ｎ‘的m_pSibling就是Ｎ的m_pSibling的m_pNext。</li>
+      <li>分拆成两个链表，偶数的是新复制的结点，奇数的是原始的链表。</li>
+      <li>时间复杂度是Ｏ(n),而且不需要辅助空间。</li>
+    </ol>
+  </li>
+</ol>
+
+<h2 id="section-3">第29题</h2>
+<p>Ｏ(n)算法得到数组中任意第K大的数字。</p>
+
+<h2 id="section-4">第40题</h2>
+<blockquote>
+  <p>题目：写一个函数，求两个整数之和，要求在函数体内不得使用+,-,＊，／四则运算符号。</p>
+</blockquote>
+
+<p>利用位操作：</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">num1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num2</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">sum</span><span class="p">,</span> <span class="n">carry</span><span class="p">;</span>
+    <span class="k">do</span>
+    <span class="p">{</span>
+        <span class="n">sum</span> <span class="o">=</span> <span class="n">num1</span> <span class="o">^</span> <span class="n">num2</span><span class="p">;</span>
+        <span class="n">carry</span> <span class="o">=</span> <span class="p">(</span><span class="n">num1</span> <span class="o">&amp;</span> <span class="n">num2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">;</span>
+        
+        <span class="n">num1</span> <span class="o">=</span> <span class="n">sum</span><span class="p">;</span>
+        <span class="n">num2</span> <span class="o">=</span> <span class="n">carry</span><span class="p">;</span>
+    <span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">num2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">);</span>
+    
+    <span class="k">return</span> <span class="n">num1</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>不使用新变量，交换两个变量的值：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">基于加减法</th>
+      <th style="text-align: center">基于异或运算</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">a = a + b</td>
+      <td style="text-align: center">a = a ^ b</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">b = a - b</td>
+      <td style="text-align: center">b = a ^ b</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">a = a - b</td>
+      <td style="text-align: center">a = a ^ b</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="section-5">第50题</h2>
+<blockquote>
+  <p>树中两个结点的最低公共祖先</p>
+</blockquote>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/blog/2013/04/10/mastering-algorithms-with-c/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/blog/2013/04/22/programming-pearls/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
