@@ -1,7 +1,7 @@
 #markdown: rdiscount
 markdown: kramdown
-permalink: /:year/:month/:day/:title/
-url: http://mrmign.github.io/prevBlog
+permalink: blog/:year/:month/:day/:title/
+url: http://mrmign.github.io
 name: Arming
 author: Arming
 qq: 21575831
