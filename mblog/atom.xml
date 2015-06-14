@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[]]></title>
+  <link href="mrmign.github.io/atom.xml" rel="self"/>
+  <link href="mrmign.github.io/"/>
+  <updated>2015-06-14T22:50:33+08:00</updated>
+  <id>mrmign.github.io/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.coderforart.com/">CoderForArt</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ARM汇编]]></title>
+    <link href="mrmign.github.io/14342019708745.html"/>
+    <updated>2015-06-13T21:26:10+08:00</updated>
+    <id>mrmign.github.io/14342019708745.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">特殊用途的寄存器</h2>
+
+<ul>
+<li>R0-R3  传递参数与返回值</li>
+<li>R7 帧指针，指向母函数与被调用子函数在栈中的交界</li>
+<li>R9 iOS3以前系统保留</li>
+<li>R12 内部过程调用寄存器，dynamic linker会用到</li>
+<li>R13 SP寄存器</li>
+<li>R14 LR寄存器，保存函数返回地址</li>
+<li>R15 PC寄存器</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[新人实验站]]></title>
+    <link href="mrmign.github.io/14300513796443.html"/>
+    <updated>2015-04-26T20:29:39+08:00</updated>
+    <id>mrmign.github.io/14300513796443.html</id>
+    <content type="html"><![CDATA[
+<p>今天的新人实验站主要讲了做一个新产品的提出到最终发布的整个过程。</p>
+
+<p>我们小组提出的idea是一个记录日常饮食中的营养成分并帮助用户搭配均衡合理的饮食。</p>
+
+<h3 id="toc_0">idea简述</h3>
+
+<ul>
+<li><p>APP名称: 营养助手</p></li>
+<li><p>APP简述: 我们天天吃饭，却很少关注自己的营养搭配，“牙龈出血”、“脂肪肝”等问题比比皆是，均由营养失衡导致。“营养助手”是一款移动APP，通过“晒照-分析-评比”的使用模式，旨在健康饮食。用户首先设定自己的年龄、身高、体重、性别等信息，以供系统获取样本。在平时用餐时，将摄入食物拍照上传，系统同时识别并计算出你所摄入食物包含的营养成分并显示，以供其他用户参考。同时系统定期统计你这段时间的营养摄入，并与其他用户对比，同时给出建议，通过与其他用户的比较刺激用户改善饮食。</p></li>
+</ul>
+
+<h3 id="toc_1">问卷调查</h3>
+
+<p>在提出了我们的idea后，还需要调查其他人的看法建义，其他人是否有遇到同样的问题等，我们是通过在线问卷调查及线下问答的形式进行的，我们设置的问卷问题如下所示：</p>
+
+<p>1 所从事的职业______________</p>
+
+<p>2 日常饮食大多吃什么?</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" /> 自己做 
+</li>
+<li class="task-list-item"><input type="checkbox" /> 中式快餐
+</li>
+<li class="task-list-item"><input type="checkbox" /> 西式
+</li>
+<li class="task-list-item"><input type="checkbox" /> 其他
+</li>
+</ul>
+
+<p>3 平时有手机拍照的习惯吗?</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" />经常
+</li>
+<li class="task-list-item"><input type="checkbox" />一般
+</li>
+<li class="task-list-item"><input type="checkbox" />少有
+</li>
+<li class="task-list-item"><input type="checkbox" />几乎不
+</li>
+</ul>
+
+<p>4 喜欢晒照片吗?</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" /> 很喜欢
+</li>
+<li class="task-list-item"><input type="checkbox" />比较喜欢 
+</li>
+<li class="task-list-item"><input type="checkbox" /> 一般
+</li>
+<li class="task-list-item"><input type="checkbox" />不喜欢
+</li>
+</ul>
+
+<p>5 自己认为吃的健康吗？</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" /> 很健康
+</li>
+<li class="task-list-item"><input type="checkbox" /> 比较健康
+</li>
+<li class="task-list-item"><input type="checkbox" /> 一般
+</li>
+<li class="task-list-item"><input type="checkbox" /> 不健康
+</li>
+</ul>
+
+<p>6 吃饭时会刻意关注营养搭配吗？</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" />很关注
+</li>
+<li class="task-list-item"><input type="checkbox" />比较关注
+</li>
+<li class="task-list-item"><input type="checkbox" />一般
+</li>
+<li class="task-list-item"><input type="checkbox" />不太关注
+</li>
+<li class="task-list-item"><input type="checkbox" />完全不关注
+</li>
+</ul>
+
+<p>7 是否关注身边人的饮食情况？</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" />很关注
+</li>
+<li class="task-list-item"><input type="checkbox" />比较关注
+</li>
+<li class="task-list-item"><input type="checkbox" />一般
+</li>
+<li class="task-list-item"><input type="checkbox" />不太关注
+</li>
+<li class="task-list-item"><input type="checkbox" />不关注
+</li>
+</ul>
+
+<p>8 是否尔用过类似饮食健康的软件？</p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" />有
+</li>
+<li class="task-list-item"><input type="checkbox" />没有
+</li>
+</ul>
+
+<p>9 如果有一款软件能改善自己的饮食习惯，你会比较关注什么? </p>
+
+<ul>
+<li class="task-list-item"><input type="checkbox" />一顿饭的营养成分
+</li>
+<li class="task-list-item"><input type="checkbox" />他人的饮食情况
+</li>
+<li class="task-list-item"><input type="checkbox" />一段时间内的营养统计
+</li>
+<li class="task-list-item"><input type="checkbox" />营养搭配的推荐
+</li>
+</ul>
+
+<p>10 给营养助手的建议和意见________________________________________ </p>
+
+<h4 id="toc_2">问卷调查结果统计</h4>
+
+<p>从本次问卷调查可以看出参与问卷调查的人群当中80%是白领，超过90%的人吃中式快餐,并且没有用过健康类的APP,超过40%的人关注营养搭配，53%的人认为自己的食物营养搭配一般。从问卷调查的结果看，人们在日常用餐时急需要一款营养搭配的软件来帮助他们记录并改善自己的饮食习惯。</p>
+
+<p>详细问卷调查统计结果请查看附件.</p>
+
+<h3 id="toc_3">APP原型设计</h3>
+
+<p>下面是我们针对营养助手设计的原型。</p>
+
+<p><img src="media/14300513796443/14300573146165.jpg" alt=""/></p>
+
+<p><img src="media/14300513796443/14300573309871.jpg" alt=""/></p>
+
+<p><img src="media/14300513796443/14300573872487.jpg" alt=""/></p>
+
+<p><img src="media/14300513796443/14300574008189.jpg" alt=""/></p>
+
+<p><img src="media/14300513796443/14300574151294.jpg" alt=""/></p>
+
+<p><img src="media/14300513796443/14300574294365.jpg" alt=""/></p>
+
+<h4 id="toc_4">APP主要功能</h4>
+
+<ul>
+<li>图片上传</li>
+<li>食物图片识别</li>
+<li>用餐(营养成分)记录</li>
+<li>营养科普</li>
+<li>营养搭配推荐</li>
+<li>用户健康分享</li>
+<li>用户健康报告生成</li>
+<li>个人营养搭配建议</li>
+<li>社区交流</li>
+</ul>
+
+<h4 id="toc_5">主要功能详细描述</h4>
+
+<ol>
+<li>图片上传。在用餐前将食物拍照上传，此时会记录用餐地点，用餐时间等。</li>
+<li>食物图片识别。根据用户上传的图片自动识别出图片中的食物所包含的营养成分，如果识别有错，可人工纠正。</li>
+<li>用餐记录。主要是记录每次用餐的食物，及食物中的各营养成分，用餐地点。</li>
+<li>营养科普。对合理用餐的相关科学知识进行普及，让大家对合理饮食有更加全面的了解。</li>
+<li>用户健康分享。用户可以分享自己的用餐情况，可以把自己饮食中的营养成分分配等数据与其他用户进行分享交流。</li>
+<li>用户健康报告生成。根据用户的用餐记录，自动生成用户每个时间段(周，月，年)的用餐营养搭配情况，让用户对自己的饮食有一个全面的了解。</li>
+<li>营养搭配推荐。系统根据用户饮食中的营养成分，按照科学的饮食搭配为用户推荐一个更合理的饮食搭配，帮助用户形成一个均衡的饮食习惯。</li>
+<li>个人营养搭配建议。为用户提供个性化的营养搭配。</li>
+<li>社区交流。可以分享自己的饮食营养搭配，与其他用户交流心得体会，帮助他人及自己找到一个合理均衡的饮食搭配。</li>
+</ol>
+
+<h3 id="toc_6">总结</h3>
+
+<p>通过该APP，用户可以记录自己的饮食，并了解到自己摄入的营养成分分布，还可以根据系统及其他用户的建议形成自己的合理饮食搭配。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[iOS7 Programming Cookbook]]></title>
+    <link href="mrmign.github.io/14281245992628.html"/>
+    <updated>2015-04-04T13:16:39+08:00</updated>
+    <id>mrmign.github.io/14281245992628.html</id>
+    <content type="html"><![CDATA[
+<h1 id="toc_0">Chapter 1</h1>
+
+<h2 id="toc_1">Adding Object and Index Subscription Support</h2>
+
+<p>类似Dictionary和Array那种用下标来访问。</p>
+
+<pre><code class="language-obj-c">@interface Person : NSObject
+
+@property (nonatomic, copy) NSString *firstName;
+@property (nonatomic, copy) NSString *lastName;
+
+// object subscription
+- (id) objectForKeyedSubscript:(id&lt;NSCopying&gt;)paramKey;
+- (void) setObject:(id)paramObject forKeyedSubscript:(id&lt;NSCopying&gt;)paramKey;
+
+// index subscription
+- (id) objectAtIndexedSubscript:(NSUInteger)paramIndex;
+- (void) setObject:(id)paramObject atIndexedSubscript:(NSUInteger)paramIndex;
+@end
+</code></pre>
+
+<pre><code class="language-obj-c">NSString *const kFirstNameKey = @“firstName”;
+NSString *const kLastNameKey = @“lastName”;
+
+@implementation Person
+
+- (id) objectForKeyedSubscript:(id&lt;NSCopying&gt;)paramKey{
+    NSObject&lt;NSCopying&gt; *keyAsObject = (NSObject&lt;NSCopying&gt; *)paramKey;
+    if ([keyAsObject isKindOfClass:[NSString class]]){
+        NSString *keyAsString = (NSString *)keyAsObject;
+        if ([keyAsString isEqualToString:kFirstNameKey] ||
+            [keyAsString isEqualToString:kLastNameKey]){
+            return [self valueForKey:keyAsString];
+        }
+    }
+    return nil;
+}
+
+- (void) setObject:(id)paramObject forKeyedSubscript:(id&lt;NSCopying&gt;)paramKey{
+    NSObject&lt;NSCopying&gt; *keyAsObject = (NSObject&lt;NSCopying&gt; *)paramKey;
+    if ([keyAsObject isKindOfClass:[NSString class]]){
+        NSString *keyAsString = (NSString *)keyAsObject;
+        if ([keyAsString isEqualToString:kFirstNameKey] ||
+            [keyAsString isEqualToString:kLastNameKey]){
+            [self setValue:paramObjectforKey:keyAsString];
+        }
+    }
+}
+
+- (id) objectAtIndexedSubscript:(NSUInteger)paramIndex{
+
+    switch (paramIndex){
+        case 0:{
+            return self.firstName;
+            break;
+        }
+        case 1:{
+            return self.lastName;
+            break;
+        }
+        default:{
+            [NSException raise:@“Invalid index” format:nil];
+        }
+    }
+
+    return nil;
+}
+
+- (void) setObject:(id)paramObject atIndexedSubscript:(NSUInteger)paramIndex{
+    switch (paramIndex){
+        case 0:{
+            self.firstName = paramObject;
+            break;
+        }
+        case 1:{
+            self.lastName = paramObject;
+            break;
+        }
+        default:{
+            [NSException raise:@“Invalid index” format:nil];
+        }
+    }
+} 
+@end
+</code></pre>
+
+<p>利用下标来操作对象。</p>
+
+<pre><code class="language-obj-c">Person *person = [Person new];
+person[kFirstNameKey] = @“Tim”;
+person[kLastNameKey] = @“Cook”;
+NSString *firstNameByKey = person[kFirstNameKey];
+NSString *lastNameByKey = person[kLastNameKey];
+
+NSString *firstNameByIndex = person[0];
+NSString *lastNameByIndex = person[1];
+
+if ([firstNameByKey isEqualToString:firstNameByIndex] &amp;&amp;
+    [lastNameByKey isEqualToString:lastNameByIndex]){
+    NSLog(@“Success”);
+} else {
+    NSLog(@“Something is not right”);
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+</feed>
