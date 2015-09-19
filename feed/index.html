@@ -7,33 +7,458 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-06-13T10:46:29+08:00</lastBuildDate>
+    <lastBuildDate>2015-09-20T00:39:26+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
     
     <item>
+      <title>jekyll个性化配置</title>
+      <link href="http://mrmign.github.io/2015/09/18/config-code-highlight-for-jekyll-with-kramdown-and-pygments/"/>
+      <pubDate>2015-09-18T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/09/18/config-code-highlight-for-jekyll-with-kramdown-and-pygments</guid>
+      <content:encoded><![CDATA[<h2 id="section">软件版本</h2>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text"><a name="True-1"></a>jekyll 2.5.3
+<a name="True-2"></a>Liquid 3.0.6
+<a name="True-3"></a>kramdown-1.8.0
+<a name="True-4"></a>pygments.rb-0.6.3
+<a name="True-5"></a>rake-10.4.2
+<a name="True-6"></a>hz2py-1.0.0  # 将中文转化为拼音</code></pre></div>
+<h2 id="section-1">代码高亮问题</h2>
+
+<p>在使用jekyll的时候模板一直使用的Liquid，像下面这样的</p>
+
+<div class="highlight"><pre><code class="language-text" data-lang="text"><a name="True-1"></a>{ % highlight lang linenos%}
+<a name="True-2"></a>code
+<a name="True-3"></a>{ % endhighlight %}</code></pre></div>
+<p>关于Liquid对于其他标签的解析这里不做深入探讨，只对使用<code>pygements</code>对代码高亮处理进行说明。如果要使用上述的代码高亮方式，就得每次都要填写同样的代码块，如果要显示行号也要添加对应的linenos标志，否则最终生成的代码块是不带行号的。这里对jekyll自带的代码高亮相关代码(<code>highlight.rb</code>, 在<code>jekyll-2.5.3/lib/jekyll/tags</code>目录下)进行分析，：</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">module</span> <span class="nn">Jekyll</span>
+<a name="True-2"></a>  <span class="k">module</span> <span class="nn">Tags</span>
+<a name="True-3"></a>    <span class="k">class</span> <span class="nc">HighlightBlock</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
+<a name="True-4"></a>      <span class="kp">include</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">StandardFilters</span>
+<a name="True-5"></a>
+<a name="True-6"></a>      <span class="c1"># The regular expression syntax checker. Start with the language specifier.</span>
+<a name="True-7"></a>      <span class="c1"># Follow that by zero or more space separated options that take one of three</span>
+<a name="True-8"></a>      <span class="c1"># forms: name, name=value, or name=&quot;&lt;quoted list&gt;&quot;</span>
+<a name="True-9"></a>      <span class="c1">#</span>
+<a name="True-10"></a>      <span class="c1"># &lt;quoted list&gt; is a space-separated list of numbers</span>
+<a name="True-11"></a>      <span class="no">SYNTAX</span> <span class="o">=</span> <span class="sr">/^([a-zA-Z0-9.+#-]+)((\s+\w+(=(\w+|&quot;([0-9]+\s)*[0-9]+&quot;))?)*)$/</span>
+<a name="True-12"></a>
+<a name="True-13"></a>      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">markup</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<a name="True-14"></a>        <span class="k">super</span>
+<a name="True-15"></a>        <span class="k">if</span> <span class="n">markup</span><span class="o">.</span><span class="n">strip</span> <span class="o">=~</span> <span class="no">SYNTAX</span>
+<a name="True-16"></a>          <span class="vi">@lang</span> <span class="o">=</span> <span class="vg">$1</span><span class="o">.</span><span class="n">downcase</span>
+<a name="True-17"></a>          <span class="vi">@options</span> <span class="o">=</span> <span class="p">{}</span>
+<a name="True-18"></a>          <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="vg">$2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="vg">$2</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+<a name="True-19"></a>            <span class="c1"># Split along 3 possible forms -- key=&quot;&lt;quoted list&gt;&quot;, key=value, or key</span>
+<a name="True-20"></a>            <span class="vg">$2</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/(?:\w=&quot;[^&quot;]*&quot;|\w=\w|\w)+/</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">opt</span><span class="o">|</span>
+<a name="True-21"></a>              <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+<a name="True-22"></a>              <span class="c1"># If a quoted list, convert to array</span>
+<a name="True-23"></a>              <span class="k">if</span> <span class="n">value</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+<a name="True-24"></a>                  <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/&quot;/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<a name="True-25"></a>                  <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span>
+<a name="True-26"></a>              <span class="k">end</span>
+<a name="True-27"></a>              <span class="vi">@options</span><span class="o">[</span><span class="n">key</span><span class="o">.</span><span class="n">to_sym</span><span class="o">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">||</span> <span class="kp">true</span>
+<a name="True-28"></a>            <span class="k">end</span>
+<a name="True-29"></a>          <span class="k">end</span>
+<a name="True-30"></a>          <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;inline&quot;</span> <span class="k">if</span> <span class="vi">@options</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="ss">:linenos</span><span class="p">)</span> <span class="ow">and</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span> <span class="o">==</span> <span class="kp">true</span>
+<a name="True-31"></a>          <span class="c1">#@options[:linenos] = &quot;inline&quot; </span>
+<a name="True-32"></a>          <span class="c1">#@options[:lineanchors] = true</span>
+<a name="True-33"></a>        <span class="k">else</span>
+<a name="True-34"></a>          <span class="k">raise</span> <span class="no">SyntaxError</span><span class="o">.</span><span class="n">new</span> <span class="o">&lt;&lt;-</span><span class="no">eos</span>
+<a name="True-35"></a><span class="sh">Syntax Error in tag &#39;highlight&#39; while parsing the following markup:</span>
+<a name="True-36"></a>
+<a name="True-37"></a><span class="sh">  #{markup}</span>
+<a name="True-38"></a>
+<a name="True-39"></a><span class="sh">Valid syntax: highlight &lt;lang&gt; [linenos]</span>
+<a name="True-40"></a><span class="no">eos</span>
+<a name="True-41"></a>        <span class="k">end</span>
+<a name="True-42"></a>      <span class="k">end</span>
+<a name="True-43"></a>
+<a name="True-44"></a>      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<a name="True-45"></a>        <span class="n">prefix</span> <span class="o">=</span> <span class="n">context</span><span class="o">[</span><span class="s2">&quot;highlighter_prefix&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
+<a name="True-46"></a>        <span class="n">suffix</span> <span class="o">=</span> <span class="n">context</span><span class="o">[</span><span class="s2">&quot;highlighter_suffix&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
+<a name="True-47"></a>        <span class="n">code</span> <span class="o">=</span> <span class="k">super</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">strip</span>
+<a name="True-48"></a>
+<a name="True-49"></a>        <span class="n">is_safe</span> <span class="o">=</span> <span class="o">!!</span><span class="n">context</span><span class="o">.</span><span class="n">registers</span><span class="o">[</span><span class="ss">:site</span><span class="o">].</span><span class="n">safe</span>
+<a name="True-50"></a>
+<a name="True-51"></a>        <span class="n">output</span> <span class="o">=</span>
+<a name="True-52"></a>          <span class="k">case</span> <span class="n">context</span><span class="o">.</span><span class="n">registers</span><span class="o">[</span><span class="ss">:site</span><span class="o">].</span><span class="n">highlighter</span>
+<a name="True-53"></a>            <span class="k">when</span> <span class="s1">&#39;pygments&#39;</span>
+<a name="True-54"></a>              <span class="n">render_pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
+<a name="True-55"></a>            <span class="k">when</span> <span class="s1">&#39;rouge&#39;</span>
+<a name="True-56"></a>              <span class="n">render_rouge</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<a name="True-57"></a>            <span class="k">else</span>
+<a name="True-58"></a>              <span class="n">render_codehighlighter</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<a name="True-59"></a>            <span class="k">end</span>
+<a name="True-60"></a>
+<a name="True-61"></a>        <span class="n">rendered_output</span> <span class="o">=</span> <span class="n">add_code_tag</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<a name="True-62"></a>        <span class="n">prefix</span> <span class="o">+</span> <span class="n">rendered_output</span> <span class="o">+</span> <span class="n">suffix</span>
+<a name="True-63"></a>      <span class="k">end</span>
+<a name="True-64"></a>
+<a name="True-65"></a>      <span class="k">def</span> <span class="nf">sanitized_opts</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
+<a name="True-66"></a>        <span class="k">if</span> <span class="n">is_safe</span>
+<a name="True-67"></a>          <span class="no">Hash</span><span class="o">[[</span>
+<a name="True-68"></a>            <span class="o">[</span><span class="ss">:startinline</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:startinline</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
+<a name="True-69"></a>            <span class="o">[</span><span class="ss">:hl_linenos</span><span class="p">,</span>  <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:hl_linenos</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
+<a name="True-70"></a>            <span class="o">[</span><span class="ss">:linenos</span><span class="p">,</span>     <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:linenos</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
+<a name="True-71"></a>            <span class="o">[</span><span class="ss">:encoding</span><span class="p">,</span>    <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:encoding</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
+<a name="True-72"></a>            <span class="o">[</span><span class="ss">:cssclass</span><span class="p">,</span>    <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:cssclass</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span>
+<a name="True-73"></a>          <span class="o">].</span><span class="n">reject</span> <span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">nil?</span> <span class="p">}</span><span class="o">]</span>
+<a name="True-74"></a>        <span class="k">else</span>
+<a name="True-75"></a>          <span class="n">opts</span>
+<a name="True-76"></a>        <span class="k">end</span>
+<a name="True-77"></a>      <span class="k">end</span>
+<a name="True-78"></a>
+<a name="True-79"></a>      <span class="k">def</span> <span class="nf">render_pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
+<a name="True-80"></a>        <span class="nb">require</span> <span class="s1">&#39;pygments&#39;</span>
+<a name="True-81"></a>
+<a name="True-82"></a>        <span class="vi">@options</span><span class="o">[</span><span class="ss">:encoding</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+<a name="True-83"></a>
+<a name="True-84"></a>        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="no">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span>
+<a name="True-85"></a>          <span class="n">code</span><span class="p">,</span>
+<a name="True-86"></a>          <span class="ss">:lexer</span>   <span class="o">=&gt;</span> <span class="vi">@lang</span><span class="p">,</span>
+<a name="True-87"></a>          <span class="ss">:options</span> <span class="o">=&gt;</span> <span class="n">sanitized_opts</span><span class="p">(</span><span class="vi">@options</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
+<a name="True-88"></a>        <span class="p">)</span>
+<a name="True-89"></a>
+<a name="True-90"></a>        <span class="k">if</span> <span class="n">highlighted_code</span><span class="o">.</span><span class="n">nil?</span>
+<a name="True-91"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;There was an error highlighting your code:&quot;</span>
+<a name="True-92"></a>          <span class="nb">puts</span>
+<a name="True-93"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="n">code</span>
+<a name="True-94"></a>          <span class="nb">puts</span>
+<a name="True-95"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;While attempting to convert the above code, Pygments.rb&quot;</span> <span class="o">+</span>
+<a name="True-96"></a>            <span class="s2">&quot; returned an unacceptable value.&quot;</span>
+<a name="True-97"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;This is usually a timeout problem solved by running `jekyll build` again.&quot;</span>
+<a name="True-98"></a>          <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Pygments.rb returned an unacceptable value when attempting to highlight some code.&quot;</span><span class="p">)</span>
+<a name="True-99"></a>        <span class="k">end</span>
+<a name="True-100"></a>
+<a name="True-101"></a>        <span class="n">highlighted_code</span>
+<a name="True-102"></a>      <span class="k">end</span>
+<a name="True-103"></a>
+<a name="True-104"></a>      <span class="k">def</span> <span class="nf">render_rouge</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<a name="True-105"></a>        <span class="nb">require</span> <span class="s1">&#39;rouge&#39;</span>
+<a name="True-106"></a>        <span class="n">formatter</span> <span class="o">=</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Formatters</span><span class="o">::</span><span class="no">HTML</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">line_numbers</span><span class="p">:</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span><span class="p">,</span> <span class="ss">wrap</span><span class="p">:</span> <span class="kp">false</span><span class="p">)</span>
+<a name="True-107"></a>        <span class="n">lexer</span> <span class="o">=</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Lexer</span><span class="o">.</span><span class="n">find_fancy</span><span class="p">(</span><span class="vi">@lang</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span> <span class="o">||</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Lexers</span><span class="o">::</span><span class="no">PlainText</span>
+<a name="True-108"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lexer</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
+<a name="True-109"></a>        <span class="s2">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s2">highlight</span><span class="se">\&quot;</span><span class="s2">&gt;&lt;pre&gt;</span><span class="si">#{</span><span class="n">code</span><span class="si">}</span><span class="s2">&lt;/pre&gt;&lt;/div&gt;&quot;</span>
+<a name="True-110"></a>      <span class="k">end</span>
+<a name="True-111"></a>
+<a name="True-112"></a>      <span class="k">def</span> <span class="nf">render_codehighlighter</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<a name="True-113"></a>        <span class="s2">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s2">highlight</span><span class="se">\&quot;</span><span class="s2">&gt;&lt;pre&gt;</span><span class="si">#{</span><span class="n">h</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">&lt;/pre&gt;&lt;/div&gt;&quot;</span>
+<a name="True-114"></a>      <span class="k">end</span>
+<a name="True-115"></a>
+<a name="True-116"></a>      <span class="k">def</span> <span class="nf">add_code_tag</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<a name="True-117"></a>        <span class="c1"># Add nested &lt;code&gt; tags to code blocks</span>
+<a name="True-118"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/&lt;pre&gt;\n*/</span><span class="p">,</span><span class="s1">&#39;&lt;pre&gt;&lt;code class=&quot;language-&#39;</span> <span class="o">+</span> <span class="vi">@lang</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; data-lang=&quot;&#39;</span> <span class="o">+</span> <span class="vi">@lang</span><span class="o">.</span><span class="n">to_s</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)</span>
+<a name="True-119"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\n*&lt;\/pre&gt;/</span><span class="p">,</span><span class="s2">&quot;&lt;/code&gt;&lt;/pre&gt;&quot;</span><span class="p">)</span>
+<a name="True-120"></a>        <span class="n">code</span><span class="o">.</span><span class="n">strip</span>
+<a name="True-121"></a>      <span class="k">end</span>
+<a name="True-122"></a>
+<a name="True-123"></a>    <span class="k">end</span>
+<a name="True-124"></a>  <span class="k">end</span>
+<a name="True-125"></a><span class="k">end</span>
+<a name="True-126"></a>
+<a name="True-127"></a><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Tags</span><span class="o">::</span><span class="no">HighlightBlock</span><span class="p">)</span></code></pre></div>
+<p>在解析md时对于代码段会进行是否显示行号的判断<code>@options[:linenos] = "inline" if @options.key?(:linenos) and @options[:linenos] == true</code> 并且默认使用inline的格式，就是行号与代码在一起，如果要复制代码，行号也会一起被选中复制。我们可以根据这个判断条件，直接自动添加显示行号的标记，我们这里不使用inline，使用lineanchors，让行号与代码分开。</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="c1">#@options[:linenos] = &quot;inline&quot; if @options.key?(:linenos) and @options[:linenos] == true</span>
+<a name="True-2"></a><span class="vi">@options</span><span class="o">[</span><span class="ss">:lineanchors</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span></code></pre></div>
+<p>直接注释掉原来判断行号显示的代码，添加上面的代码，我们就会让jekyll在解析代码块的时候自动添加显示行号。如果要使用上面的方法，需要个性jekyll的lib，这样不是很通用。可以复制上面的<code>highlight.rb</code>到博客的<code>_plugins</code>目录下，修改<code>highlight.rb</code> 如下所示：</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">module</span> <span class="nn">Jekyll</span>
+<a name="True-2"></a>  <span class="k">module</span> <span class="nn">Tags</span>
+<a name="True-3"></a>    <span class="k">class</span> <span class="nc">CustomeHighlightBlock</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span> <span class="c1">#因为jekyll的lib里有相同类的定义，这里修改为其他类名</span>
+<a name="True-4"></a>      <span class="kp">include</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">StandardFilters</span>
+<a name="True-5"></a>
+<a name="True-6"></a>      <span class="c1"># The regular expression syntax checker. Start with the language specifier.</span>
+<a name="True-7"></a>      <span class="c1"># Follow that by zero or more space separated options that take one of three</span>
+<a name="True-8"></a>      <span class="c1"># forms: name, name=value, or name=&quot;&lt;quoted list&gt;&quot;</span>
+<a name="True-9"></a>      <span class="c1">#</span>
+<a name="True-10"></a>      <span class="c1"># &lt;quoted list&gt; is a space-separated list of numbers</span>
+<a name="True-11"></a>      <span class="no">SYNTAX</span> <span class="o">=</span> <span class="sr">/^([a-zA-Z0-9.+#-]+)((\s+\w+(=(\w+|&quot;([0-9]+\s)*[0-9]+&quot;))?)*)$/</span>
+<a name="True-12"></a>
+<a name="True-13"></a>      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">markup</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+<a name="True-14"></a>        <span class="k">super</span>
+<a name="True-15"></a>        <span class="k">if</span> <span class="n">markup</span><span class="o">.</span><span class="n">strip</span> <span class="o">=~</span> <span class="no">SYNTAX</span>
+<a name="True-16"></a>          <span class="vi">@lang</span> <span class="o">=</span> <span class="vg">$1</span><span class="o">.</span><span class="n">downcase</span>
+<a name="True-17"></a>          <span class="vi">@options</span> <span class="o">=</span> <span class="p">{}</span>
+<a name="True-18"></a>          <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="vg">$2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="vg">$2</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+<a name="True-19"></a>            <span class="c1"># Split along 3 possible forms -- key=&quot;&lt;quoted list&gt;&quot;, key=value, or key</span>
+<a name="True-20"></a>            <span class="vg">$2</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/(?:\w=&quot;[^&quot;]*&quot;|\w=\w|\w)+/</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">opt</span><span class="o">|</span>
+<a name="True-21"></a>              <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+<a name="True-22"></a>              <span class="c1"># If a quoted list, convert to array</span>
+<a name="True-23"></a>              <span class="k">if</span> <span class="n">value</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+<a name="True-24"></a>                  <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/&quot;/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<a name="True-25"></a>                  <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span>
+<a name="True-26"></a>              <span class="k">end</span>
+<a name="True-27"></a>              <span class="vi">@options</span><span class="o">[</span><span class="n">key</span><span class="o">.</span><span class="n">to_sym</span><span class="o">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">||</span> <span class="kp">true</span>
+<a name="True-28"></a>            <span class="k">end</span>
+<a name="True-29"></a>          <span class="k">end</span>
+<a name="True-30"></a>          <span class="vi">@options</span><span class="o">[</span><span class="ss">:lineanchors</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>  <span class="c1"># 要修改的地方</span>
+<a name="True-31"></a>        <span class="k">else</span>
+<a name="True-32"></a>          <span class="k">raise</span> <span class="no">SyntaxError</span><span class="o">.</span><span class="n">new</span> <span class="o">&lt;&lt;-</span><span class="no">eos</span>
+<a name="True-33"></a><span class="sh">Syntax Error in tag &#39;highlight&#39; while parsing the following markup:</span>
+<a name="True-34"></a>
+<a name="True-35"></a><span class="sh">  #{markup}</span>
+<a name="True-36"></a>
+<a name="True-37"></a><span class="sh">Valid syntax: highlight &lt;lang&gt; [linenos]</span>
+<a name="True-38"></a><span class="no">eos</span>
+<a name="True-39"></a>        <span class="k">end</span>
+<a name="True-40"></a>      <span class="k">end</span>
+<a name="True-41"></a>
+<a name="True-42"></a>      
+<a name="True-43"></a>    <span class="k">end</span>
+<a name="True-44"></a>  <span class="k">end</span>
+<a name="True-45"></a><span class="k">end</span>
+<a name="True-46"></a>
+<a name="True-47"></a><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Tags</span><span class="o">::</span><span class="no">CustomeHighlightBlock</span><span class="p">)</span> <span class="c1">#因为jekyll的lib里有相同类的定义，这里修改为其他类名</span></code></pre></div>
+<p>根据上面的代码进行相应修改即可。剩下的就是要个性CSS样式了，可以根据<a href="http://drewsilcock.co.uk/proper-linenumbers/">这个</a>来修改，本文中的代码样式就是根据该链接进行修改的。</p>
+
+<p>我在配置的时候使用的是<code>kramdown</code>来解析markdown文件的，就是像github那样的使用<code>~~~ lang  ~~~</code>的代码块格式，这里可以通过使用一个开源的插件<a href="https://github.com/mvdbos/kramdown-with-pygments">kramdown-with-pygments</a>来支持代码高亮，添加了该插件后还要进行一定的修改，因为该插件里有自己对代码块的解析及输出最终的html，这个与前面我们自己修改的highlight.rb有些许冲突。因为<code>highlight.rb</code>是针对Liquid里的标签tag进行识别处理的，这里的是直接进行converter处理，修改如下：</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">def</span> <span class="nf">convert_codeblock</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
+<a name="True-2"></a>    <span class="kp">attr</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">dup</span>
+<a name="True-3"></a>    <span class="n">lang</span> <span class="o">=</span> <span class="n">extract_code_language!</span><span class="p">(</span><span class="kp">attr</span><span class="p">)</span> <span class="o">||</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:kramdown_default_lang</span><span class="o">]</span>
+<a name="True-4"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">pygmentize</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+<a name="True-5"></a>    <span class="c1"># code_attr = {}</span>
+<a name="True-6"></a>    <span class="c1"># code_attr[&#39;class&#39;] = &quot;language-#{lang}&quot; if lang</span>
+<a name="True-7"></a>    <span class="c1"># &quot;#{&#39; &#39;*indent}&lt;div class=\&quot;highlight\&quot;&gt;&lt;pre#{html_attributes(attr)}&gt;&lt;code#{html_attributes(code_attr)}&gt;#{code}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;\n&quot;</span>
+<a name="True-8"></a>
+<a name="True-9"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/&lt;pre&gt;\n*/</span><span class="p">,</span><span class="s1">&#39;&lt;pre&gt;&lt;code class=&quot;language-&#39;</span> <span class="o">+</span> <span class="n">lang</span> <span class="o">+</span> <span class="s1">&#39;&quot; data-lang=&quot;&#39;</span> <span class="o">+</span> <span class="n">lang</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)</span>
+<a name="True-10"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\n*&lt;\/pre&gt;/</span><span class="p">,</span><span class="s2">&quot;&lt;/code&gt;&lt;/pre&gt;&quot;</span><span class="p">)</span>
+<a name="True-11"></a>    <span class="n">code</span><span class="o">.</span><span class="n">strip</span>
+<a name="True-12"></a>  <span class="k">end</span>
+<a name="True-13"></a>
+<a name="True-14"></a><span class="k">def</span> <span class="nf">convert_codespan</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
+<a name="True-15"></a>    <span class="kp">attr</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">dup</span>
+<a name="True-16"></a>    <span class="n">lang</span> <span class="o">=</span> <span class="n">extract_code_language!</span><span class="p">(</span><span class="kp">attr</span><span class="p">)</span> <span class="o">||</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:kramdown_default_lang</span><span class="o">]</span>
+<a name="True-17"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">pygmentize</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+<a name="True-18"></a>    <span class="c1"># if lang</span>
+<a name="True-19"></a>    <span class="c1">#   attr[&#39;class&#39;] = &quot;highlight&quot;</span>
+<a name="True-20"></a>    <span class="c1">#   if attr.has_key?(&#39;class&#39;)</span>
+<a name="True-21"></a>    <span class="c1">#     attr[&#39;class&#39;] += &quot; language-#{lang}&quot;</span>
+<a name="True-22"></a>    <span class="c1">#   else</span>
+<a name="True-23"></a>    <span class="c1">#     attr[&#39;class&#39;] = &quot;language-#{lang}&quot;</span>
+<a name="True-24"></a>    <span class="c1">#   end</span>
+<a name="True-25"></a>    <span class="c1"># end</span>
+<a name="True-26"></a>    <span class="c1"># &quot;&lt;code#{html_attributes(attr)}&gt;#{code}&lt;/code&gt;&quot;</span>
+<a name="True-27"></a>    <span class="s2">&quot;&lt;code&gt;</span><span class="si">#{</span><span class="n">code</span><span class="si">}</span><span class="s2">&lt;/code&gt;&quot;</span>
+<a name="True-28"></a>  <span class="k">end</span></code></pre></div>
+<p>经过上面的处理，两种代码高亮方式就都支持了。说了这么多，要解决的问题就是如何使用<code>pygments</code>对代码进行高亮显示，并默认添加行号。通过这次的修改过程，对jekyll的一些代码高亮处理的逻辑有所了解了，但是jekyll依赖的其他的库还不了解。同时也勾起了对ruby的学习兴趣，如今使用ruby开发的各种便利工具有很多，如<code>cocoapods</code>，<code>jekyll</code>等，学习下ruby还是有很多好处的。</p>
+
+<h2 id="title">在创建新的文章时title是中文时自动转拼音问题</h2>
+
+<p>在创建新的文章时，要填写title，这个title也会在文章内填写好，jekyll默认不支持非ascii码的title，这里使用了<code>hz2py</code> 这个gem， 在<code>Rakefile</code>里对 post task进行相应修改。 这样就可以直接在title里填写中文了。</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="n">task</span> <span class="ss">:post</span> <span class="k">do</span>
+<a name="True-2"></a>  <span class="nb">abort</span><span class="p">(</span><span class="s2">&quot;rake aborted: &#39;</span><span class="si">#{</span><span class="no">CONFIG</span><span class="o">[</span><span class="s1">&#39;posts&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&#39; directory not found.&quot;</span><span class="p">)</span> <span class="k">unless</span> <span class="no">FileTest</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="no">CONFIG</span><span class="o">[</span><span class="s1">&#39;posts&#39;</span><span class="o">]</span><span class="p">)</span>
+<a name="True-3"></a>  <span class="n">title</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;title&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;new－post&quot;</span>
+<a name="True-4"></a>  <span class="c1"># 新增用来接收category和description参数</span>
+<a name="True-5"></a>  <span class="n">category</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;category&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
+<a name="True-6"></a>  <span class="n">description</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;description&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
+<a name="True-7"></a>  <span class="n">tags</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;tags&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;[]&quot;</span>
+<a name="True-8"></a>  <span class="c1"># 新增用来将汉字转换成拼音，因为url好像不支持中文。当然在文件顶部require了Hz2py</span>
+<a name="True-9"></a>  <span class="n">slug</span> <span class="o">=</span> <span class="no">Hz2py</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="ss">:join_with</span> <span class="o">=&gt;</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="ss">:to_simplified</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+<a name="True-10"></a>  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<a name="True-11"></a><span class="k">end</span> <span class="c1"># task :post</span></code></pre></div>
+<p>附上解决问题过程中遇到的关于jekyll的好资源供大家学习：</p>
+
+<ul>
+  <li><a href="https://jekyllrb.com">jekyll官网</a>, <a href="http://jekyllcn.com/">jekyll官网中文</a></li>
+  <li><a href="http://jekyllbootstrap.com/usage/jekyll-quick-start.html">Jekyll QuickStart</a></li>
+  <li><a href="http://www.soooldier.com/blog/2013/04/27/gai-jin-jekyll-bootstrapde-rakefile/">中文title转拼音</a></li>
+  <li><a href="https://github.com/mvdbos/kramdown-with-pygments">kramdown-with-pygments</a></li>
+  <li><a href="http://jekyllthemes.org/themes/uno-dbyll/">jekyll主题</a> 这里有很多，可以自己选择中意的</li>
+</ul>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>新人实验站</title>
+      <link href="http://mrmign.github.io/2015/04/26/xin-ren-shi-yan-zhan/"/>
+      <pubDate>2015-04-26T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/04/26/xin-ren-shi-yan-zhan</guid>
+      <content:encoded><![CDATA[<h1 id="section">新人实验站</h1>
+
+<p>今天的新人实验站主要讲了做一个新产品的提出到最终发布的整个过程。</p>
+
+<p>我们小组提出的idea是一个记录日常饮食中的营养成分并帮助用户搭配均衡合理的饮食。</p>
+
+<h3 id="idea">idea简述</h3>
+
+<ul>
+  <li>
+    <p>APP名称: 营养助手</p>
+  </li>
+  <li>
+    <p>APP简述: 我们天天吃饭，却很少关注自己的营养搭配，“牙龈出血”、“脂肪肝”等问题比比皆是，均由营养失衡导致。“营养助手”是一款移动APP，通过“晒照-分析-评比”的使用模式，旨在健康饮食。用户首先设定自己的年龄、身高、体重、性别等信息，以供系统获取样本。在平时用餐时，将摄入食物拍照上传，系统同时识别并计算出你所摄入食物包含的营养成分并显示，以供其他用户参考。同时系统定期统计你这段时间的营养摄入，并与其他用户对比，同时给出建议，通过与其他用户的比较刺激用户改善饮食。</p>
+  </li>
+</ul>
+
+<h3 id="section-1">问卷调查</h3>
+
+<p>在提出了我们的idea后，还需要调查其他人的看法建义，其他人是否有遇到同样的问题等，我们是通过在线问卷调查及线下问答的形式进行的，我们设置的问卷问题如下所示：</p>
+
+<p>1 所从事的职业__<strong>__</strong><strong>__</strong></p>
+
+<p>2 日常饮食大多吃什么?</p>
+
+<ul>
+  <li>[ ] 自己做</li>
+  <li>[ ] 中式快餐</li>
+  <li>[ ] 西式</li>
+  <li>[ ] 其他</li>
+</ul>
+
+<p>3 平时有手机拍照的习惯吗?</p>
+
+<ul>
+  <li>[ ]经常</li>
+  <li>[ ]一般</li>
+  <li>[ ]少有</li>
+  <li>[ ]几乎不</li>
+</ul>
+
+<p>4 喜欢晒照片吗?</p>
+
+<ul>
+  <li>[ ] 很喜欢</li>
+  <li>[ ]比较喜欢</li>
+  <li>[ ] 一般</li>
+  <li>[ ]不喜欢</li>
+</ul>
+
+<p>5 自己认为吃的健康吗？</p>
+
+<ul>
+  <li>[ ] 很健康</li>
+  <li>[ ] 比较健康</li>
+  <li>[ ] 一般</li>
+  <li>[ ] 不健康</li>
+</ul>
+
+<p>6 吃饭时会刻意关注营养搭配吗？</p>
+
+<ul>
+  <li>[ ]很关注</li>
+  <li>[ ]比较关注</li>
+  <li>[ ]一般</li>
+  <li>[ ]不太关注</li>
+  <li>[ ]完全不关注</li>
+</ul>
+
+<p>7 是否关注身边人的饮食情况？</p>
+
+<ul>
+  <li>[ ]很关注</li>
+  <li>[ ]比较关注</li>
+  <li>[ ]一般</li>
+  <li>[ ]不太关注</li>
+  <li>[ ]不关注</li>
+</ul>
+
+<p>8 是否尔用过类似饮食健康的软件？</p>
+
+<ul>
+  <li>[ ]有</li>
+  <li>[ ]没有</li>
+</ul>
+
+<p>9 如果有一款软件能改善自己的饮食习惯，你会比较关注什么?</p>
+
+<ul>
+  <li>[ ]一顿饭的营养成分</li>
+  <li>[ ]他人的饮食情况</li>
+  <li>[ ]一段时间内的营养统计</li>
+  <li>[ ]营养搭配的推荐</li>
+</ul>
+
+<p>10 给营养助手的建议和意见__<strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong>__</p>
+
+<h4 id="section-2">问卷调查结果统计</h4>
+
+<p>从本次问卷调查可以看出参与问卷调查的人群当中80%是白领，超过90%的人吃中式快餐,并且没有用过健康类的APP,超过40%的人关注营养搭配，53%的人认为自己的食物营养搭配一般。从问卷调查的结果看，人们在日常用餐时急需要一款营养搭配的软件来帮助他们记录并改善自己的饮食习惯。</p>
+
+<p>详细问卷调查统计结果请查看附件.</p>
+
+<h3 id="app">APP原型设计</h3>
+
+<p>下面是我们针对营养助手设计的原型。</p>
+
+<p><img src="/images/20150426/14300573146165.jpg" alt="" /></p>
+
+<p><img src="/images/20150426/14300573309871.jpg" alt="" /></p>
+
+<p><img src="/images/20150426/14300573872487.jpg" alt="" /></p>
+
+<p><img src="/images/20150426/14300574008189.jpg" alt="" /></p>
+
+<p><img src="/images/20150426/14300574151294.jpg" alt="" /></p>
+
+<p><img src="/images/20150426/14300574294365.jpg" alt="" /></p>
+
+<h4 id="app-1">APP主要功能</h4>
+
+<ul>
+  <li>图片上传</li>
+  <li>食物图片识别</li>
+  <li>用餐(营养成分)记录</li>
+  <li>营养科普</li>
+  <li>营养搭配推荐</li>
+  <li>用户健康分享</li>
+  <li>用户健康报告生成</li>
+  <li>个人营养搭配建议</li>
+  <li>社区交流</li>
+</ul>
+
+<h4 id="section-3">主要功能详细描述</h4>
+
+<ol>
+  <li>图片上传。在用餐前将食物拍照上传，此时会记录用餐地点，用餐时间等。</li>
+  <li>食物图片识别。根据用户上传的图片自动识别出图片中的食物所包含的营养成分，如果识别有错，可人工纠正。</li>
+  <li>用餐记录。主要是记录每次用餐的食物，及食物中的各营养成分，用餐地点。</li>
+  <li>营养科普。对合理用餐的相关科学知识进行普及，让大家对合理饮食有更加全面的了解。</li>
+  <li>用户健康分享。用户可以分享自己的用餐情况，可以把自己饮食中的营养成分分配等数据与其他用户进行分享交流。</li>
+  <li>用户健康报告生成。根据用户的用餐记录，自动生成用户每个时间段(周，月，年)的用餐营养搭配情况，让用户对自己的饮食有一个全面的了解。</li>
+  <li>营养搭配推荐。系统根据用户饮食中的营养成分，按照科学的饮食搭配为用户推荐一个更合理的饮食搭配，帮助用户形成一个均衡的饮食习惯。</li>
+  <li>个人营养搭配建议。为用户提供个性化的营养搭配。</li>
+  <li>社区交流。可以分享自己的饮食营养搭配，与其他用户交流心得体会，帮助他人及自己找到一个合理均衡的饮食搭配。</li>
+</ol>
+
+<h3 id="section-4">总结</h3>
+
+<p>通过该APP，用户可以记录自己的饮食，并了解到自己摄入的营养成分分布，还可以根据系统及其他用户的建议形成自己的合理饮食搭配。</p>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
       <title>ios programming cookTips</title>
-      <link href="http://mrmign.github.io/blog/2015/03/17/ios-programming-cooktips/"/>
+      <link href="http://mrmign.github.io/2015/03/17/ios-programming-cooktips/"/>
       <pubDate>2015-03-17T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2015/03/17/ios-programming-cooktips</guid>
+      <guid>http://mrmign.github.io/2015/03/17/ios-programming-cooktips</guid>
       <content:encoded><![CDATA[<h3 id="toolbar-stackoverflowhttpstackoverflowcomquestions2312484uitoolbar-on-each-page-of-uinavigationcontroller">创建ToolBar <a href="http://stackoverflow.com/questions/2312484/uitoolbar-on-each-page-of-uinavigationcontroller">StackOverflow</a></h3>
 
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="bp">CGRect</span> <span class="n">frame</span><span class="p">,</span> <span class="n">remain</span><span class="p">;</span>
-    <span class="n">CGRectDivide</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">frame</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">remain</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="n">CGRectMaxYEdge</span><span class="p">);</span>
-    <span class="n">_toolbar</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIToolbar</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">];</span>
-<span class="c1">//    _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;</span>
-    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button1</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;今天&quot;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStyleDone</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolBarGotoToday</span><span class="p">)];</span>
-    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">spacer</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithBarButtonSystemItem</span><span class="p">:</span><span class="n">UIBarButtonSystemItemFlexibleSpace</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-    
-    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button2</span><span class="o">=</span><span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;schedule_back&quot;</span><span class="p">]</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStylePlain</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolbarBackClick</span><span class="p">)];</span>
-    <span class="p">[</span><span class="n">_toolbar</span> <span class="nl">setItems</span><span class="p">:[[</span><span class="bp">NSArray</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithObjects</span><span class="p">:</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="p">,</span><span class="nb">nil</span><span class="p">]];</span>
-<span class="c1">//    [_toolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];</span>
-<span class="c1">//    [self.view addSubview:_toolbar];</span></code></pre></div>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="bp">CGRect</span> <span class="n">frame</span><span class="p">,</span> <span class="n">remain</span><span class="p">;</span>
+<a name="True-2"></a>    <span class="n">CGRectDivide</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">frame</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">remain</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="n">CGRectMaxYEdge</span><span class="p">);</span>
+<a name="True-3"></a>    <span class="n">_toolbar</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIToolbar</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">];</span>
+<a name="True-4"></a><span class="c1">//    _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;</span>
+<a name="True-5"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button1</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;今天&quot;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStyleDone</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolBarGotoToday</span><span class="p">)];</span>
+<a name="True-6"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">spacer</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithBarButtonSystemItem</span><span class="p">:</span><span class="n">UIBarButtonSystemItemFlexibleSpace</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<a name="True-7"></a>    
+<a name="True-8"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button2</span><span class="o">=</span><span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;schedule_back&quot;</span><span class="p">]</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStylePlain</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolbarBackClick</span><span class="p">)];</span>
+<a name="True-9"></a>    <span class="p">[</span><span class="n">_toolbar</span> <span class="nl">setItems</span><span class="p">:[[</span><span class="bp">NSArray</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithObjects</span><span class="p">:</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="p">,</span><span class="nb">nil</span><span class="p">]];</span>
+<a name="True-10"></a><span class="c1">//    [_toolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];</span>
+<a name="True-11"></a><span class="c1">//    [self.view addSubview:_toolbar];</span></code></pre></div>
 
 <p>直接使用UIViewController里的toolBar</p>
 
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><span class="nb">self</span><span class="p">.</span><span class="n">navigationController</span><span class="p">.</span><span class="n">toolbarHidden</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-    <span class="nb">self</span><span class="p">.</span><span class="n">toolbarItems</span> <span class="o">=</span> <span class="l">@[</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="l">]</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="nb">self</span><span class="p">.</span><span class="n">navigationController</span><span class="p">.</span><span class="n">toolbarHidden</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
+<a name="True-2"></a>    <span class="nb">self</span><span class="p">.</span><span class="n">toolbarItems</span> <span class="o">=</span> <span class="l">@[</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="l">]</span><span class="p">;</span></code></pre></div>
 
 <h4 id="related">Related</h4>
 
@@ -50,10 +475,10 @@ imageView.layer.maskToBounds = YEA;</p>
     
     <item>
       <title>iOS development problems</title>
-      <link href="http://mrmign.github.io/blog/2015/03/12/ios-development-problems/"/>
+      <link href="http://mrmign.github.io/2015/03/12/ios-development-problems/"/>
       <pubDate>2015-03-12T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2015/03/12/ios-development-problems</guid>
+      <guid>http://mrmign.github.io/2015/03/12/ios-development-problems</guid>
       <content:encoded><![CDATA[<h2 id="section">这里又要给自己挖一堆坑了，先占坑吧。。。</h2>
 
 <ul>
@@ -61,7 +486,7 @@ imageView.layer.maskToBounds = YEA;</p>
   <li>NavigationBar,(Back Button, Status)</li>
   <li>statusBar</li>
   <li>autoresizingMask用法</li>
-  <li>searchBar的cancelButton定制 </li>
+  <li>searchBar的cancelButton定制</li>
 </ul>
 
 ]]></content:encoded>
@@ -69,10 +494,10 @@ imageView.layer.maskToBounds = YEA;</p>
     
     <item>
       <title>svn problem record</title>
-      <link href="http://mrmign.github.io/blog/2015/01/25/svn-problem-record/"/>
+      <link href="http://mrmign.github.io/2015/01/25/svn-problem-record/"/>
       <pubDate>2015-01-25T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2015/01/25/svn-problem-record</guid>
+      <guid>http://mrmign.github.io/2015/01/25/svn-problem-record</guid>
       <content:encoded><![CDATA[<h2 id="svn-obstructed">SVN obstructed</h2>
 
 <p>copy them to a save place! Now remove all .svn dirs from your copy and run an update on your local project and copy back the »obstructed« dirs/files.
@@ -83,17 +508,17 @@ $ find ./ -name ".svn" | xargs rm -Rf</code></p>
     
     <item>
       <title>strange iOS problems</title>
-      <link href="http://mrmign.github.io/blog/2015/01/13/strange-ios-problems/"/>
+      <link href="http://mrmign.github.io/2015/01/13/strange-ios-problems/"/>
       <pubDate>2015-01-13T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2015/01/13/strange-ios-problems</guid>
+      <guid>http://mrmign.github.io/2015/01/13/strange-ios-problems</guid>
       <content:encoded><![CDATA[<ol>
   <li>
     <p>当为view添加UIGestureRecognizer后，如果view的frame重新设置了，添加过的手势识别会清除掉，
 可以通过view的gestureRecognizers(这是一个数组，存放各种手势)的大小来判断。</p>
   </li>
   <li>
-    <p>property follows cocoa naming convention for returning owned objects </p>
+    <p>property follows cocoa naming convention for returning owned objects</p>
   </li>
 </ol>
 
@@ -111,10 +536,10 @@ $ find ./ -name ".svn" | xargs rm -Rf</code></p>
     
     <item>
       <title>reverse iOS apps</title>
-      <link href="http://mrmign.github.io/blog/2014/12/25/reverse-ios-apps/"/>
+      <link href="http://mrmign.github.io/2014/12/25/reverse-ios-apps/"/>
       <pubDate>2014-12-25T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/12/25/reverse-ios-apps</guid>
+      <guid>http://mrmign.github.io/2014/12/25/reverse-ios-apps</guid>
       <content:encoded><![CDATA[<h1 id="section">准备工作：</h1>
 
 <h2 id="section-1">越狱</h2>
@@ -150,7 +575,7 @@ $ find ./ -name ".svn" | xargs rm -Rf</code></p>
 <h2 id="ios">重新签名iOS二进制文件</h2>
 
 <ol>
-  <li>进入到应用目录中如，/var/mobile/Containers/Bundle/Application/xxxx/xxx.app </li>
+  <li>进入到应用目录中如，/var/mobile/Containers/Bundle/Application/xxxx/xxx.app</li>
   <li>ldone xxx(应用名) -s, 使用ldone重新签名可执行文件</li>
   <li>chmod 755  xxx</li>
   <li>chown mobile.mobile xxx</li>
@@ -161,10 +586,10 @@ $ find ./ -name ".svn" | xargs rm -Rf</code></p>
     
     <item>
       <title>swift notes</title>
-      <link href="http://mrmign.github.io/blog/2014/10/19/swift-notes/"/>
+      <link href="http://mrmign.github.io/2014/10/19/swift-notes/"/>
       <pubDate>2014-10-19T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/10/19/swift-notes</guid>
+      <guid>http://mrmign.github.io/2014/10/19/swift-notes</guid>
       <content:encoded><![CDATA[<h2 id="strings-and-character">Strings and Character</h2>
 
 <blockquote>
@@ -198,29 +623,29 @@ else {
     
     <item>
       <title>LATEX学习</title>
-      <link href="http://mrmign.github.io/blog/2014/09/21/learning-latex/"/>
+      <link href="http://mrmign.github.io/2014/09/21/learning-latex/"/>
       <pubDate>2014-09-21T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/09/21/learning-latex</guid>
+      <guid>http://mrmign.github.io/2014/09/21/learning-latex</guid>
       <content:encoded><![CDATA[<h2 id="mactex-">MacTex 中文显示问题</h2>
 
-<div class="highlight"><pre><code class="language-latex" data-lang="latex"><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>
-
-<span class="c">%下面两行是用来支持中文的</span>
-<span class="k">\usepackage</span><span class="nb">{</span>fontspec,xltxtra,xunicode<span class="nb">}</span>
-<span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span>
-
-<span class="k">\setmainfont</span><span class="nb">{</span>Songti SC Regular<span class="nb">}</span> <span class="c">%设置字体，字体可以从系统的字体册里查找</span>
-
-<span class="k">\newfontfamily</span><span class="nb">{</span><span class="k">\H</span><span class="nb">}{</span>Times New Roman<span class="nb">}</span> <span class="c">%字体也是从字体册里找，必须是系统里有的字体才行</span>
-
-<span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
-<span class="k">\LaTeX</span>3是一个长远的目标，在它最张骞害怕成前, <span class="k">\LaTeXe</span><span class="nb">{}</span>是标准 <span class="k">\LaTeX\ </span>版本.
-
-<span class="nb">{</span><span class="k">\H</span> this is english<span class="nb">}</span>
-
-aaabbb
-<span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span></code></pre></div>
+<div class="highlight"><pre><code class="language-latex" data-lang="latex"><a name="True-1"></a><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c">%下面两行是用来支持中文的</span>
+<a name="True-4"></a><span class="k">\usepackage</span><span class="nb">{</span>fontspec,xltxtra,xunicode<span class="nb">}</span>
+<a name="True-5"></a><span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span>
+<a name="True-6"></a>
+<a name="True-7"></a><span class="k">\setmainfont</span><span class="nb">{</span>Songti SC Regular<span class="nb">}</span> <span class="c">%设置字体，字体可以从系统的字体册里查找</span>
+<a name="True-8"></a>
+<a name="True-9"></a><span class="k">\newfontfamily</span><span class="nb">{</span><span class="k">\H</span><span class="nb">}{</span>Times New Roman<span class="nb">}</span> <span class="c">%字体也是从字体册里找，必须是系统里有的字体才行</span>
+<a name="True-10"></a>
+<a name="True-11"></a><span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
+<a name="True-12"></a><span class="k">\LaTeX</span>3是一个长远的目标，在它最张骞害怕成前, <span class="k">\LaTeXe</span><span class="nb">{}</span>是标准 <span class="k">\LaTeX\ </span>版本.
+<a name="True-13"></a>
+<a name="True-14"></a><span class="nb">{</span><span class="k">\H</span> this is english<span class="nb">}</span>
+<a name="True-15"></a>
+<a name="True-16"></a>aaabbb
+<a name="True-17"></a><span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span></code></pre></div>
 
 <p>一时兴起，体会了把高大上的Latex，功能是强大的很啊，可是对于我等码农不用写高深的公式，也不出书立传的，貌似用不到点上了，用markdown足矣。。。束之高阁。</p>
 
@@ -229,10 +654,10 @@ aaabbb
     
     <item>
       <title>designcode.io resources</title>
-      <link href="http://mrmign.github.io/blog/2014/09/21/design-code-resources/"/>
+      <link href="http://mrmign.github.io/2014/09/21/design-code-resources/"/>
       <pubDate>2014-09-21T00:00:00+08:00</pubDate>
       <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/09/21/design-code-resources</guid>
+      <guid>http://mrmign.github.io/2014/09/21/design-code-resources</guid>
       <content:encoded><![CDATA[<blockquote>
   <p>Sketch绝逼神器啊，慢慢学习用吧。</p>
 </blockquote>
@@ -251,112 +676,6 @@ aaabbb
   <li><a href="http://sketchresources.com/">Sketch Resources</a></li>
 </ul>
 
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>C++ note </title>
-      <link href="http://mrmign.github.io/blog/2014/09/10/cpp-note/"/>
-      <pubDate>2014-09-10T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/09/10/cpp-note</guid>
-      <content:encoded><![CDATA[<h3 id="c">C++强制转换</h3>
-
-<p><code>operator&lt;type&gt;(data)</code></p>
-
-<ul>
-  <li>static_cast 简单类型转换，int，float间转换 </li>
-  <li>reinterpret_cast 在不改变实际数据的情况下改变数据的类型，初学者不易使用</li>
-  <li>const_cast 把一个const类型的常量转换成一个非常量值，还可以转volatile的值为一个非volatile的值</li>
-  <li>dynamic_cast 与类搭配使用</li>
-</ul>
-
-<h3 id="section">虚函数</h3>
-
-<p>处理未知类型的对象的方法。</p>
-
-<p>virtual void func()</p>
-
-<h3 id="section-1">纯虚函数(抽象函数)</h3>
-
-<p>virtual void func() = 0;</p>
-
-<h3 id="section-2">多继承里的虚继承</h3>
-
-<p><a href="http://blog.csdn.net/haoel/article/details/1948051/">C++虚函数表解析</a>
-<a href="http://blog.csdn.net/haoel/article/details/3081328">C++对象的内存布局上</a>
-<a href="http://blog.csdn.net/haoel/article/details/3081385">C++对象的内存布局下</a></p>
-
-<h3 id="const">声明成员函数为const的</h3>
-
-<p><code>
-template&lt;class T&gt; class Vector
-{
-public:
-	int length();
-	int length(int n);
-	// ...
-}
-template&lt;class T&gt;
-int pad_length(const Vector&lt;T&gt;&amp; v, int n)
-{
-	int k = v.length();  // oops!
-	return k&gt;n?k : n;
-}
-</code>
-除非对length的声明中出现了const，否则标了oops!的行将不会编译通过，因为v是const引用的。
-&gt; 如果参数是const类型的，调用的函数也必须是const的？？</p>
-
-<h3 id="section-3">复制函数</h3>
-
-<h3 id="section-4">虚复制函数</h3>
-
-<h2 id="section-5">操作系统</h2>
-
-<p>子进程是父进程的一个副本，它们的程序计数器具有相同的值，所以在调用fork之后两个进程将要招待的下一条语句都是一样的。</p>
-
-<p><code>int pid = fork()</code> fork会返回两个值，把新创建的子进程的id返回给父进程，给新创建的子进程返回0(在子进程被存储在亦是pid中)。
-如果fork函数调用失败，仅给父进程返回-1，并且不创建子进程。</p>
-
-<p>子进程被创建为有自己的地址空间的父进程的一个副本，也就是存储进程执行所辅导书v人所有数据和信息的一个单独的内存区域。所以改变
-子进程中的变量不会影响父进程中的相应的变量值，反之亦然，因为每个进程都有自己的地址空间。</p>
-
-<h4 id="section-6">进程间通信和管道</h4>
-
-<h1 id="basic">Basic</h1>
-
-<p>数组参数，用数组作为形参既不是传值调用也不是引用调用。</p>
-
-<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="kt">void</span> <span class="nf">fill</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">size</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
-        <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
-<span class="n">fill</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">num</span><span class="p">);</span></code></pre></div>
-
-<ul>
-  <li>形参a[]的方括号里没有索引表达式，就算在数组参数的方括号中填入一个数字，编译器还是会忽略这个数不计</li>
-  <li>函数调用中给出的实参其后即没有方括号也没有索引表达式。</li>
-</ul>
-
-<p>一个数组包含三部分：第一个索引变量的地址，数组的基本类型，数组大小。</p>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>prepare for interview</title>
-      <link href="http://mrmign.github.io/blog/2014/08/14/prepare-for-interview/"/>
-      <pubDate>2014-08-14T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/blog/2014/08/14/prepare-for-interview</guid>
-      <content:encoded><![CDATA[<ul>
-  <li><a href="http://www.cnblogs.com/weixliu/p/3903390.html">程序员面试笔试宝典学习记录（一）</a>  还有后续的其他分类</li>
-  <li>图灵社区 陈利人 专栏</li>
-  <li>九章算法 微信</li>
-  <li><a href="http://blog.jobbole.com/74468/">算法系列</a></li>
-</ul>
 ]]></content:encoded>
     </item>
     
