@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>3. coumputing on data</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>3. coumputing on data</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-05-04">2013-05-04</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#course" title="course">course</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#ml" title="ml">ml</a>&nbsp;
+  
+  <a href="/tags/#octave" title="octave">octave</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+
+<div class="highlight"><pre><code class="language-octave" data-lang="octave"><a name="True-1"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">]</span>
+<a name="True-2"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-3"></a>
+<a name="True-4"></a>   <span class="mi">1</span>   <span class="mi">2</span>
+<a name="True-5"></a>   <span class="mi">3</span>   <span class="mi">4</span>
+<a name="True-6"></a>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-7"></a>
+<a name="True-8"></a><span class="o">&gt;&gt;</span> <span class="n">B</span> <span class="p">=</span> <span class="p">[</span><span class="mi">11</span> <span class="mi">12</span><span class="p">;</span> <span class="mi">13</span> <span class="mi">14</span><span class="p">;</span> <span class="mi">15</span> <span class="mi">16</span><span class="p">]</span>
+<a name="True-9"></a><span class="n">B</span> <span class="p">=</span>
+<a name="True-10"></a>
+<a name="True-11"></a>   <span class="mi">11</span>   <span class="mi">12</span>
+<a name="True-12"></a>   <span class="mi">13</span>   <span class="mi">14</span>
+<a name="True-13"></a>   <span class="mi">15</span>   <span class="mi">16</span>
+<a name="True-14"></a>
+<a name="True-15"></a><span class="o">&gt;&gt;</span> <span class="n">c</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">]</span>
+<a name="True-16"></a><span class="n">c</span> <span class="p">=</span>
+<a name="True-17"></a>
+<a name="True-18"></a>   <span class="mi">1</span>   <span class="mi">1</span>
+<a name="True-19"></a>   <span class="mi">2</span>   <span class="mi">2</span>
+<a name="True-20"></a>
+<a name="True-21"></a><span class="o">&gt;&gt;</span><span class="c">%% matrix operations</span>
+<a name="True-22"></a><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="o">*</span><span class="n">B</span>
+<a name="True-23"></a><span class="nb">error</span><span class="p">:</span> <span class="n">operator</span> <span class="o">*</span><span class="p">:</span> <span class="n">nonconformant</span> <span class="n">arguments</span> <span class="p">(</span><span class="n">op1</span> <span class="n">is</span> <span class="mi">3</span><span class="n">x2</span><span class="p">,</span> <span class="n">op2</span> <span class="n">is</span> <span class="mi">3</span><span class="n">x2</span><span class="p">)</span>
+<a name="True-24"></a><span class="o">&gt;&gt;</span> <span class="n">C</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">;</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">]</span>
+<a name="True-25"></a><span class="n">C</span> <span class="p">=</span>
+<a name="True-26"></a>
+<a name="True-27"></a>   <span class="mi">1</span>   <span class="mi">1</span>
+<a name="True-28"></a>   <span class="mi">2</span>   <span class="mi">2</span>
+<a name="True-29"></a>
+<a name="True-30"></a><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="o">*</span><span class="n">C</span>  <span class="c">% matrix multiplication</span>
+<a name="True-31"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-32"></a>
+<a name="True-33"></a>    <span class="mi">5</span>    <span class="mi">5</span>
+<a name="True-34"></a>   <span class="mi">11</span>   <span class="mi">11</span>
+<a name="True-35"></a>   <span class="mi">17</span>   <span class="mi">17</span>
+<a name="True-36"></a>
+<a name="True-37"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="o">.*</span> <span class="n">B</span> <span class="c">% element-wise multiplcation A(i,i)*B(i,i)</span>
+<a name="True-38"></a>          <span class="c">% A .* C  or A * B gives error - wrong dimensions</span>
+<a name="True-39"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-40"></a>
+<a name="True-41"></a>   <span class="mi">11</span>   <span class="mi">24</span>
+<a name="True-42"></a>   <span class="mi">39</span>   <span class="mi">56</span>
+<a name="True-43"></a>   <span class="mi">75</span>   <span class="mi">96</span>
+<a name="True-44"></a>
+<a name="True-45"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="o">.^</span> <span class="mi">2</span> <span class="c">% element-wise square of each element in A</span>
+<a name="True-46"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-47"></a>
+<a name="True-48"></a>    <span class="mi">1</span>    <span class="mi">4</span>
+<a name="True-49"></a>    <span class="mi">9</span>   <span class="mi">16</span>
+<a name="True-50"></a>   <span class="mi">25</span>   <span class="mi">36</span>
+<a name="True-51"></a>
+<a name="True-52"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span>
+<a name="True-53"></a><span class="n">v</span> <span class="p">=</span>
+<a name="True-54"></a>
+<a name="True-55"></a>   <span class="mi">1</span>
+<a name="True-56"></a>   <span class="mi">2</span>
+<a name="True-57"></a>   <span class="mi">3</span>
+<a name="True-58"></a>
+<a name="True-59"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">./</span> <span class="n">v</span> <span class="c">% element-wise reciprocal</span>
+<a name="True-60"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-61"></a>
+<a name="True-62"></a>   <span class="mf">1.00000</span>
+<a name="True-63"></a>   <span class="mf">0.50000</span>
+<a name="True-64"></a>   <span class="mf">0.33333</span>
+<a name="True-65"></a>
+<a name="True-66"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">./</span> <span class="n">A</span>
+<a name="True-67"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-68"></a>
+<a name="True-69"></a>   <span class="mf">1.00000</span>   <span class="mf">0.50000</span>
+<a name="True-70"></a>   <span class="mf">0.33333</span>   <span class="mf">0.25000</span>
+<a name="True-71"></a>   <span class="mf">0.20000</span>   <span class="mf">0.16667</span>
+<a name="True-72"></a>
+<a name="True-73"></a><span class="o">&gt;&gt;</span> <span class="nb">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="c">% functions like this operate element-wise on vecs or matrices </span>
+<a name="True-74"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-75"></a>
+<a name="True-76"></a>   <span class="mf">0.00000</span>
+<a name="True-77"></a>   <span class="mf">0.69315</span>
+<a name="True-78"></a>   <span class="mf">1.09861</span>
+<a name="True-79"></a>
+<a name="True-80"></a><span class="o">&gt;&gt;</span> <span class="nb">exp</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a name="True-81"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-82"></a>
+<a name="True-83"></a>    <span class="mf">2.7183</span>
+<a name="True-84"></a>    <span class="mf">7.3891</span>
+<a name="True-85"></a>   <span class="mf">20.0855</span>
+<a name="True-86"></a>
+<a name="True-87"></a><span class="o">&gt;&gt;</span> <span class="n">v</span>
+<a name="True-88"></a><span class="n">v</span> <span class="p">=</span>
+<a name="True-89"></a>
+<a name="True-90"></a>   <span class="mi">1</span>
+<a name="True-91"></a>   <span class="mi">2</span>
+<a name="True-92"></a>   <span class="mi">3</span>
+<a name="True-93"></a>
+<a name="True-94"></a><span class="o">&gt;&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a name="True-95"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-96"></a>
+<a name="True-97"></a>   <span class="mi">1</span>
+<a name="True-98"></a>   <span class="mi">2</span>
+<a name="True-99"></a>   <span class="mi">3</span>
+<a name="True-100"></a>
+<a name="True-101"></a><span class="o">&gt;&gt;</span> <span class="nb">abs</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+<a name="True-102"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-103"></a>
+<a name="True-104"></a>   <span class="mi">1</span>
+<a name="True-105"></a>   <span class="mi">2</span>
+<a name="True-106"></a>   <span class="mi">3</span>
+<a name="True-107"></a>
+<a name="True-108"></a><span class="o">&gt;&gt;</span> <span class="o">-</span><span class="n">v</span>  <span class="c">% -1*v</span>
+<a name="True-109"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-110"></a>
+<a name="True-111"></a>  <span class="o">-</span><span class="mi">1</span>
+<a name="True-112"></a>  <span class="o">-</span><span class="mi">2</span>
+<a name="True-113"></a>  <span class="o">-</span><span class="mi">3</span>
+<a name="True-114"></a>
+<a name="True-115"></a><span class="o">&gt;&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">v</span>
+<a name="True-116"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-117"></a>
+<a name="True-118"></a>  <span class="o">-</span><span class="mi">1</span>
+<a name="True-119"></a>  <span class="o">-</span><span class="mi">2</span>
+<a name="True-120"></a>  <span class="o">-</span><span class="mi">3</span>
+<a name="True-121"></a>
+<a name="True-122"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="o">+</span> <span class="nb">ones</span><span class="p">(</span><span class="nb">length</span><span class="p">(</span><span class="n">v</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span> <span class="c">% v + 1</span>
+<a name="True-123"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-124"></a>
+<a name="True-125"></a>   <span class="mi">2</span>
+<a name="True-126"></a>   <span class="mi">3</span>
+<a name="True-127"></a>   <span class="mi">4</span>
+<a name="True-128"></a>
+<a name="True-129"></a><span class="o">&gt;&gt;</span> <span class="nb">length</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<a name="True-130"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">3</span>
+<a name="True-131"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="o">+</span> <span class="mi">1</span>
+<a name="True-132"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-133"></a>
+<a name="True-134"></a>   <span class="mi">2</span>
+<a name="True-135"></a>   <span class="mi">3</span>
+<a name="True-136"></a>   <span class="mi">4</span>
+<a name="True-137"></a>
+<a name="True-138"></a><span class="o">&gt;&gt;</span> <span class="n">A</span>
+<a name="True-139"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-140"></a>
+<a name="True-141"></a>   <span class="mi">1</span>   <span class="mi">2</span>
+<a name="True-142"></a>   <span class="mi">3</span>   <span class="mi">4</span>
+<a name="True-143"></a>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-144"></a> 
+<a name="True-145"></a><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="o">&#39;</span>  <span class="c">% matrix transpose</span>
+<a name="True-146"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-147"></a>
+<a name="True-148"></a>   <span class="mi">1</span>   <span class="mi">3</span>   <span class="mi">5</span>
+<a name="True-149"></a>   <span class="mi">2</span>   <span class="mi">4</span>   <span class="mi">6</span>
+<a name="True-150"></a>
+<a name="True-151"></a><span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">A</span><span class="o">&#39;</span><span class="p">)</span><span class="o">&#39;</span>
+<a name="True-152"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-153"></a>
+<a name="True-154"></a>   <span class="mi">1</span>   <span class="mi">2</span>
+<a name="True-155"></a>   <span class="mi">3</span>   <span class="mi">4</span>
+<a name="True-156"></a>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-157"></a>
+<a name="True-158"></a><span class="o">&gt;&gt;</span><span class="c">%% misc useful functions</span>
+<a name="True-159"></a><span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">15</span> <span class="mi">2</span> <span class="mf">0.5</span><span class="p">]</span>
+<a name="True-160"></a><span class="n">a</span> <span class="p">=</span>
+<a name="True-161"></a>
+<a name="True-162"></a>    <span class="mf">1.00000</span>   <span class="mf">15.00000</span>    <span class="mf">2.00000</span>    <span class="mf">0.50000</span>
+<a name="True-163"></a>
+<a name="True-164"></a><span class="o">&gt;&gt;</span> <span class="n">val</span> <span class="p">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-165"></a><span class="n">val</span> <span class="p">=</span>  <span class="mi">15</span>
+<a name="True-166"></a><span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">ind</span><span class="p">]</span> <span class="p">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="c">% val -  maximum element of the vector a and index - index value where maximum occur</span>
+<a name="True-167"></a><span class="n">val</span> <span class="p">=</span>  <span class="mi">15</span>
+<a name="True-168"></a><span class="n">ind</span> <span class="p">=</span>  <span class="mi">2</span>
+<a name="True-169"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="c">% if A is matrix, returns max from each column</span>
+<a name="True-170"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-171"></a>
+<a name="True-172"></a>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-173"></a>
+<a name="True-174"></a><span class="o">&gt;&gt;</span> <span class="n">a</span>
+<a name="True-175"></a><span class="n">a</span> <span class="p">=</span>
+<a name="True-176"></a>
+<a name="True-177"></a>    <span class="mf">1.00000</span>   <span class="mf">15.00000</span>    <span class="mf">2.00000</span>    <span class="mf">0.50000</span>
+<a name="True-178"></a>
+<a name="True-179"></a><span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">3</span>
+<a name="True-180"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-181"></a>
+<a name="True-182"></a>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">1</span>
+<a name="True-183"></a>
+<a name="True-184"></a><span class="o">&gt;&gt;</span> <span class="nb">find</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span>
+<a name="True-185"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-186"></a>
+<a name="True-187"></a>   <span class="mi">1</span>   <span class="mi">3</span>   <span class="mi">4</span>
+<a name="True-188"></a>
+<a name="True-189"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="p">=</span> <span class="nb">magic</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a name="True-190"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-191"></a>
+<a name="True-192"></a>   <span class="mi">8</span>   <span class="mi">1</span>   <span class="mi">6</span>
+<a name="True-193"></a>   <span class="mi">3</span>   <span class="mi">5</span>   <span class="mi">7</span>
+<a name="True-194"></a>   <span class="mi">4</span>   <span class="mi">9</span>   <span class="mi">2</span>
+<a name="True-195"></a>
+<a name="True-196"></a><span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="p">]</span> <span class="p">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">A</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">)</span>
+<a name="True-197"></a><span class="n">r</span> <span class="p">=</span>
+<a name="True-198"></a>
+<a name="True-199"></a>   <span class="mi">1</span>
+<a name="True-200"></a>   <span class="mi">3</span>
+<a name="True-201"></a>
+<a name="True-202"></a><span class="n">c</span> <span class="p">=</span>
+<a name="True-203"></a>
+<a name="True-204"></a>   <span class="mi">1</span>
+<a name="True-205"></a>   <span class="mi">2</span>
+<a name="True-206"></a>
+<a name="True-207"></a><span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">r</span><span class="p">,</span><span class="n">c</span> <span class="p">]</span> <span class="p">=</span> <span class="nb">find</span><span class="p">(</span><span class="n">A</span> <span class="o">&gt;</span><span class="p">=</span> <span class="mi">7</span><span class="p">)</span> <span class="c">% row, column indices for values matching comparison</span>
+<a name="True-208"></a><span class="n">r</span> <span class="p">=</span>
+<a name="True-209"></a>
+<a name="True-210"></a>   <span class="mi">1</span>
+<a name="True-211"></a>   <span class="mi">3</span>
+<a name="True-212"></a>   <span class="mi">2</span>
+<a name="True-213"></a>
+<a name="True-214"></a><span class="n">c</span> <span class="p">=</span>
+<a name="True-215"></a>
+<a name="True-216"></a>   <span class="mi">1</span>
+<a name="True-217"></a>   <span class="mi">2</span>
+<a name="True-218"></a>   <span class="mi">3</span>
+<a name="True-219"></a>
+<a name="True-220"></a><span class="o">&gt;&gt;</span><span class="c">% sum, prod</span>
+<a name="True-221"></a><span class="o">&gt;&gt;</span> <span class="n">a</span>
+<a name="True-222"></a><span class="n">a</span> <span class="p">=</span>
+<a name="True-223"></a>
+<a name="True-224"></a>    <span class="mf">1.00000</span>   <span class="mf">15.00000</span>    <span class="mf">2.00000</span>    <span class="mf">0.50000</span>
+<a name="True-225"></a>
+<a name="True-226"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-227"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mf">18.500</span>
+<a name="True-228"></a><span class="o">&gt;&gt;</span> <span class="nb">prod</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-229"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">15</span>
+<a name="True-230"></a><span class="o">&gt;&gt;</span> <span class="nb">floor</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-231"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-232"></a>
+<a name="True-233"></a>    <span class="mi">1</span>   <span class="mi">15</span>    <span class="mi">2</span>    <span class="mi">0</span>
+<a name="True-234"></a>
+<a name="True-235"></a><span class="o">&gt;&gt;</span> <span class="nb">ceil</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-236"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-237"></a>
+<a name="True-238"></a>    <span class="mi">1</span>   <span class="mi">15</span>    <span class="mi">2</span>    <span class="mi">1</span>
+<a name="True-239"></a>
+<a name="True-240"></a><span class="o">&gt;&gt;</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a name="True-241"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-242"></a>
+<a name="True-243"></a>   <span class="mf">0.31868</span>   <span class="mf">0.91598</span>   <span class="mf">0.51921</span>
+<a name="True-244"></a>   <span class="mf">0.96554</span>   <span class="mf">0.27133</span>   <span class="mf">0.35385</span>
+<a name="True-245"></a>   <span class="mf">0.42620</span>   <span class="mf">0.32065</span>   <span class="mf">0.18019</span>
+<a name="True-246"></a>
+<a name="True-247"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<a name="True-248"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-249"></a>
+<a name="True-250"></a>   <span class="mf">0.46646</span>   <span class="mf">0.97470</span>   <span class="mf">0.11691</span>
+<a name="True-251"></a>   <span class="mf">0.96954</span>   <span class="mf">0.98368</span>   <span class="mf">0.91132</span>
+<a name="True-252"></a>   <span class="mf">0.56436</span>   <span class="mf">0.16409</span>   <span class="mf">0.55678</span>
+<a name="True-253"></a>
+<a name="True-254"></a><span class="o">&gt;&gt;</span> <span class="n">A</span>
+<a name="True-255"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-256"></a>
+<a name="True-257"></a>   <span class="mi">8</span>   <span class="mi">1</span>   <span class="mi">6</span>
+<a name="True-258"></a>   <span class="mi">3</span>   <span class="mi">5</span>   <span class="mi">7</span>
+<a name="True-259"></a>   <span class="mi">4</span>   <span class="mi">9</span>   <span class="mi">2</span>
+<a name="True-260"></a>
+<a name="True-261"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="p">[],</span> <span class="mi">1</span><span class="p">)</span>
+<a name="True-262"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-263"></a>
+<a name="True-264"></a>   <span class="mi">8</span>   <span class="mi">9</span>   <span class="mi">7</span>
+<a name="True-265"></a>
+<a name="True-266"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="p">[],</span> <span class="mi">2</span><span class="p">)</span>
+<a name="True-267"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-268"></a>
+<a name="True-269"></a>   <span class="mi">8</span>
+<a name="True-270"></a>   <span class="mi">7</span>
+<a name="True-271"></a>   <span class="mi">9</span>
+<a name="True-272"></a>
+<a name="True-273"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<a name="True-274"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-275"></a>
+<a name="True-276"></a>   <span class="mi">8</span>   <span class="mi">9</span>   <span class="mi">7</span>
+<a name="True-277"></a>
+<a name="True-278"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<a name="True-279"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">9</span>
+<a name="True-280"></a><span class="o">&gt;&gt;</span> <span class="n">A</span><span class="p">(:)</span>
+<a name="True-281"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-282"></a>
+<a name="True-283"></a>   <span class="mi">8</span>
+<a name="True-284"></a>   <span class="mi">3</span>
+<a name="True-285"></a>   <span class="mi">4</span>
+<a name="True-286"></a>   <span class="mi">1</span>
+<a name="True-287"></a>   <span class="mi">5</span>
+<a name="True-288"></a>   <span class="mi">9</span>
+<a name="True-289"></a>   <span class="mi">6</span>
+<a name="True-290"></a>   <span class="mi">7</span>
+<a name="True-291"></a>   <span class="mi">2</span>
+<a name="True-292"></a>
+<a name="True-293"></a><span class="o">&gt;&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">(:))</span>
+<a name="True-294"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">9</span>
+<a name="True-295"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="p">=</span> <span class="nb">magic</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="True-296"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-297"></a>
+<a name="True-298"></a>   <span class="mi">47</span>   <span class="mi">58</span>   <span class="mi">69</span>   <span class="mi">80</span>    <span class="mi">1</span>   <span class="mi">12</span>   <span class="mi">23</span>   <span class="mi">34</span>   <span class="mi">45</span>
+<a name="True-299"></a>   <span class="mi">57</span>   <span class="mi">68</span>   <span class="mi">79</span>    <span class="mi">9</span>   <span class="mi">11</span>   <span class="mi">22</span>   <span class="mi">33</span>   <span class="mi">44</span>   <span class="mi">46</span>
+<a name="True-300"></a>   <span class="mi">67</span>   <span class="mi">78</span>    <span class="mi">8</span>   <span class="mi">10</span>   <span class="mi">21</span>   <span class="mi">32</span>   <span class="mi">43</span>   <span class="mi">54</span>   <span class="mi">56</span>
+<a name="True-301"></a>   <span class="mi">77</span>    <span class="mi">7</span>   <span class="mi">18</span>   <span class="mi">20</span>   <span class="mi">31</span>   <span class="mi">42</span>   <span class="mi">53</span>   <span class="mi">55</span>   <span class="mi">66</span>
+<a name="True-302"></a>    <span class="mi">6</span>   <span class="mi">17</span>   <span class="mi">19</span>   <span class="mi">30</span>   <span class="mi">41</span>   <span class="mi">52</span>   <span class="mi">63</span>   <span class="mi">65</span>   <span class="mi">76</span>
+<a name="True-303"></a>   <span class="mi">16</span>   <span class="mi">27</span>   <span class="mi">29</span>   <span class="mi">40</span>   <span class="mi">51</span>   <span class="mi">62</span>   <span class="mi">64</span>   <span class="mi">75</span>    <span class="mi">5</span>
+<a name="True-304"></a>   <span class="mi">26</span>   <span class="mi">28</span>   <span class="mi">39</span>   <span class="mi">50</span>   <span class="mi">61</span>   <span class="mi">72</span>   <span class="mi">74</span>    <span class="mi">4</span>   <span class="mi">15</span>
+<a name="True-305"></a>   <span class="mi">36</span>   <span class="mi">38</span>   <span class="mi">49</span>   <span class="mi">60</span>   <span class="mi">71</span>   <span class="mi">73</span>    <span class="mi">3</span>   <span class="mi">14</span>   <span class="mi">25</span>
+<a name="True-306"></a>   <span class="mi">37</span>   <span class="mi">48</span>   <span class="mi">59</span>   <span class="mi">70</span>   <span class="mi">81</span>    <span class="mi">2</span>   <span class="mi">13</span>   <span class="mi">24</span>   <span class="mi">35</span>
+<a name="True-307"></a>
+<a name="True-308"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<a name="True-309"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-310"></a>
+<a name="True-311"></a>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>   <span class="mi">369</span>
+<a name="True-312"></a>
+<a name="True-313"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<a name="True-314"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-315"></a>
+<a name="True-316"></a>   <span class="mi">369</span>
+<a name="True-317"></a>   <span class="mi">369</span>
+<a name="True-318"></a>   <span class="mi">369</span>
+<a name="True-319"></a>   <span class="mi">369</span>
+<a name="True-320"></a>   <span class="mi">369</span>
+<a name="True-321"></a>   <span class="mi">369</span>
+<a name="True-322"></a>   <span class="mi">369</span>
+<a name="True-323"></a>   <span class="mi">369</span>
+<a name="True-324"></a>   <span class="mi">369</span>
+<a name="True-325"></a>
+<a name="True-326"></a><span class="o">&gt;&gt;</span> <span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="True-327"></a><span class="o">&gt;&gt;</span> 
+<a name="True-328"></a><span class="o">&gt;&gt;</span> <span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="True-329"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="o">.*</span> <span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="True-330"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-331"></a>
+<a name="True-332"></a>   <span class="mi">47</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-333"></a>    <span class="mi">0</span>   <span class="mi">68</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-334"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">8</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-335"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">20</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-336"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">41</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-337"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">62</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-338"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">74</span>    <span class="mi">0</span>    <span class="mi">0</span>
+<a name="True-339"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">14</span>    <span class="mi">0</span>
+<a name="True-340"></a>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">35</span>
+<a name="True-341"></a>
+<a name="True-342"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="o">.*</span><span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">)))</span>
+<a name="True-343"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">369</span>
+<a name="True-344"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="o">.*</span><span class="n">flipup</span><span class="p">(</span><span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">))))</span>
+<a name="True-345"></a><span class="nb">error</span><span class="p">:</span> `<span class="n">flipup</span><span class="o">&#39;</span> <span class="n">undefined</span> <span class="n">near</span> <span class="nb">line</span> <span class="mi">127</span> <span class="n">column</span> <span class="mi">12</span>
+<a name="True-346"></a><span class="nb">error</span><span class="p">:</span> <span class="n">evaluating</span> <span class="n">argument</span> <span class="n">list</span> <span class="n">element</span> <span class="n">number</span> <span class="mi">1</span>
+<a name="True-347"></a><span class="nb">error</span><span class="p">:</span> <span class="n">evaluating</span> <span class="n">argument</span> <span class="n">list</span> <span class="n">element</span> <span class="n">number</span> <span class="mi">1</span>
+<a name="True-348"></a><span class="nb">error</span><span class="p">:</span> <span class="n">evaluating</span> <span class="n">argument</span> <span class="n">list</span> <span class="n">element</span> <span class="n">number</span> <span class="mi">1</span>
+<a name="True-349"></a><span class="nb">error</span><span class="p">:</span> <span class="n">evaluating</span> <span class="n">argument</span> <span class="n">list</span> <span class="n">element</span> <span class="n">number</span> <span class="mi">1</span>
+<a name="True-350"></a><span class="o">&gt;&gt;</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">A</span><span class="o">.*</span><span class="nb">flipud</span><span class="p">(</span><span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">))))</span>
+<a name="True-351"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">369</span>
+<a name="True-352"></a><span class="o">&gt;&gt;</span> <span class="nb">flipud</span><span class="p">(</span><span class="nb">eye</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<a name="True-353"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="p">=</span> <span class="nb">magic</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a name="True-354"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-355"></a>
+<a name="True-356"></a>   <span class="mi">8</span>   <span class="mi">1</span>   <span class="mi">6</span>
+<a name="True-357"></a>   <span class="mi">3</span>   <span class="mi">5</span>   <span class="mi">7</span>
+<a name="True-358"></a>   <span class="mi">4</span>   <span class="mi">9</span>   <span class="mi">2</span>
+<a name="True-359"></a>
+<a name="True-360"></a><span class="o">&gt;&gt;</span><span class="c">% Matrix inverse (pseudo-inverse) </span>
+<a name="True-361"></a><span class="o">&gt;&gt;</span> <span class="nb">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>   <span class="c">% inv(A&#39;*A)*A&#39;</span>
+<a name="True-362"></a><span class="n">ans</span> <span class="p">=</span>
+<a name="True-363"></a>
+<a name="True-364"></a>   <span class="mf">0.147222</span>  <span class="o">-</span><span class="mf">0.144444</span>   <span class="mf">0.063889</span>
+<a name="True-365"></a>  <span class="o">-</span><span class="mf">0.061111</span>   <span class="mf">0.022222</span>   <span class="mf">0.105556</span>
+<a name="True-366"></a>  <span class="o">-</span><span class="mf">0.019444</span>   <span class="mf">0.188889</span>  <span class="o">-</span><span class="mf">0.102778</span>
+<a name="True-367"></a>
+<a name="True-368"></a><span class="o">&gt;&gt;</span></code></pre></div>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2013/05/04/2-moving-data-around/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2013/05/04/4-plotting-data/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>1. Octave basics</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>1. Octave basics</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2013-05-04">2013-05-04</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#course" title="course">course</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#ml" title="ml">ml</a>&nbsp;
+  
+  <a href="/tags/#octave" title="octave">octave</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h3 id="basic-operations">Basic Operations</h3>
+
+<div class="highlight"><pre><code class="language-octave" data-lang="octave"><a name="True-1"></a><span class="n">octave</span><span class="p">:</span><span class="mi">1</span><span class="o">&gt;</span><span class="c">%% Change working directory in windows example: </span>
+<a name="True-2"></a><span class="n">octave</span><span class="p">:</span><span class="mi">1</span><span class="o">&gt;</span><span class="c">%% Note that it uses normal slashes and does not uses escape characters for the empty spaces.</span>
+<a name="True-3"></a><span class="n">octave</span><span class="p">:</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="p">.</span><span class="o">./</span>
+<a name="True-4"></a><span class="n">octave</span><span class="p">:</span><span class="mi">2</span><span class="o">&gt;</span> <span class="n">ls</span>
+<a name="True-5"></a><span class="n">Learning</span> <span class="n">From</span> <span class="n">Data</span> <span class="mi">2</span><span class="n">nd</span> <span class="n">Ed</span> <span class="p">(</span><span class="n">Wiley</span><span class="p">,</span><span class="mi">2007</span><span class="p">).</span><span class="n">pdf</span>
+<a name="True-6"></a><span class="n">Line</span> <span class="n">Regression</span> <span class="n">with</span> <span class="n">multiple</span> <span class="n">variables</span> <span class="n">week</span> <span class="mf">2.</span><span class="n">pdf</span>
+<a name="True-7"></a><span class="n">octave</span>
+<a name="True-8"></a><span class="n">Supervised</span> <span class="nb">and</span> <span class="n">Unsupervised</span> <span class="n">Learning</span><span class="p">.</span><span class="n">pdf</span>
+<a name="True-9"></a><span class="n">octave</span><span class="p">:</span><span class="mi">3</span><span class="o">&gt;</span> <span class="nb">pwd</span>
+<a name="True-10"></a><span class="n">ans</span> <span class="p">=</span> <span class="o">/</span><span class="nb">home</span><span class="o">/</span><span class="n">arming</span><span class="o">/</span><span class="n">coursera</span><span class="o">/</span><span class="n">machinelearning</span>
+<a name="True-11"></a><span class="n">octave</span><span class="p">:</span><span class="mi">4</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">octave</span>
+<a name="True-12"></a><span class="n">octave</span><span class="p">:</span><span class="mi">5</span><span class="o">&gt;</span> <span class="nb">pwd</span>
+<a name="True-13"></a><span class="n">ans</span> <span class="p">=</span> <span class="o">/</span><span class="nb">home</span><span class="o">/</span><span class="n">arming</span><span class="o">/</span><span class="n">coursera</span><span class="o">/</span><span class="n">machinelearning</span><span class="o">/</span><span class="n">octave</span>
+<a name="True-14"></a><span class="n">octave</span><span class="p">:</span><span class="mi">6</span><span class="o">&gt;</span> <span class="n">PS1</span><span class="p">(</span><span class="s">&#39;&gt;&gt; &#39;</span><span class="p">)</span> <span class="c">% Change Octave prompt</span>
+<a name="True-15"></a><span class="o">&gt;&gt;</span><span class="c">%% elementary operations</span>
+<a name="True-16"></a><span class="o">&gt;&gt;</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">6</span>
+<a name="True-17"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">11</span>
+<a name="True-18"></a><span class="o">&gt;&gt;</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">2</span> 
+<a name="True-19"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">1</span>
+<a name="True-20"></a><span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="o">*</span><span class="mi">8</span>
+<a name="True-21"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">40</span>
+<a name="True-22"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span>
+<a name="True-23"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mf">0.50000</span>
+<a name="True-24"></a><span class="o">&gt;&gt;</span> <span class="mi">2</span>^<span class="mi">6</span>
+<a name="True-25"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">64</span>
+<a name="True-26"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c">% false</span>
+<a name="True-27"></a><span class="n">ans</span> <span class="p">=</span> <span class="mi">0</span>
+<a name="True-28"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">~=</span> <span class="mi">2</span>  <span class="c">% true.  note, not &quot;!=&quot;</span>
+<a name="True-29"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">1</span>
+<a name="True-30"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="mi">0</span>
+<a name="True-31"></a><span class="n">ans</span> <span class="p">=</span> <span class="mi">0</span>
+<a name="True-32"></a><span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="mi">0</span>
+<a name="True-33"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">1</span>
+<a name="True-34"></a><span class="o">&gt;&gt;</span> <span class="nb">xor</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<a name="True-35"></a><span class="n">ans</span> <span class="p">=</span>  <span class="mi">1</span>
+<a name="True-36"></a><span class="o">&gt;&gt;</span><span class="c">%% variable assignment</span>
+<a name="True-37"></a><span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="p">=</span><span class="mi">3</span><span class="p">;</span> <span class="c">% semicolon suppresses output</span>
+<a name="True-38"></a><span class="n">a</span> <span class="p">=</span>  <span class="mi">3</span>
+<a name="True-39"></a><span class="o">&gt;&gt;</span> <span class="n">b</span> <span class="p">=</span><span class="s">&#39;hi&#39;</span>
+<a name="True-40"></a><span class="n">b</span> <span class="p">=</span> <span class="n">hi</span>
+<a name="True-41"></a><span class="o">&gt;&gt;</span> <span class="n">c</span> <span class="p">=</span> <span class="mi">3</span> <span class="o">&gt;</span><span class="p">=</span> <span class="mi">1</span>
+<a name="True-42"></a><span class="n">c</span> <span class="p">=</span>  <span class="mi">1</span>
+<a name="True-43"></a><span class="o">&gt;&gt;</span><span class="c">% Displaying them:</span>
+<a name="True-44"></a><span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="p">=</span> <span class="nb">pi</span>
+<a name="True-45"></a><span class="n">a</span> <span class="p">=</span>  <span class="mf">3.1416</span>
+<a name="True-46"></a><span class="o">&gt;&gt;</span> <span class="nb">disp</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a name="True-47"></a> <span class="mf">3.1416</span>
+<a name="True-48"></a><span class="o">&gt;&gt;</span> <span class="nb">disp</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s">&#39;2 decimals: %0.2f&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+<a name="True-49"></a><span class="mi">2</span> <span class="n">decimals</span><span class="p">:</span> <span class="mf">3.14</span>
+<a name="True-50"></a><span class="o">&gt;&gt;</span> <span class="nb">disp</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s">&#39;6 decimals: %0.6f&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+<a name="True-51"></a><span class="mi">6</span> <span class="n">decimals</span><span class="p">:</span> <span class="mf">3.141593</span>
+<a name="True-52"></a><span class="o">&gt;&gt;</span> <span class="n">format</span> <span class="n">long</span> 
+<a name="True-53"></a><span class="o">&gt;&gt;</span> <span class="n">a</span>
+<a name="True-54"></a><span class="n">a</span> <span class="p">=</span>  <span class="mf">3.14159265358979</span>
+<a name="True-55"></a><span class="o">&gt;&gt;</span> <span class="n">format</span> <span class="n">short</span>
+<a name="True-56"></a><span class="o">&gt;&gt;</span> <span class="n">a</span>
+<a name="True-57"></a><span class="n">a</span> <span class="p">=</span>  <span class="mf">3.1416</span>
+<a name="True-58"></a><span class="o">&gt;&gt;</span><span class="c">%%  vectors and matrices</span>
+<a name="True-59"></a><span class="o">&gt;&gt;</span> <span class="n">A</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">]</span>
+<a name="True-60"></a><span class="n">A</span> <span class="p">=</span>
+<a name="True-61"></a>
+<a name="True-62"></a>   <span class="mi">1</span>   <span class="mi">2</span>
+<a name="True-63"></a>   <span class="mi">3</span>   <span class="mi">4</span>
+<a name="True-64"></a>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-65"></a>
+<a name="True-66"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
+<a name="True-67"></a><span class="n">v</span> <span class="p">=</span>
+<a name="True-68"></a>
+<a name="True-69"></a>   <span class="mi">1</span>   <span class="mi">2</span>   <span class="mi">3</span>
+<a name="True-70"></a>
+<a name="True-71"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c">% from 1 to 2, with stepsize of 0.1. Useful for plot axes</span>
+<a name="True-72"></a><span class="n">v</span> <span class="p">=</span>
+<a name="True-73"></a>
+<a name="True-74"></a> <span class="n">Columns</span> <span class="mi">1</span> <span class="n">through</span> <span class="mi">8</span><span class="p">:</span>
+<a name="True-75"></a>
+<a name="True-76"></a>   <span class="mf">1.0000</span>   <span class="mf">1.1000</span>   <span class="mf">1.2000</span>   <span class="mf">1.3000</span>   <span class="mf">1.4000</span>   <span class="mf">1.5000</span>   <span class="mf">1.6000</span>   <span class="mf">1.7000</span>
+<a name="True-77"></a>
+<a name="True-78"></a> <span class="n">Columns</span> <span class="mi">9</span> <span class="n">through</span> <span class="mi">11</span><span class="p">:</span>
+<a name="True-79"></a>
+<a name="True-80"></a>   <span class="mf">1.8000</span>   <span class="mf">1.9000</span>   <span class="mf">2.0000</span>
+<a name="True-81"></a>
+<a name="True-82"></a><span class="o">&gt;&gt;</span> <span class="n">v</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="mi">6</span> <span class="c">% from 1 to 6, assumes stepsize of 1 (row vector)</span>
+<a name="True-83"></a><span class="n">v</span> <span class="p">=</span>
+<a name="True-84"></a>
+<a name="True-85"></a>   <span class="mi">1</span>   <span class="mi">2</span>   <span class="mi">3</span>   <span class="mi">4</span>   <span class="mi">5</span>   <span class="mi">6</span>
+<a name="True-86"></a>
+<a name="True-87"></a><span class="o">&gt;&gt;</span> <span class="n">C</span> <span class="p">=</span> <span class="mi">2</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>  <span class="c">% same as C = [2 2 2; 2 2 2]</span>
+<a name="True-88"></a><span class="n">C</span> <span class="p">=</span>
+<a name="True-89"></a>
+<a name="True-90"></a>   <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span>
+<a name="True-91"></a>   <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span>
+<a name="True-92"></a>
+<a name="True-93"></a><span class="o">&gt;&gt;</span> <span class="n">w</span> <span class="p">=</span> <span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c">% 1x3 vector of ones</span>
+<a name="True-94"></a><span class="n">w</span> <span class="p">=</span>
+<a name="True-95"></a>
+<a name="True-96"></a>   <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">1</span>
+<a name="True-97"></a>
+<a name="True-98"></a><span class="o">&gt;&gt;</span> <span class="n">w</span> <span class="p">=</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c">% drawn from a uniform distribution </span>
+<a name="True-99"></a><span class="n">w</span> <span class="p">=</span>
+<a name="True-100"></a>
+<a name="True-101"></a>   <span class="mf">0.64276</span>   <span class="mf">0.75107</span>   <span class="mf">0.87499</span>
+<a name="True-102"></a>
+<a name="True-103"></a><span class="o">&gt;&gt;</span> <span class="n">w</span> <span class="p">=</span> <span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c">% drawn from a normal distribution (mean=0, var=1)</span>
+<a name="True-104"></a><span class="n">w</span> <span class="p">=</span>
+<a name="True-105"></a>
+<a name="True-106"></a>   <span class="mf">0.26606</span>  <span class="o">-</span><span class="mf">1.05041</span>   <span class="mf">1.34285</span>
+<a name="True-107"></a>
+<a name="True-108"></a><span class="o">&gt;&gt;</span> <span class="n">w</span> <span class="p">=</span> <span class="o">-</span><span class="mi">6</span> <span class="o">+</span> <span class="nb">sqrt</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10000</span><span class="p">))</span> <span class="c">% (mean = -6, var = 10)</span>
+<a name="True-109"></a><span class="nb">warning</span><span class="p">:</span> <span class="n">broken</span> <span class="nb">pipe</span> <span class="o">--</span> <span class="n">some</span> <span class="n">output</span> <span class="n">may</span> <span class="n">be</span> <span class="n">lost</span>
+<a name="True-110"></a><span class="o">&gt;&gt;</span> <span class="nb">hist</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="c">% plot histogram using 10 bins (default)</span>
+<a name="True-111"></a><span class="o">&gt;&gt;</span> <span class="nb">hist</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="c">% plot histogram using 50 bins</span>
+<a name="True-112"></a><span class="o">&gt;&gt;</span> <span class="no">I</span> <span class="p">=</span> <span class="nb">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c">% 4x4 identity matrix</span>
+<a name="True-113"></a><span class="no">I</span> <span class="p">=</span>
+<a name="True-114"></a>
+<a name="True-115"></a><span class="n">Diagonal</span> <span class="n">Matrix</span>
+<a name="True-116"></a>
+<a name="True-117"></a>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>
+<a name="True-118"></a>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">0</span>
+<a name="True-119"></a>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>   <span class="mi">0</span>
+<a name="True-120"></a>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">0</span>   <span class="mi">1</span>
+<a name="True-121"></a><span class="o">&gt;&gt;</span>
+<a name="True-122"></a><span class="o">&gt;&gt;</span><span class="c">% help function</span>
+<a name="True-123"></a><span class="o">&gt;&gt;</span> <span class="n">help</span> <span class="nb">eye</span> 
+<a name="True-124"></a><span class="o">&gt;&gt;</span> <span class="n">help</span> <span class="nb">rand</span>
+<a name="True-125"></a><span class="o">&gt;&gt;</span> <span class="n">help</span> <span class="n">help</span></code></pre></div>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2013/05/02/libc-function-code/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2013/05/04/2-moving-data-around/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
