@@ -7,7 +7,7 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-09-20T22:56:26+08:00</lastBuildDate>
+    <lastBuildDate>2015-09-20T23:22:58+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
     
     <item>
@@ -270,6 +270,229 @@
   <li><a href="http://www.soooldier.com/blog/2013/04/27/gai-jin-jekyll-bootstrapde-rakefile/">中文title转拼音</a></li>
   <li><a href="https://github.com/mvdbos/kramdown-with-pygments">kramdown-with-pygments</a></li>
   <li><a href="http://jekyllthemes.org/themes/uno-dbyll/">jekyll主题</a> 这里有很多，可以自己选择中意的</li>
+</ul>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Motion Design for iOS(part 4)</title>
+      <link href="http://mrmign.github.io/2015/08/09/motion-design-for-iospart-4/"/>
+      <pubDate>2015-08-09T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/08/09/motion-design-for-iospart-4</guid>
+      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-4">Motion Design for iOS(part 4)</h1>
+
+<h3 id="pop-animation-framework">Pop animation Framework</h3>
+
+<p>在Core Animation中一旦动画结束，presentation layer就被移除，如果不想让层突然回到起始位置，需要设置model layer的属性与动画的最后状态相符(UIView的动画方法不用，它自动帮设置了最终的属性值)。像JNWSpringAnimation这种动画，依然使用了CA中的对象<code>CAKeyframeAnimation</code>，我们需要设置Model layer的最终值。</p>
+
+<p>Pop完全不同。Pop不用CA来执行它所提供的动画功能。它所做的是建立一个定时器对象每1/60秒就执行一次，定时器一秒执行60次的代码会直接更新你定义的弹性动画中的下一位置所依赖的所有属性。没有特殊的，额外的层添加到你的元素上，Pop直接修改UIView或CAlayer上的属性，甚至是其他任意你想要的类型。也就是说，你可以在动画过程中直接获得正在改变的属性的当前值，而不需要通过Presentation Layer.更棒的是，你不需要单独设置最终的值来保持状态，因为动画一直在修改真正的值。</p>
+
+<p>Pop所使用的定时器对象是<code>CADisplayLink</code>，是<code>NSTimer</code>更高级的版本，<code>CADisplayLink</code>不设置时间间隔来调用代码，它调用方法的速度完全取决于屏幕的刷新速率。</p>
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Motion Design for iOS(part 3)</title>
+      <link href="http://mrmign.github.io/2015/08/04/motion-design-for-iospart-3/"/>
+      <pubDate>2015-08-04T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/08/04/motion-design-for-iospart-3</guid>
+      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-3">Motion Design for iOS(part 3)</h1>
+
+<p><a href="https://en.wikipedia.org/wiki/Transformation_matrix">math around matrix transformations</a></p>
+
+<p>Core Animation</p>
+
+<ul>
+  <li><code>CGAffineTransformMakeScale</code></li>
+</ul>
+
+<h3 id="two-animation-frameworks">Two Animation Frameworks</h3>
+
+<ul>
+  <li><a href="https://github.com/jwilling/JNWSpringAnimation">JNWSpringAnimation</a></li>
+  <li><a href="https://github.com/facebook/pop">Pop by Facebook</a></li>
+</ul>
+
+<p><code>CAKeyframeAnimation</code></p>
+
+<h3 id="spring-animation-properties">Spring animation Properties</h3>
+
+<ul>
+  <li>Damping</li>
+  <li>stiffness</li>
+  <li>mass</li>
+</ul>
+
+<h3 id="core-animation">Core Animation维护了三个层树</h3>
+
+<ol>
+  <li>Model layer tree. 当层静止没有动的时候它显示层的所有属性。如设置<code>view.layer.cornerRadius=50</code>的时候我们是在model layer上设置的属性。model layer上的属性是接触最多的，任何时候改变layer的属性都是在model layer上改的。在动画过程中model layer上值不会改变。</li>
+  <li>Presentation layer tree.该层呈现动画过程中层上的属性，并且属性值都是实时的。不要在该层设置任何值，相反你可以通过该层读取当前动画的相关值。</li>
+  <li>Render tree.渲染树是苹果私有的值，用来做真正的图像渲染，不需要知道这些值。</li>
+</ol>
+
+<p>当我们给层添加动画时候，是在presentation tree上计算动画的值，当动画结束后，动画自动从presentation层上移除，并且presentation tree的值马上变回model layer的值(因为这些值才真正反应了层的静态属性)。如果我们想让层的属性变为动画最后的值，我们需要显示的指定。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
+<a name="True-2"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
+<a name="True-3"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+<a name="True-4"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<a name="True-5"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">1.0</span><span class="l">)</span><span class="p">;</span>
+<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">2.0</span><span class="l">)</span><span class="p">;</span>
+<a name="True-8"></a>
+<a name="True-9"></a><span class="p">[</span><span class="n">redBall</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
+<a name="True-10"></a><span class="n">redBall</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">CGAffineTransformMakeScale</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span></code></pre></div>
+<p>上面的动画在执行完成后就被移除了，layer的实际变换值会与动画的最终值相符，ball保持2倍大小。</p>
+
+<p>在使用UIView基于block的动画方法的时候我们不需要这样做，是因为 这些方法自动地维持了最终的值不需要特意去设置。使用UIView基于block的动画方法的缺点就是只能使用默认的简单动画，如果想使用复杂的动画效果还是要使用<code>CAAnimation</code>对象，像<code>JNWSpringAnimation</code>。</p>
+
+<h3 id="uiview-animation-options">UIView animation options</h3>
+
+<p><code>UIViewAnimationOptionBeginFromCurrentState</code></p>
+
+<h3 id="jnwspringanimation">JNWSpringAnimation</h3>
+
+<p>相同的<code>damping</code>和<code>stiffness</code>可以缓慢的拖没有反弹效果，只是平滑渐近地变换。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">CGFloat</span> <span class="n">dampingStiffness</span> <span class="o">=</span> <span class="mf">16.0f</span><span class="p">;</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">// Scale animation for the main app background</span>
+<a name="True-4"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
+<a name="True-5"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
+<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
+<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
+<a name="True-8"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<a name="True-9"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="p">[[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">presentationLayer</span>
+<a name="True-10"></a>    <span class="nl">valueForKeyPath</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">]</span> <span class="n">floatValue</span><span class="p">]</span><span class="l">)</span><span class="p">;</span>
+<a name="True-11"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">0.9</span><span class="l">)</span><span class="p">;</span>
+<a name="True-12"></a>
+<a name="True-13"></a><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
+<a name="True-14"></a><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span>
+<a name="True-15"></a>    <span class="n">CGAffineTransformScale</span><span class="p">(</span><span class="n">CGAffineTransformIdentity</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.9</span><span class="p">);</span></code></pre></div>
+<p>上面代码中的fromValue不再是固定值了，因为presentationLayer知道动画过程中的各个属性值，防止动画还没线束又发生改变，这样就可以从当前的值执行了。不会有跳变的现象。</p>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Motion Design for iOS(part 2)</title>
+      <link href="http://mrmign.github.io/2015/08/04/motion-design-for-iospart-2/"/>
+      <pubDate>2015-08-04T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/08/04/motion-design-for-iospart-2</guid>
+      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-2">Motion Design for iOS(part 2)</h1>
+
+<h3 id="section">动画属性</h3>
+
+<h4 id="section-1">最基本的三个属性</h4>
+
+<ol>
+  <li>Position</li>
+  <li>Opacity</li>
+  <li>Scale</li>
+</ol>
+
+<h4 id="section-2">其他的属性</h4>
+
+<ol>
+  <li>Color</li>
+  <li>Rotation</li>
+  <li>3D 用3D来变换一个对象就是控制它的第三维，也就是说动画中的3D变换要么是进入屏幕，要么是朝向用户</li>
+</ol>
+
+<p>对于每个要进行动画的对象，在开始写代码前要考虑以下问题：</p>
+
+<ol>
+  <li>对象最初的属性是什么？如是否在屏幕下方？是不是完全透明？是不是size非常小?</li>
+  <li>对象的最后属性是什么？是不是在屏幕中间？对用户是不是可见？是否旋转了特定角度？是否有不同的背景色？</li>
+  <li>动画要执行多长时间？</li>
+  <li>执行动画期间会发生什么？</li>
+  <li>一旦该对象完成了动画会发生什么？</li>
+</ol>
+
+<h3 id="section-3">动画的时间</h3>
+
+<p><img src="/images/20150804/easing.png" alt="easing" />￼</p>
+
+<p>横坐标表示时间，纵坐标表示动画改变的属性</p>
+
+<p>上面图中所列出的四种动画曲线是Core Animation默认支持的.</p>
+
+<p>Core Animation提供的简易曲线数学上定义为贝塞尔曲线。</p>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Motion Design for iOS(part 1)</title>
+      <link href="http://mrmign.github.io/2015/08/03/motion-design-for-iospart-1/"/>
+      <pubDate>2015-08-03T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/08/03/motion-design-for-iospart-1</guid>
+      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-1">Motion Design for iOS(part 1)</h1>
+
+<h3 id="basic-principles-of-animationhttpthe12principlestumblrcom"><a href="http://the12principles.tumblr.com/">12 basic principles of animation</a></h3>
+
+<ul>
+  <li>
+    <p>Squash and Stretch
+<img src="/images/20150803/Squash%20and%20Stretch.gif" alt="Squash and Stretch" />￼</p>
+  </li>
+  <li>
+    <p>Anticipation
+<img src="/images/20150803/Anticipation.gif" alt="Anticipation" />￼</p>
+  </li>
+  <li>
+    <p>Staging
+<img src="/images/20150803/Staging.gif" alt="Staging" />￼</p>
+  </li>
+  <li>
+    <p>Straight Ahead &amp; Pose-to-Pose
+<img src="/images/20150803/Straight%20Ahead%20and%20Pose-to-Pose.gif" alt="Straight Ahead and Pose-to-Pose" />￼</p>
+  </li>
+  <li>
+    <p>Follow-Through and Overlapping Action
+<img src="/images/20150803/Follow-Through%20and%20Overlapping%20Action%20.gif" alt="Follow-Through and Overlapping Action " />￼</p>
+  </li>
+  <li>
+    <p>Slow In and Slow Out
+<img src="/images/20150803/Slow%20In%20and%20Slow%20Out.gif" alt="Slow In and Slow Out" />￼</p>
+  </li>
+  <li>
+    <p>Arcs
+<img src="/images/20150803/Arcs.gif" alt="Arcs" />￼</p>
+  </li>
+  <li>
+    <p>Secondary Action
+<img src="/images/20150803/Secondary%20Action.gif" alt="Secondary Action" />￼</p>
+  </li>
+  <li>
+    <p>Timing 
+<img src="/images/20150803/Timing.gif" alt="Timing" />￼</p>
+  </li>
+  <li>
+    <p>Exaggeration
+<img src="/images/20150803/Exaggeration.gif" alt="Exaggeration" />￼</p>
+  </li>
+  <li>
+    <p>Solid Drawing
+<img src="/images/20150803/Solid%20Drawing.gif" alt="Solid Drawing" />￼</p>
+  </li>
+  <li>
+    <p>Appeal
+<img src="/images/20150803/Appeal.gif" alt="Appeal" />￼</p>
+  </li>
+</ul>
+
+<h3 id="animation-examples">animation examples</h3>
+
+<ul>
+  <li><a href="http://capptivate.co/">CAPPTIVATE.io</a></li>
+  <li><a href="https://dribbble.com/search?q=animation">Dribble</a></li>
 </ul>
 
 ]]></content:encoded>
@@ -632,185 +855,6 @@
 
 <p>通过该APP，用户可以记录自己的饮食，并了解到自己摄入的营养成分分布，还可以根据系统及其他用户的建议形成自己的合理饮食搭配。</p>
 
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>iOS7 Programming Cookbook笔记</title>
-      <link href="http://mrmign.github.io/2015/04/04/ios7-programming-cookbook-bi-ji/"/>
-      <pubDate>2015-04-04T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/04/04/ios7-programming-cookbook-bi-ji</guid>
-      <content:encoded><![CDATA[<h1 id="chapter-1">Chapter 1</h1>
-
-<h2 id="adding-object-and-index-subscription-support">Adding Object and Index Subscription Support</h2>
-
-<p>类似Dictionary和Array那种用下标来访问。</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="k">@interface</span> <span class="nc">Person</span> : <span class="bp">NSObject</span>
-<a name="True-2"></a>
-<a name="True-3"></a><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">firstName</span><span class="p">;</span>
-<a name="True-4"></a><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">lastName</span><span class="p">;</span>
-<a name="True-5"></a>
-<a name="True-6"></a><span class="c1">// object subscription</span>
-<a name="True-7"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectForKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">;</span>
-<a name="True-8"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">forKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">;</span>
-<a name="True-9"></a>
-<a name="True-10"></a><span class="c1">// index subscription</span>
-<a name="True-11"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectAtIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">;</span>
-<a name="True-12"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">atIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">;</span>
-<a name="True-13"></a><span class="k">@end</span></code></pre></div>
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="bp">NSString</span> <span class="o">*</span><span class="k">const</span> <span class="n">kFirstNameKey</span> <span class="o">=</span> <span class="s">@&quot;firstName&quot;</span><span class="p">;</span>
-<a name="True-2"></a><span class="bp">NSString</span> <span class="o">*</span><span class="k">const</span> <span class="n">kLastNameKey</span> <span class="o">=</span> <span class="s">@&quot;lastName&quot;</span><span class="p">;</span>
-<a name="True-3"></a>
-<a name="True-4"></a><span class="k">@implementation</span> <span class="nc">Person</span>
-<a name="True-5"></a>
-<a name="True-6"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectForKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">{</span>
-<a name="True-7"></a>    <span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">keyAsObject</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="n">paramKey</span><span class="p">;</span>
-<a name="True-8"></a>    <span class="k">if</span> <span class="p">([</span><span class="n">keyAsObject</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="bp">NSString</span> <span class="k">class</span><span class="p">]]){</span>
-<a name="True-9"></a>        <span class="bp">NSString</span> <span class="o">*</span><span class="n">keyAsString</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">keyAsObject</span><span class="p">;</span>
-<a name="True-10"></a>        <span class="k">if</span> <span class="p">([</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">||</span>
-<a name="True-11"></a>            <span class="p">[</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kLastNameKey</span><span class="p">]){</span>
-<a name="True-12"></a>            <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">valueForKey</span><span class="p">:</span><span class="n">keyAsString</span><span class="p">];</span>
-<a name="True-13"></a>        <span class="p">}</span>
-<a name="True-14"></a>    <span class="p">}</span>
-<a name="True-15"></a>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-<a name="True-16"></a><span class="p">}</span>
-<a name="True-17"></a>
-<a name="True-18"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">forKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">{</span>
-<a name="True-19"></a>    <span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">keyAsObject</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="n">paramKey</span><span class="p">;</span>
-<a name="True-20"></a>    <span class="k">if</span> <span class="p">([</span><span class="n">keyAsObject</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="bp">NSString</span> <span class="k">class</span><span class="p">]]){</span>
-<a name="True-21"></a>        <span class="bp">NSString</span> <span class="o">*</span><span class="n">keyAsString</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">keyAsObject</span><span class="p">;</span>
-<a name="True-22"></a>        <span class="k">if</span> <span class="p">([</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">||</span>
-<a name="True-23"></a>            <span class="p">[</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kLastNameKey</span><span class="p">]){</span>
-<a name="True-24"></a>            <span class="p">[</span><span class="nb">self</span> <span class="nl">setValue</span><span class="p">:</span><span class="nl">paramObjectforKey</span><span class="p">:</span><span class="n">keyAsString</span><span class="p">];</span>
-<a name="True-25"></a>        <span class="p">}</span>
-<a name="True-26"></a>    <span class="p">}</span>
-<a name="True-27"></a><span class="p">}</span>
-<a name="True-28"></a>
-<a name="True-29"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectAtIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">{</span>
-<a name="True-30"></a>
-<a name="True-31"></a>    <span class="k">switch</span> <span class="p">(</span><span class="n">paramIndex</span><span class="p">){</span>
-<a name="True-32"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span><span class="p">{</span>
-<a name="True-33"></a>            <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">firstName</span><span class="p">;</span>
-<a name="True-34"></a>            <span class="k">break</span><span class="p">;</span>
-<a name="True-35"></a>        <span class="p">}</span>
-<a name="True-36"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span><span class="p">{</span>
-<a name="True-37"></a>            <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">lastName</span><span class="p">;</span>
-<a name="True-38"></a>            <span class="k">break</span><span class="p">;</span>
-<a name="True-39"></a>        <span class="p">}</span>
-<a name="True-40"></a>        <span class="k">default</span><span class="o">:</span><span class="p">{</span>
-<a name="True-41"></a>            <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="s">@&quot;Invalid index&quot;</span> <span class="nl">format</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-<a name="True-42"></a>        <span class="p">}</span>
-<a name="True-43"></a>    <span class="p">}</span>
-<a name="True-44"></a>
-<a name="True-45"></a>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
-<a name="True-46"></a><span class="p">}</span>
-<a name="True-47"></a>
-<a name="True-48"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">atIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">{</span>
-<a name="True-49"></a>    <span class="k">switch</span> <span class="p">(</span><span class="n">paramIndex</span><span class="p">){</span>
-<a name="True-50"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span><span class="p">{</span>
-<a name="True-51"></a>            <span class="nb">self</span><span class="p">.</span><span class="n">firstName</span> <span class="o">=</span> <span class="n">paramObject</span><span class="p">;</span>
-<a name="True-52"></a>            <span class="k">break</span><span class="p">;</span>
-<a name="True-53"></a>        <span class="p">}</span>
-<a name="True-54"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span><span class="p">{</span>
-<a name="True-55"></a>            <span class="nb">self</span><span class="p">.</span><span class="n">lastName</span> <span class="o">=</span> <span class="n">paramObject</span><span class="p">;</span>
-<a name="True-56"></a>            <span class="k">break</span><span class="p">;</span>
-<a name="True-57"></a>        <span class="p">}</span>
-<a name="True-58"></a>        <span class="k">default</span><span class="o">:</span><span class="p">{</span>
-<a name="True-59"></a>            <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="s">@&quot;Invalid index&quot;</span> <span class="nl">format</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-<a name="True-60"></a>        <span class="p">}</span>
-<a name="True-61"></a>    <span class="p">}</span>
-<a name="True-62"></a><span class="p">}</span> 
-<a name="True-63"></a><span class="k">@end</span></code></pre></div>
-<p>利用下标来操作对象。</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">Person</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">Person</span> <span class="n">new</span><span class="p">];</span>
-<a name="True-2"></a><span class="n">person</span><span class="p">[</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">=</span> <span class="s">@&quot;Tim&quot;</span><span class="p">;</span>
-<a name="True-3"></a><span class="n">person</span><span class="p">[</span><span class="n">kLastNameKey</span><span class="p">]</span> <span class="o">=</span> <span class="s">@&quot;Cook&quot;</span><span class="p">;</span>
-<a name="True-4"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">firstNameByKey</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="n">kFirstNameKey</span><span class="p">];</span>
-<a name="True-5"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">lastNameByKey</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="n">kLastNameKey</span><span class="p">];</span>
-<a name="True-6"></a>
-<a name="True-7"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">firstNameByIndex</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<a name="True-8"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">lastNameByIndex</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-<a name="True-9"></a>
-<a name="True-10"></a><span class="k">if</span> <span class="p">([</span><span class="n">firstNameByKey</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">firstNameByIndex</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
-<a name="True-11"></a>    <span class="p">[</span><span class="n">lastNameByKey</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">lastNameByIndex</span><span class="p">]){</span>
-<a name="True-12"></a>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Success&quot;</span><span class="p">);</span>
-<a name="True-13"></a><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-<a name="True-14"></a>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Something is not right&quot;</span><span class="p">);</span>
-<a name="True-15"></a><span class="p">}</span></code></pre></div>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>ios programming cookTips</title>
-      <link href="http://mrmign.github.io/2015/03/17/ios-programming-cooktips/"/>
-      <pubDate>2015-03-17T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/03/17/ios-programming-cooktips</guid>
-      <content:encoded><![CDATA[<h3 id="toolbar-stackoverflowhttpstackoverflowcomquestions2312484uitoolbar-on-each-page-of-uinavigationcontroller">创建ToolBar <a href="http://stackoverflow.com/questions/2312484/uitoolbar-on-each-page-of-uinavigationcontroller">StackOverflow</a></h3>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="bp">CGRect</span> <span class="n">frame</span><span class="p">,</span> <span class="n">remain</span><span class="p">;</span>
-<a name="True-2"></a>    <span class="n">CGRectDivide</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">frame</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">remain</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="n">CGRectMaxYEdge</span><span class="p">);</span>
-<a name="True-3"></a>    <span class="n">_toolbar</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIToolbar</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame</span><span class="p">:</span><span class="n">frame</span><span class="p">];</span>
-<a name="True-4"></a><span class="c1">//    _toolbar.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;</span>
-<a name="True-5"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button1</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;今天&quot;</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStyleDone</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolBarGotoToday</span><span class="p">)];</span>
-<a name="True-6"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">spacer</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithBarButtonSystemItem</span><span class="p">:</span><span class="n">UIBarButtonSystemItemFlexibleSpace</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
-<a name="True-7"></a>    
-<a name="True-8"></a>    <span class="bp">UIBarButtonItem</span> <span class="o">*</span><span class="n">button2</span><span class="o">=</span><span class="p">[[</span><span class="bp">UIBarButtonItem</span> <span class="n">alloc</span><span class="p">]</span><span class="nl">initWithImage</span><span class="p">:[</span><span class="bp">UIImage</span> <span class="nl">imageNamed</span><span class="p">:</span><span class="s">@&quot;schedule_back&quot;</span><span class="p">]</span> <span class="nl">style</span><span class="p">:</span><span class="n">UIBarButtonItemStylePlain</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span> <span class="nl">action</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">toolbarBackClick</span><span class="p">)];</span>
-<a name="True-9"></a>    <span class="p">[</span><span class="n">_toolbar</span> <span class="nl">setItems</span><span class="p">:[[</span><span class="bp">NSArray</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithObjects</span><span class="p">:</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="p">,</span><span class="nb">nil</span><span class="p">]];</span>
-<a name="True-10"></a><span class="c1">//    [_toolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];</span>
-<a name="True-11"></a><span class="c1">//    [self.view addSubview:_toolbar];</span></code></pre></div>
-
-<p>直接使用UIViewController里的toolBar</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="nb">self</span><span class="p">.</span><span class="n">navigationController</span><span class="p">.</span><span class="n">toolbarHidden</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span>
-<a name="True-2"></a>    <span class="nb">self</span><span class="p">.</span><span class="n">toolbarItems</span> <span class="o">=</span> <span class="l">@[</span><span class="n">button1</span><span class="p">,</span><span class="n">spacer</span><span class="p">,</span><span class="n">button2</span><span class="l">]</span><span class="p">;</span></code></pre></div>
-
-<h4 id="related">Related</h4>
-
-<ul>
-  <li><a href="http://stackoverflow.com/questions/227078/creating-a-left-arrow-button-like-uinavigationbars-back-style-on-a-uitoolba?rq=1">http://stackoverflow.com/questions/227078/creating-a-left-arrow-button-like-uinavigationbars-back-style-on-a-uitoolba?rq=1</a></li>
-</ul>
-
-<p>圆形UIImageView
-imageView.layer.cornerRadius = imageView.width/2;
-imageView.layer.maskToBounds = YEA;</p>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>iOS development problems</title>
-      <link href="http://mrmign.github.io/2015/03/12/ios-development-problems/"/>
-      <pubDate>2015-03-12T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/03/12/ios-development-problems</guid>
-      <content:encoded><![CDATA[<h2 id="section">这里又要给自己挖一堆坑了，先占坑吧。。。</h2>
-
-<ul>
-  <li>Container View Controller</li>
-  <li>NavigationBar,(Back Button, Status)</li>
-  <li>statusBar</li>
-  <li>autoresizingMask用法</li>
-  <li>searchBar的cancelButton定制</li>
-</ul>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>svn problem record</title>
-      <link href="http://mrmign.github.io/2015/01/25/svn-problem-record/"/>
-      <pubDate>2015-01-25T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/01/25/svn-problem-record</guid>
-      <content:encoded><![CDATA[<h2 id="svn-obstructed">SVN obstructed</h2>
-
-<p>copy them to a save place! Now remove all .svn dirs from your copy and run an update on your local project and copy back the »obstructed« dirs/files.
-<code>Find and delete the .svn files
-$ find ./ -name ".svn" | xargs rm -Rf</code></p>
 ]]></content:encoded>
     </item>
     
