@@ -98,13 +98,12 @@
   <p>值类型的在传递给函数，方法，赋值时都进行拷贝。</p>
 </blockquote>
 
-<p>if let old = dict.updateValue(“aaa”, forKey: “aaa”) {
-    println(“not nil”)
-}
-else {
-    println(“nil”)
-}</p>
-
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">if</span> <span class="k">let</span> <span class="n">old</span> <span class="o">=</span> <span class="n">dict</span><span class="p">.</span><span class="n">updateValue</span><span class="p">(</span><span class="s">&quot;aaa&quot;</span><span class="p">,</span> <span class="nl">forKey</span><span class="p">:</span> <span class="s">&quot;aaa&quot;</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="n">println</span><span class="p">(</span><span class="s">&quot;not nil&quot;</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">else</span> <span class="p">{</span>
+<a name="True-5"></a>    <span class="n">println</span><span class="p">(</span><span class="s">&quot;nil&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
 <p>这里updateValue返回optional value，这里为什么可以在if中直接声明常量？条件判断里应该只允许使用Bool值？</p>
 
 </section>
