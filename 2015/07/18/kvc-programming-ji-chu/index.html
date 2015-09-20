@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>KVC Programming基础</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>KVC Programming基础</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-07-18">2015-07-18</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#iOS" title="iOS">iOS</a>&nbsp;
+  
+  <a href="/tags/#kvc" title="kvc">kvc</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h1 id="kvckey-value-coding-programming">KVC(Key-value Coding) Programming基础</h1>
+
+<p>KVC是KVO(Key-value Observeing)的基础。</p>
+
+<h2 id="kvc">什么是KVC?</h2>
+
+<p>KVC是一种间接访问对象属性的机制，使用字符串来区分属性，而不是通过访问方法调用或是直接通过实例变量访问。实质上KVC定义了你的应用的访问方法实现的模式和方法签名。</p>
+
+<p>KVC必需的方法在<code>NSKeyValueCoding</code>中声明的，默认的实现是在<code>NSObject</code>中提供。</p>
+
+<blockquote>
+  <p>Key-value coding supports properties with object values, as well as the scalar types and structs. Non-object parameters and return types are detected and automatically wrapped, and unwrapped, as described in Scalar and Structure Support.</p>
+</blockquote>
+
+<h2 id="kvc-1">使用KVC简化代码</h2>
+
+<p>不使用KVC时的代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
+<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
+<a name="True-3"></a> 
+<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
+<a name="True-5"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;name&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">name</span><span class="p">];</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;age&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-9"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">age</span><span class="p">];</span>
+<a name="True-10"></a>    <span class="p">}</span>
+<a name="True-11"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;favoriteColor&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-12"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">favoriteColor</span><span class="p">];</span>
+<a name="True-13"></a>    <span class="p">}</span>
+<a name="True-14"></a>    <span class="c1">// And so on.</span>
+<a name="True-15"></a><span class="p">}</span></code></pre></div><p>使用KVC的代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
+<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
+<a name="True-3"></a> 
+<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
+<a name="True-5"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="nl">valueForKey</span><span class="p">:[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]];</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>从上面的两段代码比较看出，KVC可以明显的简化代码。</p>
+
+<h2 id="terminology">术语(Terminology)</h2>
+
+<p>除了已经有的术语，KVC定义了它自己的特殊术语。</p>
+
+<p>KVC可以用来获取3类不同类型的对象值：<code>attributes</code>, <code>to-one relationships</code>, 和 <code>to-many relationships</code> 。术语<em><code>property</code></em>就是指这些类型的任意一种。</p>
+
+<ul>
+  <li>attribute, 简单的值，如scalar(char, NSTimeInterval, int, float, or double等), string, 布尔值， <strong>Value objects</strong>也是</li>
+  <li>to-one relationship.不太理解，直接引用原文</li>
+</ul>
+
+<blockquote>
+  <p>A property that specifies a to-one relationship is an object that has properties of its own. These underlying properties can change without the object itself changing. For example, an NSView instance’s superview is a to-one relationship.</p>
+</blockquote>
+
+<ul>
+  <li>a property that specifies a to-many relationship consists of a collection of related objects</li>
+</ul>
+
+<h2 id="kvc-2">KVC基础</h2>
+
+<h3 id="keyskey-paths">keys和key Paths</h3>
+
+<p>key,是用来识别一个对象的特定属性的字符串。必须用ASCII编码，以小写字母开头，不能有空格。</p>
+
+<p>key path是用<code>.</code>来分隔的keys的字符串，指定要遍历的对象属性序列。</p>
+
+<h3 id="kvc-3">用KVC获取属性值</h3>
+
+<p><code>valueForKey:</code>返回指定key的值，如果没有与指定key的方法或实例变量，接收者会给自己发送<code>valueForUndefinedKey:</code>消息，默认的<code>valueForUndefinedKey:</code>实现触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写这个行为。</p>
+
+<p><code>valueForKeyPath:</code>返回指定的key path的值，如果没有对应的key对象就会收到<code>valueForUndefinedKey:</code>消息。</p>
+
+<p><code>dictionaryWithValuesForKeys:</code> 返回一个数组keys的值。返回的NSDictionary包含对应的key和value.</p>
+
+<h3 id="kvc-4">用KVC设置属性值</h3>
+
+<p><code>setValue:forKey:</code>设置指定key的值，<code>setValue:forKey:</code>的默认实现会自动展开表示scalar和结构体的<code>NSValue</code>对象，并给属性赋值。如果指定的key不存在，接收者会收到<code>setValue:forUndefinedKey:</code>消息，默认的实现也会触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写该方法。</p>
+
+<p><code>setValue:forKeyPath:</code>跟单个key差不多的做法。</p>
+
+<p><code>setValuesForKeysWithDictionary:</code>用NSDictionary的keys来指定相应属性的值，默认实现会调用<code>setValue:forKey:</code>，如果需要用nil来替换NSNull对象。</p>
+
+<p>如果尝试给一个非对象属性设置nil值，接收者会给自己发送<code>setNilValueForKey:</code>消息，默认实现会触发<strong>NSInvalidArgumentException</strong>异常。应用可以重写该方法替换一个默认值或标记值，然后调用<code>setValue:forKey:</code>来设置新值。</p>
+
+<h3 id="section">简单属性的访问方法搜索模式</h3>
+
+<h4 id="setvalueforkey"><code>setValue:forKey:</code>的默认搜索模式</h4>
+
+<ol>
+  <li>搜索接收者的类是否有方法的名字匹配<code>set&lt;Key&gt;:</code></li>
+  <li>如果没有找到相应的方法，并且接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，搜索接收者的实例变量的名字是否有按下面顺序匹配的，<code>_&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code></li>
+  <li>如果找到了访问方法或实例变量，就对它进行赋值</li>
+  <li>如果没有找到对应的访问方法或实例变量，调用接收者的<code>setValue:forUndefinedKey:</code></li>
+</ol>
+
+<h4 id="valueforkey"><code>valueForKey:</code>的默认搜索模式</h4>
+
+<ol>
+  <li>搜索接收者类的访问方法名称是否有按<code>get&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>这个顺序匹配的。如果有这样的方法就调用。如果方法的返回值类型是对象指针就直接返回。如果返回值类型是scalar(简单)类型，并且可以转换为NSNumber，就返回NSNumber。其他的就转化为NSValue并返回。</li>
+  <li>Otherwise (no simple accessor method is found), searches the class of the receiver for methods whose names match the patterns <code>countOf&lt;Key&gt;</code> and <code>objectIn&lt;Key&gt;AtIndex:</code> (corresponding to the primitive methods defined by the NSArray class) and <code>&lt;key&gt;AtIndexes:</code> (corresponding to the NSArray method <code>objectsAtIndexes:</code>).
+ If the <code>countOf&lt;Key&gt;</code> method and at least one of the other two possible methods are found, a collection proxy object that   responds to all NSArray methods is returned. Each NSArray   message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>objectIn&lt;Key&gt;AtIndex:</code>, and <code>&lt;key&gt;AtIndexes:</code> messages being sent to the original receiver of <code>valueForKey:</code>. If the class of the receiver also    implements an optional method whose name matches the pattern <code>get&lt;Key&gt;:range:</code> that method will be used when appropriate for best performance.</li>
+  <li>Otherwise (no simple accessor method or set of array access methods is found), searches the class of the receiver for a threesome of methods whose names match the patterns <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and <code>memberOf&lt;Key&gt;:</code> (corresponding to the primitive methods defined by the NSSet class).
+ If all three methods are found, a collection proxy object   that responds to all NSSet methods is returned. Each NSSet  message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and    <code>memberOf&lt;Key&gt;:</code> messages being sent to the original    receiver of <code>valueForKey:</code>.</li>
+  <li>如果没有找到简单的访问方法或集合访问方法，如果接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，就按下面的顺序搜索接收者类的实例变量，<code> _&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>，如果找到了就返回对应实例变量的值，返回值类型如1中所描述的</li>
+  <li>如果上面的任何一种都没找到就返回<code>valueForUndefinedKey:</code>默认实现的值。</li>
+</ol>
+
+<p>上面的2，3中是针对集合的，这里只对简单的属性进行描述，集合的先略过。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/07/11/ios9-https-wen-ti/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2015/07/23/kvo-programming-ji-chu/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
