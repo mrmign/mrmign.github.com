@@ -1,5 +1,2 @@
-*.o
-*.swp
 .DS_Store
 .nojekyll
-Rakefile
