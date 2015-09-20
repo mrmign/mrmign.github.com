@@ -7,7 +7,7 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-09-20T21:21:21+08:00</lastBuildDate>
+    <lastBuildDate>2015-09-20T22:56:26+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
     
     <item>
@@ -276,6 +276,184 @@
     </item>
     
     <item>
+      <title>KVO Programming基础</title>
+      <link href="http://mrmign.github.io/2015/07/23/kvo-programming-ji-chu/"/>
+      <pubDate>2015-07-23T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/07/23/kvo-programming-ji-chu</guid>
+      <content:encoded><![CDATA[<h1 id="key-value-observing-programming">Key-Value Observing Programming</h1>
+
+<h2 id="section">一个属性观察者的设置步骤：</h2>
+
+<ol>
+  <li>首先要想想有没有场景使用KVO比较好，如一个对象的某个特定属性修改了需要通知另一个对象时。如当BankObject中的<code>accountBalance</code>修改了就要通知PersonObject。
+<img src="/images/20150723/14376628801388.jpg" alt="" />￼</li>
+  <li>PersonObject必须通过<code>addObserver:forKeyPath:options:context:</code> 注册为BankObject的accountBalance的观察者。<code>addObserver:forKeyPath:options:context:</code>在这两个实例对象之间建立一个关联，该关联不是在这两个类之间，而是这两个特定的实例对象间。
+<img src="/images/20150723/14376633250086.jpg" alt="" />￼</li>
+  <li>为了响应值改变时的通知，观察者必须实现<code>observeValueForKeyPath:ofObject:change:context: </code>方法，，这个方法实现定义了观察者如何响应通知。<img src="/images/20150723/14376636509368.jpg" alt="" />￼</li>
+  <li>当被观察的属性或是所依赖的一个key发生改变时，<code>observeValueForKeyPath:ofObject:change:context:</code>方法会自动触发。</li>
+</ol>
+
+<h2 id="kvo">注册KVO</h2>
+
+<h3 id="section-1">要符合下面三条：</h3>
+
+<ol>
+  <li>你想观察的属性所属的类必须符合KVC规范</li>
+  <li>必须通过<code>addObserver:forKeyPath:options:context:</code>方法给观察者注册被观察者</li>
+  <li>观察者必须实现<code>observeValueForKeyPath:ofObject:change:context:</code></li>
+</ol>
+
+<h4 id="section-2">注册观察者</h4>
+
+<p><code>addObserver:forKeyPath:options:context:</code>的options参数指定传递给观察者的值类型，有<code>NSKeyValueObservingOptionOld</code>和<code>NSKeyValueObservingOptionNew</code>两种，可以两个都传用or操作。该方法对观察者，被观察者，及contex没有强引用，需要自己管理好。</p>
+
+<h4 id="section-3">接收变化通知</h4>
+
+<p>根据change字典的<code>NSKeyValueChangeKindKey</code>判断是哪种改变类型，有<code>NSKeyValueChangeSetting</code>，<code>NSKeyValueChangeInsertion</code>, <code>NSKeyValueChangeRemoval</code>, or <code>NSKeyValueChangeReplacement</code>。
+#### 移除观察者</p>
+
+<p><code>[observedObject removeObserver:inspector forKeyPath:@"openingBalance"];</code>，如果context是一个对象，在移除观察者前一定要保持强引用。</p>
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>KVC Programming基础</title>
+      <link href="http://mrmign.github.io/2015/07/18/kvc-programming-ji-chu/"/>
+      <pubDate>2015-07-18T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/07/18/kvc-programming-ji-chu</guid>
+      <content:encoded><![CDATA[<h1 id="kvckey-value-coding-programming">KVC(Key-value Coding) Programming基础</h1>
+
+<p>KVC是KVO(Key-value Observeing)的基础。</p>
+
+<h2 id="kvc">什么是KVC?</h2>
+
+<p>KVC是一种间接访问对象属性的机制，使用字符串来区分属性，而不是通过访问方法调用或是直接通过实例变量访问。实质上KVC定义了你的应用的访问方法实现的模式和方法签名。</p>
+
+<p>KVC必需的方法在<code>NSKeyValueCoding</code>中声明的，默认的实现是在<code>NSObject</code>中提供。</p>
+
+<blockquote>
+  <p>Key-value coding supports properties with object values, as well as the scalar types and structs. Non-object parameters and return types are detected and automatically wrapped, and unwrapped, as described in Scalar and Structure Support.</p>
+</blockquote>
+
+<h2 id="kvc-1">使用KVC简化代码</h2>
+
+<p>不使用KVC时的代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
+<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
+<a name="True-3"></a> 
+<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
+<a name="True-5"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;name&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">name</span><span class="p">];</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;age&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-9"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">age</span><span class="p">];</span>
+<a name="True-10"></a>    <span class="p">}</span>
+<a name="True-11"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;favoriteColor&quot;</span><span class="p">])</span> <span class="p">{</span>
+<a name="True-12"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">favoriteColor</span><span class="p">];</span>
+<a name="True-13"></a>    <span class="p">}</span>
+<a name="True-14"></a>    <span class="c1">// And so on.</span>
+<a name="True-15"></a><span class="p">}</span></code></pre></div><p>使用KVC的代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
+<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
+<a name="True-3"></a> 
+<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
+<a name="True-5"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="nl">valueForKey</span><span class="p">:[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]];</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>从上面的两段代码比较看出，KVC可以明显的简化代码。</p>
+
+<h2 id="terminology">术语(Terminology)</h2>
+
+<p>除了已经有的术语，KVC定义了它自己的特殊术语。</p>
+
+<p>KVC可以用来获取3类不同类型的对象值：<code>attributes</code>, <code>to-one relationships</code>, 和 <code>to-many relationships</code> 。术语<em><code>property</code></em>就是指这些类型的任意一种。</p>
+
+<ul>
+  <li>attribute, 简单的值，如scalar(char, NSTimeInterval, int, float, or double等), string, 布尔值， <strong>Value objects</strong>也是</li>
+  <li>to-one relationship.不太理解，直接引用原文</li>
+</ul>
+
+<blockquote>
+  <p>A property that specifies a to-one relationship is an object that has properties of its own. These underlying properties can change without the object itself changing. For example, an NSView instance’s superview is a to-one relationship.</p>
+</blockquote>
+
+<ul>
+  <li>a property that specifies a to-many relationship consists of a collection of related objects</li>
+</ul>
+
+<h2 id="kvc-2">KVC基础</h2>
+
+<h3 id="keyskey-paths">keys和key Paths</h3>
+
+<p>key,是用来识别一个对象的特定属性的字符串。必须用ASCII编码，以小写字母开头，不能有空格。</p>
+
+<p>key path是用<code>.</code>来分隔的keys的字符串，指定要遍历的对象属性序列。</p>
+
+<h3 id="kvc-3">用KVC获取属性值</h3>
+
+<p><code>valueForKey:</code>返回指定key的值，如果没有与指定key的方法或实例变量，接收者会给自己发送<code>valueForUndefinedKey:</code>消息，默认的<code>valueForUndefinedKey:</code>实现触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写这个行为。</p>
+
+<p><code>valueForKeyPath:</code>返回指定的key path的值，如果没有对应的key对象就会收到<code>valueForUndefinedKey:</code>消息。</p>
+
+<p><code>dictionaryWithValuesForKeys:</code> 返回一个数组keys的值。返回的NSDictionary包含对应的key和value.</p>
+
+<h3 id="kvc-4">用KVC设置属性值</h3>
+
+<p><code>setValue:forKey:</code>设置指定key的值，<code>setValue:forKey:</code>的默认实现会自动展开表示scalar和结构体的<code>NSValue</code>对象，并给属性赋值。如果指定的key不存在，接收者会收到<code>setValue:forUndefinedKey:</code>消息，默认的实现也会触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写该方法。</p>
+
+<p><code>setValue:forKeyPath:</code>跟单个key差不多的做法。</p>
+
+<p><code>setValuesForKeysWithDictionary:</code>用NSDictionary的keys来指定相应属性的值，默认实现会调用<code>setValue:forKey:</code>，如果需要用nil来替换NSNull对象。</p>
+
+<p>如果尝试给一个非对象属性设置nil值，接收者会给自己发送<code>setNilValueForKey:</code>消息，默认实现会触发<strong>NSInvalidArgumentException</strong>异常。应用可以重写该方法替换一个默认值或标记值，然后调用<code>setValue:forKey:</code>来设置新值。</p>
+
+<h3 id="section">简单属性的访问方法搜索模式</h3>
+
+<h4 id="setvalueforkey"><code>setValue:forKey:</code>的默认搜索模式</h4>
+
+<ol>
+  <li>搜索接收者的类是否有方法的名字匹配<code>set&lt;Key&gt;:</code></li>
+  <li>如果没有找到相应的方法，并且接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，搜索接收者的实例变量的名字是否有按下面顺序匹配的，<code>_&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code></li>
+  <li>如果找到了访问方法或实例变量，就对它进行赋值</li>
+  <li>如果没有找到对应的访问方法或实例变量，调用接收者的<code>setValue:forUndefinedKey:</code></li>
+</ol>
+
+<h4 id="valueforkey"><code>valueForKey:</code>的默认搜索模式</h4>
+
+<ol>
+  <li>搜索接收者类的访问方法名称是否有按<code>get&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>这个顺序匹配的。如果有这样的方法就调用。如果方法的返回值类型是对象指针就直接返回。如果返回值类型是scalar(简单)类型，并且可以转换为NSNumber，就返回NSNumber。其他的就转化为NSValue并返回。</li>
+  <li>Otherwise (no simple accessor method is found), searches the class of the receiver for methods whose names match the patterns <code>countOf&lt;Key&gt;</code> and <code>objectIn&lt;Key&gt;AtIndex:</code> (corresponding to the primitive methods defined by the NSArray class) and <code>&lt;key&gt;AtIndexes:</code> (corresponding to the NSArray method <code>objectsAtIndexes:</code>).
+ If the <code>countOf&lt;Key&gt;</code> method and at least one of the other two possible methods are found, a collection proxy object that   responds to all NSArray methods is returned. Each NSArray   message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>objectIn&lt;Key&gt;AtIndex:</code>, and <code>&lt;key&gt;AtIndexes:</code> messages being sent to the original receiver of <code>valueForKey:</code>. If the class of the receiver also    implements an optional method whose name matches the pattern <code>get&lt;Key&gt;:range:</code> that method will be used when appropriate for best performance.</li>
+  <li>Otherwise (no simple accessor method or set of array access methods is found), searches the class of the receiver for a threesome of methods whose names match the patterns <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and <code>memberOf&lt;Key&gt;:</code> (corresponding to the primitive methods defined by the NSSet class).
+ If all three methods are found, a collection proxy object   that responds to all NSSet methods is returned. Each NSSet  message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and    <code>memberOf&lt;Key&gt;:</code> messages being sent to the original    receiver of <code>valueForKey:</code>.</li>
+  <li>如果没有找到简单的访问方法或集合访问方法，如果接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，就按下面的顺序搜索接收者类的实例变量，<code> _&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>，如果找到了就返回对应实例变量的值，返回值类型如1中所描述的</li>
+  <li>如果上面的任何一种都没找到就返回<code>valueForUndefinedKey:</code>默认实现的值。</li>
+</ol>
+
+<p>上面的2，3中是针对集合的，这里只对简单的属性进行描述，集合的先略过。</p>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>iOS9 https问题</title>
+      <link href="http://mrmign.github.io/2015/07/11/ios9-https-wen-ti/"/>
+      <pubDate>2015-07-11T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/07/11/ios9-https-wen-ti</guid>
+      <content:encoded><![CDATA[<p>iOS9提高了http的请求安全，需要进行如下设置：</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><a name="True-1"></a><span class="nt">&lt;key&gt;</span>NSAppTransportSecurity<span class="nt">&lt;/key&gt;</span>  
+<a name="True-2"></a>  <span class="nt">&lt;dict&gt;</span>  
+<a name="True-3"></a>  <span class="nt">&lt;key&gt;</span>NSAllowsArbitraryLoads<span class="nt">&lt;/key&gt;</span>  
+<a name="True-4"></a>  <span class="nt">&lt;true/&gt;</span>  
+<a name="True-5"></a>  <span class="nt">&lt;/dict&gt;</span></code></pre></div>]]></content:encoded>
+    </item>
+    
+    <item>
       <title>ARM汇编</title>
       <link href="http://mrmign.github.io/2015/06/13/arm-hui-bian/"/>
       <pubDate>2015-06-13T00:00:00+08:00</pubDate>
@@ -458,6 +636,114 @@
     </item>
     
     <item>
+      <title>iOS7 Programming Cookbook笔记</title>
+      <link href="http://mrmign.github.io/2015/04/04/ios7-programming-cookbook-bi-ji/"/>
+      <pubDate>2015-04-04T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/04/04/ios7-programming-cookbook-bi-ji</guid>
+      <content:encoded><![CDATA[<h1 id="chapter-1">Chapter 1</h1>
+
+<h2 id="adding-object-and-index-subscription-support">Adding Object and Index Subscription Support</h2>
+
+<p>类似Dictionary和Array那种用下标来访问。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="k">@interface</span> <span class="nc">Person</span> : <span class="bp">NSObject</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">firstName</span><span class="p">;</span>
+<a name="True-4"></a><span class="k">@property</span> <span class="p">(</span><span class="k">nonatomic</span><span class="p">,</span> <span class="k">copy</span><span class="p">)</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">lastName</span><span class="p">;</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="c1">// object subscription</span>
+<a name="True-7"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectForKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">;</span>
+<a name="True-8"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">forKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">;</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="c1">// index subscription</span>
+<a name="True-11"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectAtIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">;</span>
+<a name="True-12"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">atIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">;</span>
+<a name="True-13"></a><span class="k">@end</span></code></pre></div>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="bp">NSString</span> <span class="o">*</span><span class="k">const</span> <span class="n">kFirstNameKey</span> <span class="o">=</span> <span class="s">@&quot;firstName&quot;</span><span class="p">;</span>
+<a name="True-2"></a><span class="bp">NSString</span> <span class="o">*</span><span class="k">const</span> <span class="n">kLastNameKey</span> <span class="o">=</span> <span class="s">@&quot;lastName&quot;</span><span class="p">;</span>
+<a name="True-3"></a>
+<a name="True-4"></a><span class="k">@implementation</span> <span class="nc">Person</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectForKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">{</span>
+<a name="True-7"></a>    <span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">keyAsObject</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="n">paramKey</span><span class="p">;</span>
+<a name="True-8"></a>    <span class="k">if</span> <span class="p">([</span><span class="n">keyAsObject</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="bp">NSString</span> <span class="k">class</span><span class="p">]]){</span>
+<a name="True-9"></a>        <span class="bp">NSString</span> <span class="o">*</span><span class="n">keyAsString</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">keyAsObject</span><span class="p">;</span>
+<a name="True-10"></a>        <span class="k">if</span> <span class="p">([</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">||</span>
+<a name="True-11"></a>            <span class="p">[</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kLastNameKey</span><span class="p">]){</span>
+<a name="True-12"></a>            <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">valueForKey</span><span class="p">:</span><span class="n">keyAsString</span><span class="p">];</span>
+<a name="True-13"></a>        <span class="p">}</span>
+<a name="True-14"></a>    <span class="p">}</span>
+<a name="True-15"></a>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+<a name="True-16"></a><span class="p">}</span>
+<a name="True-17"></a>
+<a name="True-18"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">forKeyedSubscript:</span><span class="p">(</span><span class="kt">id</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span><span class="p">)</span><span class="nv">paramKey</span><span class="p">{</span>
+<a name="True-19"></a>    <span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">keyAsObject</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSObject</span><span class="o">&lt;</span><span class="bp">NSCopying</span><span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span><span class="n">paramKey</span><span class="p">;</span>
+<a name="True-20"></a>    <span class="k">if</span> <span class="p">([</span><span class="n">keyAsObject</span> <span class="nl">isKindOfClass</span><span class="p">:[</span><span class="bp">NSString</span> <span class="k">class</span><span class="p">]]){</span>
+<a name="True-21"></a>        <span class="bp">NSString</span> <span class="o">*</span><span class="n">keyAsString</span> <span class="o">=</span> <span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="n">keyAsObject</span><span class="p">;</span>
+<a name="True-22"></a>        <span class="k">if</span> <span class="p">([</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">||</span>
+<a name="True-23"></a>            <span class="p">[</span><span class="n">keyAsString</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">kLastNameKey</span><span class="p">]){</span>
+<a name="True-24"></a>            <span class="p">[</span><span class="nb">self</span> <span class="nl">setValue</span><span class="p">:</span><span class="nl">paramObjectforKey</span><span class="p">:</span><span class="n">keyAsString</span><span class="p">];</span>
+<a name="True-25"></a>        <span class="p">}</span>
+<a name="True-26"></a>    <span class="p">}</span>
+<a name="True-27"></a><span class="p">}</span>
+<a name="True-28"></a>
+<a name="True-29"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span> <span class="nf">objectAtIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">{</span>
+<a name="True-30"></a>
+<a name="True-31"></a>    <span class="k">switch</span> <span class="p">(</span><span class="n">paramIndex</span><span class="p">){</span>
+<a name="True-32"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span><span class="p">{</span>
+<a name="True-33"></a>            <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">firstName</span><span class="p">;</span>
+<a name="True-34"></a>            <span class="k">break</span><span class="p">;</span>
+<a name="True-35"></a>        <span class="p">}</span>
+<a name="True-36"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span><span class="p">{</span>
+<a name="True-37"></a>            <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">lastName</span><span class="p">;</span>
+<a name="True-38"></a>            <span class="k">break</span><span class="p">;</span>
+<a name="True-39"></a>        <span class="p">}</span>
+<a name="True-40"></a>        <span class="k">default</span><span class="o">:</span><span class="p">{</span>
+<a name="True-41"></a>            <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="s">@&quot;Invalid index&quot;</span> <span class="nl">format</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<a name="True-42"></a>        <span class="p">}</span>
+<a name="True-43"></a>    <span class="p">}</span>
+<a name="True-44"></a>
+<a name="True-45"></a>    <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+<a name="True-46"></a><span class="p">}</span>
+<a name="True-47"></a>
+<a name="True-48"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">setObject:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">paramObject</span> <span class="nf">atIndexedSubscript:</span><span class="p">(</span><span class="bp">NSUInteger</span><span class="p">)</span><span class="nv">paramIndex</span><span class="p">{</span>
+<a name="True-49"></a>    <span class="k">switch</span> <span class="p">(</span><span class="n">paramIndex</span><span class="p">){</span>
+<a name="True-50"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span><span class="p">{</span>
+<a name="True-51"></a>            <span class="nb">self</span><span class="p">.</span><span class="n">firstName</span> <span class="o">=</span> <span class="n">paramObject</span><span class="p">;</span>
+<a name="True-52"></a>            <span class="k">break</span><span class="p">;</span>
+<a name="True-53"></a>        <span class="p">}</span>
+<a name="True-54"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span><span class="p">{</span>
+<a name="True-55"></a>            <span class="nb">self</span><span class="p">.</span><span class="n">lastName</span> <span class="o">=</span> <span class="n">paramObject</span><span class="p">;</span>
+<a name="True-56"></a>            <span class="k">break</span><span class="p">;</span>
+<a name="True-57"></a>        <span class="p">}</span>
+<a name="True-58"></a>        <span class="k">default</span><span class="o">:</span><span class="p">{</span>
+<a name="True-59"></a>            <span class="p">[</span><span class="bp">NSException</span> <span class="nl">raise</span><span class="p">:</span><span class="s">@&quot;Invalid index&quot;</span> <span class="nl">format</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<a name="True-60"></a>        <span class="p">}</span>
+<a name="True-61"></a>    <span class="p">}</span>
+<a name="True-62"></a><span class="p">}</span> 
+<a name="True-63"></a><span class="k">@end</span></code></pre></div>
+<p>利用下标来操作对象。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">Person</span> <span class="o">*</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">Person</span> <span class="n">new</span><span class="p">];</span>
+<a name="True-2"></a><span class="n">person</span><span class="p">[</span><span class="n">kFirstNameKey</span><span class="p">]</span> <span class="o">=</span> <span class="s">@&quot;Tim&quot;</span><span class="p">;</span>
+<a name="True-3"></a><span class="n">person</span><span class="p">[</span><span class="n">kLastNameKey</span><span class="p">]</span> <span class="o">=</span> <span class="s">@&quot;Cook&quot;</span><span class="p">;</span>
+<a name="True-4"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">firstNameByKey</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="n">kFirstNameKey</span><span class="p">];</span>
+<a name="True-5"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">lastNameByKey</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="n">kLastNameKey</span><span class="p">];</span>
+<a name="True-6"></a>
+<a name="True-7"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">firstNameByIndex</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<a name="True-8"></a><span class="bp">NSString</span> <span class="o">*</span><span class="n">lastNameByIndex</span> <span class="o">=</span> <span class="n">person</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="k">if</span> <span class="p">([</span><span class="n">firstNameByKey</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">firstNameByIndex</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
+<a name="True-11"></a>    <span class="p">[</span><span class="n">lastNameByKey</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="n">lastNameByIndex</span><span class="p">]){</span>
+<a name="True-12"></a>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Success&quot;</span><span class="p">);</span>
+<a name="True-13"></a><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<a name="True-14"></a>    <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;Something is not right&quot;</span><span class="p">);</span>
+<a name="True-15"></a><span class="p">}</span></code></pre></div>
+]]></content:encoded>
+    </item>
+    
+    <item>
       <title>ios programming cookTips</title>
       <link href="http://mrmign.github.io/2015/03/17/ios-programming-cooktips/"/>
       <pubDate>2015-03-17T00:00:00+08:00</pubDate>
@@ -525,152 +811,6 @@ imageView.layer.maskToBounds = YEA;</p>
 <p>copy them to a save place! Now remove all .svn dirs from your copy and run an update on your local project and copy back the »obstructed« dirs/files.
 <code>Find and delete the .svn files
 $ find ./ -name ".svn" | xargs rm -Rf</code></p>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>strange iOS problems</title>
-      <link href="http://mrmign.github.io/2015/01/13/strange-ios-problems/"/>
-      <pubDate>2015-01-13T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/01/13/strange-ios-problems</guid>
-      <content:encoded><![CDATA[<ol>
-  <li>
-    <p>当为view添加UIGestureRecognizer后，如果view的frame重新设置了，添加过的手势识别会清除掉，
-可以通过view的gestureRecognizers(这是一个数组，存放各种手势)的大小来判断。</p>
-  </li>
-  <li>
-    <p>property follows cocoa naming convention for returning owned objects</p>
-  </li>
-</ol>
-
-<p>问题的原因是因为声明的变量格式不对，<code>@property (nonatomic, strong) Phrase *newPhrase;</code>变量以new开头，Xcode/ARC不会自动生成getter/setter方法。避免类似的问题，在声明属性时不要以下面的开头：</p>
-
-<ul>
-  <li>new</li>
-  <li>alloc</li>
-  <li>copy</li>
-  <li>mutableCopy</li>
-</ul>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>reverse iOS apps</title>
-      <link href="http://mrmign.github.io/2014/12/25/reverse-ios-apps/"/>
-      <pubDate>2014-12-25T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2014/12/25/reverse-ios-apps</guid>
-      <content:encoded><![CDATA[<h1 id="section">准备工作：</h1>
-
-<h2 id="section-1">越狱</h2>
-
-<p>网上自己找相关教程</p>
-
-<h2 id="section-2">安装逆向需要的工具</h2>
-
-<p><a href="http://reverseengineeringapps.blogspot.de/2014/11/reverse-engineering-ios-mobile.html?m=1">一些越狱软件</a></p>
-
-<p>根据上面的链接安装了Rasticrac之后，运行的时候是 <code>rc.sh -m</code>, 我的机器是iOS 8.1，该脚本安装在<code>/usr/bin/</code>目录下，
-与文章里说的不一样。下面在运行<code>rc.sh -m</code>会列出已经安装的app, 并且会给每个应用加个快选的菜单，这一点很人性啊。
-这个软件破解成功率还是蛮高的，但是在尝试微信的时候出错了，所以还得需要其他的破解方式，下面解释另一种方式。</p>
-
-<p>安装dumpdecrypt手动进行破解, <a href="http://bbs.iosre.com/forum.php?mod=viewthread&amp;tid=7&amp;extra=page%3D1">参考这里</a></p>
-
-<h2 id="section-3">其他一些方便的工具</h2>
-
-<p>通过USB来SSH登录手机，这种方式比通过wifi要快。 <a href="http://bbs.iosre.com/forum.php?mod=viewthread&amp;tid=185&amp;highlight=usb">参考这里</a></p>
-
-<p>有时候自己来写个脚本减少点体力活还是必须的，安装Python必须的，如何安装 <a href="http://www.reddit.com/r/jailbreak/comments/1yl39t/tutorial_how_to_install_python_2763_pip_on_ios/">参考这里</a></p>
-
-<p>当然，可以写shell脚本，但是我不是很熟，python还是比较熟手的。也想用过Lua，但是Lua的系统支持不是很好，好处就是解释器那个小啊。</p>
-
-<h3 id="cpu">CPU架构</h3>
-
-<ul>
-  <li>iPhone4, 4S, iTouch 5 armv7</li>
-  <li>iPhone5 armv7s</li>
-  <li>iPhone5s, iPhone6 arm64</li>
-</ul>
-
-<h2 id="ios">重新签名iOS二进制文件</h2>
-
-<ol>
-  <li>进入到应用目录中如，/var/mobile/Containers/Bundle/Application/xxxx/xxx.app</li>
-  <li>ldone xxx(应用名) -s, 使用ldone重新签名可执行文件</li>
-  <li>chmod 755  xxx</li>
-  <li>chown mobile.mobile xxx</li>
-</ol>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>swift notes</title>
-      <link href="http://mrmign.github.io/2014/10/19/swift-notes/"/>
-      <pubDate>2014-10-19T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2014/10/19/swift-notes</guid>
-      <content:encoded><![CDATA[<h2 id="strings-and-character">Strings and Character</h2>
-
-<blockquote>
-  <p>A Unicode scalar is any Unicode code point in the range U+0000 to U+D7FF inclusive or U+E000 to U+10FFFF inclusive. Unicode scalars do not include the Unicode surrogate pair code points in the range U+D800 to U+DFFF inclusive.</p>
-</blockquote>
-
-<p>An arbitrary Unicode scalar, written as \u{n}, where n is between one and eight hexadecimal digits</p>
-
-<p>the length property from NSString is called utf16Count when it is accessed on a Swift String value</p>
-
-<ul>
-  <li>单字节 \xnn</li>
-  <li>双字节 \unnnn</li>
-  <li>四字节 \Unnnnnnnn</li>
-</ul>
-
-<blockquote>
-  <p>值类型的在传递给函数，方法，赋值时都进行拷贝。</p>
-</blockquote>
-
-<p>if let old = dict.updateValue(“aaa”, forKey: “aaa”) {
-    println(“not nil”)
-}
-else {
-    println(“nil”)
-}</p>
-
-<p>这里updateValue返回optional value，这里为什么可以在if中直接声明常量？条件判断里应该只允许使用Bool值？</p>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>LATEX学习</title>
-      <link href="http://mrmign.github.io/2014/09/21/learning-latex/"/>
-      <pubDate>2014-09-21T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2014/09/21/learning-latex</guid>
-      <content:encoded><![CDATA[<h2 id="mactex-">MacTex 中文显示问题</h2>
-
-<div class="highlight"><pre><code class="language-latex" data-lang="latex"><a name="True-1"></a><span class="k">\documentclass</span><span class="nb">{</span>article<span class="nb">}</span>
-<a name="True-2"></a>
-<a name="True-3"></a><span class="c">%下面两行是用来支持中文的</span>
-<a name="True-4"></a><span class="k">\usepackage</span><span class="nb">{</span>fontspec,xltxtra,xunicode<span class="nb">}</span>
-<a name="True-5"></a><span class="k">\defaultfontfeatures</span><span class="nb">{</span>Mapping=tex-text<span class="nb">}</span>
-<a name="True-6"></a>
-<a name="True-7"></a><span class="k">\setmainfont</span><span class="nb">{</span>Songti SC Regular<span class="nb">}</span> <span class="c">%设置字体，字体可以从系统的字体册里查找</span>
-<a name="True-8"></a>
-<a name="True-9"></a><span class="k">\newfontfamily</span><span class="nb">{</span><span class="k">\H</span><span class="nb">}{</span>Times New Roman<span class="nb">}</span> <span class="c">%字体也是从字体册里找，必须是系统里有的字体才行</span>
-<a name="True-10"></a>
-<a name="True-11"></a><span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
-<a name="True-12"></a><span class="k">\LaTeX</span>3是一个长远的目标，在它最张骞害怕成前, <span class="k">\LaTeXe</span><span class="nb">{}</span>是标准 <span class="k">\LaTeX\ </span>版本.
-<a name="True-13"></a>
-<a name="True-14"></a><span class="nb">{</span><span class="k">\H</span> this is english<span class="nb">}</span>
-<a name="True-15"></a>
-<a name="True-16"></a>aaabbb
-<a name="True-17"></a><span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span></code></pre></div>
-
-<p>一时兴起，体会了把高大上的Latex，功能是强大的很啊，可是对于我等码农不用写高深的公式，也不出书立传的，貌似用不到点上了，用markdown足矣。。。束之高阁。</p>
-
 ]]></content:encoded>
     </item>
     
