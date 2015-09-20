@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Motion Design for iOS(part 3)</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Motion Design for iOS(part 3)</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-08-04">2015-08-04</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#iOS" title="iOS">iOS</a>&nbsp;
+  
+  <a href="/tags/#animation" title="animation">animation</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h1 id="motion-design-for-iospart-3">Motion Design for iOS(part 3)</h1>
+
+<p><a href="https://en.wikipedia.org/wiki/Transformation_matrix">math around matrix transformations</a></p>
+
+<p>Core Animation</p>
+
+<ul>
+  <li><code>CGAffineTransformMakeScale</code></li>
+</ul>
+
+<h3 id="two-animation-frameworks">Two Animation Frameworks</h3>
+
+<ul>
+  <li><a href="https://github.com/jwilling/JNWSpringAnimation">JNWSpringAnimation</a></li>
+  <li><a href="https://github.com/facebook/pop">Pop by Facebook</a></li>
+</ul>
+
+<p><code>CAKeyframeAnimation</code></p>
+
+<h3 id="spring-animation-properties">Spring animation Properties</h3>
+
+<ul>
+  <li>Damping</li>
+  <li>stiffness</li>
+  <li>mass</li>
+</ul>
+
+<h3 id="core-animation">Core Animation维护了三个层树</h3>
+
+<ol>
+  <li>Model layer tree. 当层静止没有动的时候它显示层的所有属性。如设置<code>view.layer.cornerRadius=50</code>的时候我们是在model layer上设置的属性。model layer上的属性是接触最多的，任何时候改变layer的属性都是在model layer上改的。在动画过程中model layer上值不会改变。</li>
+  <li>Presentation layer tree.该层呈现动画过程中层上的属性，并且属性值都是实时的。不要在该层设置任何值，相反你可以通过该层读取当前动画的相关值。</li>
+  <li>Render tree.渲染树是苹果私有的值，用来做真正的图像渲染，不需要知道这些值。</li>
+</ol>
+
+<p>当我们给层添加动画时候，是在presentation tree上计算动画的值，当动画结束后，动画自动从presentation层上移除，并且presentation tree的值马上变回model layer的值(因为这些值才真正反应了层的静态属性)。如果我们想让层的属性变为动画最后的值，我们需要显示的指定。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
+<a name="True-2"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
+<a name="True-3"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+<a name="True-4"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<a name="True-5"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">1.0</span><span class="l">)</span><span class="p">;</span>
+<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">2.0</span><span class="l">)</span><span class="p">;</span>
+<a name="True-8"></a>
+<a name="True-9"></a><span class="p">[</span><span class="n">redBall</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
+<a name="True-10"></a><span class="n">redBall</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">CGAffineTransformMakeScale</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span></code></pre></div>
+<p>上面的动画在执行完成后就被移除了，layer的实际变换值会与动画的最终值相符，ball保持2倍大小。</p>
+
+<p>在使用UIView基于block的动画方法的时候我们不需要这样做，是因为 这些方法自动地维持了最终的值不需要特意去设置。使用UIView基于block的动画方法的缺点就是只能使用默认的简单动画，如果想使用复杂的动画效果还是要使用<code>CAAnimation</code>对象，像<code>JNWSpringAnimation</code>。</p>
+
+<h3 id="uiview-animation-options">UIView animation options</h3>
+
+<p><code>UIViewAnimationOptionBeginFromCurrentState</code></p>
+
+<h3 id="jnwspringanimation">JNWSpringAnimation</h3>
+
+<p>相同的<code>damping</code>和<code>stiffness</code>可以缓慢的拖没有反弹效果，只是平滑渐近地变换。</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">CGFloat</span> <span class="n">dampingStiffness</span> <span class="o">=</span> <span class="mf">16.0f</span><span class="p">;</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">// Scale animation for the main app background</span>
+<a name="True-4"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
+<a name="True-5"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
+<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
+<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
+<a name="True-8"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<a name="True-9"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="p">[[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">presentationLayer</span>
+<a name="True-10"></a>    <span class="nl">valueForKeyPath</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">]</span> <span class="n">floatValue</span><span class="p">]</span><span class="l">)</span><span class="p">;</span>
+<a name="True-11"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">0.9</span><span class="l">)</span><span class="p">;</span>
+<a name="True-12"></a>
+<a name="True-13"></a><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
+<a name="True-14"></a><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span>
+<a name="True-15"></a>    <span class="n">CGAffineTransformScale</span><span class="p">(</span><span class="n">CGAffineTransformIdentity</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.9</span><span class="p">);</span></code></pre></div>
+<p>上面代码中的fromValue不再是固定值了，因为presentationLayer知道动画过程中的各个属性值，防止动画还没线束又发生改变，这样就可以从当前的值执行了。不会有跳变的现象。</p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/08/04/motion-design-for-iospart-2/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2015/08/09/motion-design-for-iospart-4/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
