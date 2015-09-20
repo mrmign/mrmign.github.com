@@ -114,33 +114,31 @@
 
 <div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="kt">void</span> <span class="nf">wax_setup</span><span class="p">()</span> <span class="p">{</span>
 <a name="True-2"></a>	<span class="n">NSSetUncaughtExceptionHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="n">uncaughtExceptionHandler</span><span class="p">);</span> 
-<a name="True-3"></a>	
-<a name="True-4"></a>    <span class="bp">NSFileManager</span> <span class="o">*</span><span class="n">fileManager</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSFileManager</span> <span class="n">defaultManager</span><span class="p">];</span>
-<a name="True-5"></a>    <span class="p">[</span><span class="n">fileManager</span> <span class="nl">changeCurrentDirectoryPath</span><span class="p">:[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">bundlePath</span><span class="p">]];</span>
-<a name="True-6"></a>    
-<a name="True-7"></a>    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">wax_currentLuaState</span><span class="p">();</span>
-<a name="True-8"></a>	<span class="n">lua_atpanic</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wax_panic</span><span class="p">);</span>
-<a name="True-9"></a>    
-<a name="True-10"></a>    <span class="n">luaL_openlibs</span><span class="p">(</span><span class="n">L</span><span class="p">);</span> 
-<a name="True-11"></a>
-<a name="True-12"></a>	<span class="n">luaopen_wax_class</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
-<a name="True-13"></a>    <span class="n">luaopen_wax_instance</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
-<a name="True-14"></a>    <span class="n">luaopen_wax_struct</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<a name="True-3"></a>    <span class="bp">NSFileManager</span> <span class="o">*</span><span class="n">fileManager</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSFileManager</span> <span class="n">defaultManager</span><span class="p">];</span>
+<a name="True-4"></a>    <span class="p">[</span><span class="n">fileManager</span> <span class="nl">changeCurrentDirectoryPath</span><span class="p">:[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span> <span class="n">bundlePath</span><span class="p">]];</span>
+<a name="True-5"></a>    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">wax_currentLuaState</span><span class="p">();</span>
+<a name="True-6"></a>	<span class="n">lua_atpanic</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wax_panic</span><span class="p">);</span>
+<a name="True-7"></a>    
+<a name="True-8"></a>    <span class="n">luaL_openlibs</span><span class="p">(</span><span class="n">L</span><span class="p">);</span> 
+<a name="True-9"></a>
+<a name="True-10"></a>	<span class="n">luaopen_wax_class</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<a name="True-11"></a>    <span class="n">luaopen_wax_instance</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<a name="True-12"></a>    <span class="n">luaopen_wax_struct</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
+<a name="True-13"></a>	
+<a name="True-14"></a>    <span class="n">addGlobals</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
 <a name="True-15"></a>	
-<a name="True-16"></a>    <span class="n">addGlobals</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>
-<a name="True-17"></a>	
-<a name="True-18"></a>	<span class="p">[</span><span class="n">wax_gc</span> <span class="n">start</span><span class="p">];</span>
-<a name="True-19"></a><span class="p">}</span></code></pre></div>
+<a name="True-16"></a>	<span class="p">[</span><span class="n">wax_gc</span> <span class="n">start</span><span class="p">];</span>
+<a name="True-17"></a><span class="p">}</span></code></pre></div>
 
 <p>在wax_class中创建<code>wax.class</code>表，wax_instance创建<code>wax.instance</code>表，wax_struct创建<code>waxt.struct</code>表。</p>
 
 <p>运行wax的stdlib, 这个stdlib是用lua写的，</p>
 
-<div class="highlight"><pre><code class="language-c" data-lang="c"><a name="True-1"></a><span class="n">wax_start</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">initScipt</span><span class="p">,</span> <span class="n">lua_CFunction</span> <span class="n">extension</span><span class="p">,</span> <span class="p">...)</span>
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">wax_start</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">initScipt</span><span class="p">,</span> <span class="n">lua_CFunction</span> <span class="n">extension</span><span class="p">,</span> <span class="p">...)</span>
 <a name="True-2"></a>    <span class="n">wax_setup</span><span class="p">();</span>
 <a name="True-3"></a>        <span class="n">luaopen_wax_class</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>        <span class="c1">//lua访问Cocoa</span>
-<a name="True-4"></a>            <span class="n">Finds</span> <span class="n">an</span> <span class="n">objc</span> <span class="n">class</span>      <span class="c1">//__index</span>
-<a name="True-5"></a>            <span class="n">Creates</span> <span class="n">a</span> <span class="n">new</span> <span class="n">Objc</span> <span class="n">class</span> <span class="c1">//__call</span>
+<a name="True-4"></a>            <span class="n">Finds</span> <span class="n">an</span> <span class="n">objc</span> <span class="k">class</span>      <span class="c1">//__index</span>
+<a name="True-5"></a>            <span class="n">Creates</span> <span class="n">a</span> <span class="n">new</span> <span class="n">Objc</span> <span class="k">class</span> <span class="c1">//__call</span>
 <a name="True-6"></a>
 <a name="True-7"></a>        <span class="n">luaopen_wax_instance</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>     <span class="c1">//Cocoa对象</span>
 <a name="True-8"></a>        <span class="n">luaopen_wax_struct</span><span class="p">(</span><span class="n">L</span><span class="p">);</span>       <span class="c1">//Cocoa struct</span>
