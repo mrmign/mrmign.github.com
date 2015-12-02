@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>iOS上播放消息提示音及振动总结</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>iOS上播放消息提示音及振动总结</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-09-21">2015-09-21</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#iOS" title="iOS">iOS</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<p>在QQ，微信中当收到新消息的时候会播放提示音或是振动，亦或是声音+振动，如何在自己的应用中实现同样的功能呢？</p>
+
+<h3 id="section">播放提示音</h3>
+
+<p>当应用在前台运行收到消息时，这个时候要播放消息的提示音了，如何播放直接上代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="cm">/* 播放完成回调 */</span>
+<a name="True-2"></a><span class="kt">void</span> <span class="nf">AudioSoundPlayComplete</span><span class="p">(</span><span class="n">SystemSoundID</span> <span class="n">soundid</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">clientData</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">{</span>
+<a name="True-4"></a>    <span class="n">AudioServicesRemoveSystemSoundCompletion</span><span class="p">(</span><span class="n">soundid</span><span class="p">);</span>
+<a name="True-5"></a>    <span class="n">AudioServicesDisposeSystemSoundID</span><span class="p">(</span><span class="n">soundid</span><span class="p">);</span>
+<a name="True-6"></a>    <span class="n">AlertSoundService</span> <span class="o">*</span><span class="n">alerService</span> <span class="o">=</span> <span class="p">(</span><span class="k">__bridge</span> <span class="n">AlertSoundService</span><span class="o">*</span><span class="p">)</span><span class="n">clientData</span><span class="p">;</span>
+<a name="True-7"></a>    <span class="p">[</span><span class="n">alerService</span> <span class="nl">stopPlaySound</span><span class="p">:</span><span class="n">soundid</span><span class="p">];</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="p">-</span> <span class="p">(</span><span class="n">SystemSoundID</span><span class="p">)</span><span class="nf">playSound:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">soundName</span>
+<a name="True-11"></a><span class="p">{</span>
+<a name="True-12"></a>    <span class="n">SystemSoundID</span> <span class="n">ssid</span><span class="p">;</span>
+<a name="True-13"></a>    <span class="bp">NSString</span><span class="o">*</span> <span class="n">pathName</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span> 
+<a name="True-14"></a>    <span class="n">pathName</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span><span class="nl">pathForResource</span><span class="p">:</span><span class="n">soundName</span> <span class="nl">ofType</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<a name="True-15"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">pathName</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>        <span class="c1">//将NSString类型路径名转换为NSURL类型</span>
+<a name="True-17"></a>        <span class="bp">NSURL</span><span class="o">*</span> <span class="n">pathUrl</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSURL</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initFileURLWithPath</span><span class="p">:</span><span class="n">pathName</span><span class="p">];</span>
+<a name="True-18"></a>        <span class="k">if</span> <span class="p">(</span><span class="n">pathUrl</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-19"></a>            <span class="n">OSStatus</span> <span class="n">err</span> <span class="o">=</span> <span class="n">AudioServicesCreateSystemSoundID</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFURLRef</span><span class="p">)</span><span class="n">pathUrl</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ssid</span><span class="p">);</span>
+<a name="True-20"></a>            <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">==</span> <span class="n">kAudioServicesNoError</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-21"></a>                <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">ssid</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">AudioSoundPlayComplete</span><span class="p">,</span>  <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-22"></a>                <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">ssid</span><span class="p">);</span>
+<a name="True-23"></a>                <span class="k">return</span> <span class="n">ssid</span><span class="p">;</span>
+<a name="True-24"></a>            <span class="p">}</span>
+<a name="True-25"></a>            <span class="k">else</span>
+<a name="True-26"></a>            <span class="p">{</span>
+<a name="True-27"></a>                <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;create system sound id fail,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-28"></a>                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-29"></a>            <span class="p">}</span>
+<a name="True-30"></a>        <span class="p">}</span>
+<a name="True-31"></a>        <span class="k">else</span>
+<a name="True-32"></a>        <span class="p">{</span>
+<a name="True-33"></a>            <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;path with NSString convert to path with NSURL fail!!!,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-34"></a>            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-35"></a>        <span class="p">}</span>
+<a name="True-36"></a>    <span class="p">}</span>
+<a name="True-37"></a>    <span class="k">else</span>
+<a name="True-38"></a>    <span class="p">{</span>
+<a name="True-39"></a>        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;the path for sound play is nil,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-40"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-41"></a>    <span class="p">}</span>
+<a name="True-42"></a><span class="p">}</span></code></pre></div>
+<p>播放提示音是传入要播放的声音文件的名称，从bundle寻找对应文件找到了就进行播放，这里添加了系统声音播放完成后的回调，以便在声音播放结束后进行其他处理，比如如果需要根据不同的消息播放不同的提示音，如果当前正在播放提示音1，此时收到其他消息要播放提示音2，这里就不能简单的直接调用该方法进行播放了，我们需要一个播放队列，把要播放的提示音添加到队列中来处理，当播放完成一个后就需要从队列移除，此时播放完成的回调就派上用场了。</p>
+
+<h3 id="section-1">振动</h3>
+
+<p>如果要振动提示又该如何实现呢？系统为我们提供了振动的soundID <code>kSystemSoundID_Vibrate</code>，可以直接使用该soundID实现振动，代码如下:</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="kt">void</span> <span class="nf">VibratePlayComplete</span><span class="p">(</span><span class="n">SystemSoundID</span> <span class="n">soundId</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">clientData</span><span class="p">)</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="n">AudioServicesRemoveSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-4"></a>    <span class="n">AudioServicesDisposeSystemSoundID</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-5"></a><span class="p">}</span>
+<a name="True-6"></a>
+<a name="True-7"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playVibrate</span>
+<a name="True-8"></a><span class="p">{</span>
+<a name="True-9"></a>    <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">VibratePlayComplete</span><span class="p">,</span> <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-10"></a>    <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-11"></a><span class="p">}</span></code></pre></div>
+<p>这里振动实现与播放提示音方法基本一致，只是传的soundID参数不同，在播放提示音时ssid是根据我们的音频文件生成的，而振动是系统定义的。振动完成后也有回调方法进行特殊处理，与播放声音的实现一致。</p>
+
+<p>通过上面的方法我们就实现了消息提示音及振动，这里只是简单的实现，但是在实际场景下还需要添加其他的逻辑处理，比如连续收消息，不能一直播放提示音或是振动吧，用户会不爽的，可以在播放完成提示音后设置一个时间间隔，比如2秒钟内收到消息就不播提示音不振动，超过2秒再有提示，这些都需要根据具体业务需求来处理了。</p>
+
+<p>既然已经实现了播放提示音与振动，那如果我想根据系统是否静音来选择哪种提示：</p>
+
+<ul>
+  <li>如果系统是静音模式，消息提示为振动</li>
+  <li>如果系统是正常模式，消息提示为提示音</li>
+</ul>
+
+<p>看起来不难嘛，我们读取系统的音量，根据音量大小来判断系统是否是静音不就OK了，那如何读取系统音量呢，一番查资料后，找到如下几种方案：</p>
+
+<h4 id="section-2">方案1：</h4>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">Float32</span> <span class="n">volume</span><span class="p">;</span>
+<a name="True-2"></a><span class="kt">UInt32</span> <span class="n">dataSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Float32</span><span class="p">);</span>
+<a name="True-3"></a><span class="n">AudioSessionGetProperty</span> <span class="p">(</span>
+<a name="True-4"></a>                     <span class="n">kAudioSessionProperty_CurrentHardwareOutputVolume</span><span class="p">,</span>
+<a name="True-5"></a>                     <span class="o">&amp;</span><span class="n">dataSize</span><span class="p">,</span>
+<a name="True-6"></a>                     <span class="o">&amp;</span><span class="n">volume</span>
+<a name="True-7"></a>                     <span class="p">);</span></code></pre></div>
+<p>该方案中获取的音量值一直不变。放弃！</p>
+
+<h4 id="httpblogcsdnnetslinlossarticledetails7870559">方案2：<a href="http://blog.csdn.net/slinloss/article/details/7870559">链接</a></h4>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a> <span class="o">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="n">isMuted</span>  
+<a name="True-2"></a><span class="p">{</span>  
+<a name="True-3"></a>    <span class="n">CFStringRef</span> <span class="n">route</span><span class="p">;</span>  
+<a name="True-4"></a>    <span class="kt">UInt32</span> <span class="n">routeSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">CFStringRef</span><span class="p">);</span>  
+<a name="True-5"></a>    <span class="n">OSStatus</span> <span class="n">status</span> <span class="o">=</span> <span class="n">AudioSessionGetProperty</span><span class="p">(</span><span class="n">kAudioSessionProperty_AudioRoute</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">routeSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">route</span><span class="p">);</span>  
+<a name="True-6"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="n">kAudioSessionNoError</span><span class="p">)</span>  
+<a name="True-7"></a>    <span class="p">{</span>  
+<a name="True-8"></a>        <span class="k">if</span> <span class="p">(</span><span class="n">route</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="o">!</span><span class="n">CFStringGetLength</span><span class="p">(</span><span class="n">route</span><span class="p">))</span>  
+<a name="True-9"></a>            <span class="k">return</span> <span class="nb">TRUE</span><span class="p">;</span>  
+<a name="True-10"></a>    <span class="p">}</span>  
+<a name="True-11"></a>    <span class="k">return</span> <span class="nb">FALSE</span><span class="p">;</span>  
+<a name="True-12"></a><span class="p">}</span> 
+<a name="True-13"></a>
+<a name="True-14"></a> <span class="o">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="n">addMutedListener</span>  
+<a name="True-15"></a><span class="p">{</span>  
+<a name="True-16"></a>    <span class="n">OSStatus</span> <span class="n">s</span> <span class="o">=</span> <span class="n">AudioSessionAddPropertyListener</span><span class="p">(</span><span class="n">kAudioSessionProperty_AudioRouteChange</span><span class="p">,</span>  
+<a name="True-17"></a>    <span class="n">audioRouteChangeListenerCallback</span><span class="p">,</span>  
+<a name="True-18"></a>    <span class="nb">self</span><span class="p">);</span>  
+<a name="True-19"></a>    <span class="k">return</span> <span class="n">s</span> <span class="o">==</span> <span class="n">kAudioSessionNoError</span><span class="p">;</span>  
+<a name="True-20"></a><span class="p">}</span>  
+<a name="True-21"></a><span class="kt">void</span> <span class="n">audioRouteChangeListenerCallback</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">inUserData</span><span class="p">,</span>  
+<a name="True-22"></a>                                       <span class="n">AudioSessionPropertyID</span> <span class="n">inPropertyID</span><span class="p">,</span>  
+<a name="True-23"></a>                                       <span class="kt">UInt32</span> <span class="n">inPropertyValueSize</span><span class="p">,</span>  
+<a name="True-24"></a>                                       <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">inPropertyValue</span>  
+<a name="True-25"></a>                                       <span class="p">)</span>  
+<a name="True-26"></a><span class="p">{</span>  
+<a name="True-27"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">inPropertyID</span> <span class="o">!=</span> <span class="n">kAudioSessionProperty_AudioRouteChange</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  
+<a name="True-28"></a>    <span class="kt">BOOL</span> <span class="n">muted</span> <span class="o">=</span> <span class="p">[</span><span class="n">mediaVolume</span> <span class="n">isMuted</span><span class="p">];</span>  
+<a name="True-29"></a>    <span class="c1">// add code here  </span>
+<a name="True-30"></a><span class="p">}</span></code></pre></div>
+<p>该方案中使用的方法在iOS7中已不建议使用了，而且该方案在尝试的过程中一直不成功。</p>
+
+<h4 id="httpsharkfoodcomcontentdeveloperscontentsound20switch">方案3：<a href="http://sharkfood.com/content/Developers/content/Sound%20Switch/">链接</a></h4>
+
+<p>该方案中使用的方法是播放一段无声的系统声，判断播放完成所需要的时间，如果获得的时长接近0则表示系统处于静音状态。该方案通过笨方法实现静音的检测，虽然性能不高，因为要一直循环着播放无声的音频文件来检测系统静音状态，但是可以通过正常的API调用来得到系统状态。</p>
+
+<p>根据上面的三种方案感觉通过判断系统音量的方案可以放弃了，再想想其他办法，随着iOS系统的不断完善，硬件也有直接切换静音的按钮(可设置)，系统会不会自动帮我们处理静音振动与非静音播放声音呢？</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playMsgSound</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="p">[</span><span class="nb">self</span> <span class="n">playDefaultSound</span><span class="p">];</span>
+<a name="True-4"></a>    <span class="p">[</span><span class="nb">self</span> <span class="n">playVibrate</span><span class="p">];</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p>摒着试一试的心态在收到消息时先播放声音，再振动，并尝试通过按键设置系统的静音状态，这里先说明一下iOS系统的设置里针对振动的设置项：</p>
+
+<ol>
+  <li>响铃模式振动</li>
+  <li>静音模式振动</li>
+</ol>
+
+<ul>
+  <li>关闭1，在收到消息时切换静音状态，可以得到结果静音下只振动，非静音下只播放声音</li>
+  <li>关闭2，静音下不振动也没有播放声音，非静音下，振动+播放声音</li>
+  <li>关闭1和2，不管在静音状态还是非静音状态都没振动和声音</li>
+  <li>打开1和2，静音下振动，非静音下振动+声音</li>
+</ul>
+
+<p>因此我们可以得出系统已经根据用户的设置自动选择了振动与声音模式，我们可以不用判断系统音量来选择振动或是播放声音了，直接播放声音，然后振动。到此问题算是解决了。</p>
+
+<h3 id="section-3">插播一黑魔法</h3>
+
+<p>在上面的方法中振动我们使用系统定义的<code>kSystemSoundID_Vibrate</code>来实现，如果在设置中关闭振动选项，就不会再振动了，如果此时不管怎样都要振动，该怎么办呢？黑魔法黑科技来拯救你：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="cp">#define kSystemSoundID_Vibrate 1352</span>
+<a name="True-2"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playVibrate</span>
+<a name="True-3"></a><span class="p">{</span>
+<a name="True-4"></a>    <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">VibratePlayComplete</span><span class="p">,</span> <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-5"></a>    <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>1352 完全无视系统的静音振动设置，至于为什么会成功还没有深入研究。待补充~~</p>
+
+<p>如果使用该方法能不能正常通过苹果审核不确定，如若被拒，后果自负~~</p>
+
+<h4 id="section-4">参考</h4>
+<ul>
+  <li><a href="http://stackoverflow.com/questions/4724980/making-the-iphone-vibrate?rq=1">http://stackoverflow.com/questions/4724980/making-the-iphone-vibrate?rq=1</a></li>
+  <li><a href="https://github.com/TUNER88/iOSSystemSoundsLibrary">https://github.com/TUNER88/iOSSystemSoundsLibrary</a></li>
+  <li><a href="http://sharkfood.com/content/Developers/content/Sound%20Switch/">http://sharkfood.com/content/Developers/content/Sound%20Switch/</a></li>
+  <li><a href="http://blog.csdn.net/slinloss/article/details/7870559">http://blog.csdn.net/slinloss/article/details/7870559</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/09/18/config-code-highlight-for-jekyll-with-kramdown-and-pygments/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2015/09/21/jspatch-xue-xi/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

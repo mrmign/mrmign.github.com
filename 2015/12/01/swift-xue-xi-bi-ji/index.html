@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>swift学习笔记</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>swift学习笔记</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-12-01">2015-12-01</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#[swift]" title="[swift]">[swift]</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<p>Swift有三种类型的对象: class, struct, enum</p>
+
+<h2 id="function-parameters-and-return-value">Function Parameters and Return Value</h2>
+
+<p><code>Void</code>(函数没有返回值时返回的类型)在Swift中是真实的类型，没有返回任何值的函数实际返回的就是Void类型,也可以用()来表示。
+<code>return Void</code>,<code>return ()</code>,<code>return</code> 是一个效果。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">f</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Void</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">func</span> <span class="n">f</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="p">{}</span>
+<a name="True-3"></a><span class="k">func</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{}</span></code></pre></div><p>上面三个方法都是没有返回值的。</p>
+
+<h4 id="function-signature">函数签名(Function Signature)</h4>
+
+<p>利用参数与返回值确定函数签名，例如<code>(Int, Int) -&gt; Int</code>。对于没有参数与返回值的函数可以用<code>Void -&gt; Void</code>,<code>() -&gt; ()</code>, <code>Void -&gt; ()</code>, <code>() -&gt; Void</code>表示，为了一致，还是优先使用前两种。</p>
+
+<h2 id="external-parameter-names">External Parameter Names</h2>
+
+<p>作用：</p>
+
+<ul>
+  <li>声明每个参数的目的</li>
+  <li>区分函数。两个函数名字和签名可以相同，但是外部参数名不能相同</li>
+  <li>帮助Swift与OC，Cocoa交互</li>
+</ul>
+
+<p><strong>除了第一个参数，剩下的所有的参数默认自动是外部参数。</strong></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">//调用</span>
+<a name="True-4"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span></code></pre></div>
+<p>如果不想要外部参数，在前面加<code>_</code>,像下面这样：</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="n">_</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">//调用</span>
+<a name="True-4"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></code></pre></div>
+<p>一个Swift函数的名字是括号前面的名字加上外部参数的名字，如上面的<code>say(_:times:)</code>和<code>say(_:_:)</code>。</p>
+
+<h2 id="overloading">Overloading</h2>
+
+<p>两个函数如果有相同的signature但是外部参数名字不同不能说是重载；因为他们外部参数名称不同，因此他们是两个函数名不相同的函数。</p>
+
+<h2 id="default-parameter-values">Default Parameter Values</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{}</span></code></pre></div><p>可以用<code>say("hi")</code>和<code>say("hi", times:3)</code>来调用该函数。</p>
+
+<h2 id="ignored-parameters">Ignored Parameters</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="n">loudly</span> <span class="nl">_</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="c1">//调用</span>
+<a name="True-3"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span><span class="nl">times</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nb">true</span><span class="p">)</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="k">func</span> <span class="n">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="nl">_</span><span class="p">:</span><span class="n">Int</span><span class="p">){}</span>
+<a name="True-6"></a><span class="c1">//调用</span>
+<a name="True-7"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">true</span><span class="p">)</span></code></pre></div>
+<p>当参数局部名称是<code>_</code>时在函数体内无法读取该参数值。</p>
+
+<h2 id="modifiable-parameter">Modifiable Parameter</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="k">var</span> <span class="nl">loudly</span><span class="p">:</span> <span class="n">Bool</span><span class="p">){}</span></code></pre></div><p>默认情况下函数参数隐式声明为常量(<code>let</code>),不能进行赋值。如果需要在函数体中对参数进行赋值，需要显式声明为<code>var</code>。虽然声明为var后可以进行赋值，但是不能修改函数体外部原来的值。如果要修改传递参数的原始的值，可以按下面操作：</p>
+
+<ol>
+  <li>把想要修改的参数声明为<code>inout</code></li>
+  <li>在调用函数时，想让函数修改其值的变量必须声明为<code>var</code></li>
+  <li>不要用变量来当参数，需要传递它的地址，在变量名前加<code>&amp;</code></li>
+</ol>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">removeFromeString</span><span class="p">(</span><span class="k">inout</span> <span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="n">character</span> <span class="nl">c</span><span class="p">:</span><span class="n">Character</span><span class="p">){}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;hello&quot;</span>
+<a name="True-4"></a><span class="n">removeFromString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;l&quot;</span><span class="p">)</span></code></pre></div>
+<h4 id="unsafemutablepointer"><code>UnsafeMutablePointer</code></h4>
+
+<p>当需要与OC打交道而不是Swift时，需要使用<code>UnsafeMutablePointer </code>而不是<code>inout</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">CGRectDivide</span><span class="p">(</span><span class="nl">rect</span><span class="p">:</span> <span class="bp">CGRect</span><span class="p">,</span> <span class="n">_</span> <span class="nl">slice</span><span class="p">:</span> <span class="n">UnsafeMutablePointer</span><span class="o">&lt;</span><span class="bp">CGRect</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_</span> <span class="nl">remainder</span><span class="p">:</span> <span class="n">UnsafeMutablePointer</span><span class="o">&lt;</span><span class="bp">CGRect</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_</span> <span class="nl">amount</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">,</span> <span class="n">_</span> <span class="nl">edge</span><span class="p">:</span> <span class="bp">CGRectEdge</span><span class="p">)</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="k">var</span> <span class="n">arrow</span> <span class="o">=</span> <span class="n">CGRectZero</span>
+<a name="True-4"></a><span class="k">var</span> <span class="n">body</span> <span class="o">=</span> <span class="n">CGRectZero</span>
+<a name="True-5"></a><span class="n">CGRectDivide</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arrow</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">body</span><span class="p">,</span> <span class="n">Arrow</span><span class="p">.</span><span class="n">ARHEIGHT</span><span class="p">,</span> <span class="p">.</span><span class="n">MinYEdge</span><span class="p">)</span></code></pre></div>
+<p>当参数是class类型时，不需要声明为<code>inout</code>,因为class类型是引用类型的，其他的都是值类型。</p>
+
+<h2 id="function-as-value">Function As Value</h2>
+
+<p>函数要作为值需要有类型，函数的类型就是它的signature.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">doThis</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">f</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">func</span> <span class="nf">whatTodo</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;I did it&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="n">doThis</span><span class="p">(</span><span class="n">whatTodo</span><span class="p">)</span></code></pre></div>
+<p>可以使用<code>typealis</code>给某个函数类型一个名字，如<code>typealias VoidVoidFunc = () -&gt; ()</code></p>
+
+<h2 id="anonymous-functions">Anonymous Functions</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">f</span><span class="p">(</span><span class="nl">finished</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="p">{</span>
+<a name="True-6"></a>	<span class="p">(</span><span class="nl">finished</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">in</span>
+<a name="True-7"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div>
+<h5 id="section">匿名函数的使用：</h5>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="p">()</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">in</span>
+<a name="True-3"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-4"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="k">in</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">})</span></code></pre></div>
+<p>省略返回值</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="p">()</span> <span class="k">in</span>
+<a name="True-3"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-4"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">})</span></code></pre></div>
+<p>当没有参数时省略<code>in</code>行</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>省略参数类型</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="p">(</span><span class="n">finished</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>省略括号</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">finished</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>即使有参数也省略<code>in</code>行。如果返回值可以省略，并且如果编译器知道参数类型，你可以省略in行，在匿名函数体内直接用$0,$1,..引用对应的参数。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\($0)&quot;</span><span class="p">)</span>
+<a name="True-5"></a><span class="p">})</span></code></pre></div>
+<p>省略参数的名字。如果匿名函数体不需要引用参数，可以用<code>_</code>在in行替换参数列表，如果不需要引用任何参数，可以只用一个<code>_</code>来替换整个参数列表。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">_</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p><strong>不能同时省略in行也不通过magic name引用参数！！</strong></p>
+
+<p>省略函数参数名。如果在调用函数时匿名函数作为最后一个参数，可以在倒数第二个参数闭合函数，将没有名称的匿名函数紧跟在后面。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">}){</span>
+<a name="True-4"></a>		<span class="n">_</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>省略调用函数的括号。如果你用了尾函数语法，并且你调用的函数只有一个函数作为参数，你可以在调用时省略空括号。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">doThis</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">f</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="n">doThis</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>省略关键字return</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">sayHi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="s">&quot;Hi&quot;</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">func</span> <span class="n">performAndPrint</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n">f</span><span class="p">()</span>
+<a name="True-6"></a>	<span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">}</span>
+<a name="True-8"></a><span class="n">performAndPrint</span> <span class="p">{</span>
+<a name="True-9"></a>	<span class="n">sayHi</span><span class="p">()</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/09/21/jspatch-xue-xi/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a   class="pageNavInvalid"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

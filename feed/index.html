@@ -7,8 +7,400 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-09-20T23:22:58+08:00</lastBuildDate>
+    <lastBuildDate>2015-12-02T01:04:17+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
+    
+    <item>
+      <title>swift学习笔记</title>
+      <link href="http://mrmign.github.io/2015/12/01/swift-xue-xi-bi-ji/"/>
+      <pubDate>2015-12-01T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/12/01/swift-xue-xi-bi-ji</guid>
+      <content:encoded><![CDATA[<p>Swift有三种类型的对象: class, struct, enum</p>
+
+<h2 id="function-parameters-and-return-value">Function Parameters and Return Value</h2>
+
+<p><code>Void</code>(函数没有返回值时返回的类型)在Swift中是真实的类型，没有返回任何值的函数实际返回的就是Void类型,也可以用()来表示。
+<code>return Void</code>,<code>return ()</code>,<code>return</code> 是一个效果。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">f</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Void</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">func</span> <span class="n">f</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="p">{}</span>
+<a name="True-3"></a><span class="k">func</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{}</span></code></pre></div><p>上面三个方法都是没有返回值的。</p>
+
+<h4 id="function-signature">函数签名(Function Signature)</h4>
+
+<p>利用参数与返回值确定函数签名，例如<code>(Int, Int) -&gt; Int</code>。对于没有参数与返回值的函数可以用<code>Void -&gt; Void</code>,<code>() -&gt; ()</code>, <code>Void -&gt; ()</code>, <code>() -&gt; Void</code>表示，为了一致，还是优先使用前两种。</p>
+
+<h2 id="external-parameter-names">External Parameter Names</h2>
+
+<p>作用：</p>
+
+<ul>
+  <li>声明每个参数的目的</li>
+  <li>区分函数。两个函数名字和签名可以相同，但是外部参数名不能相同</li>
+  <li>帮助Swift与OC，Cocoa交互</li>
+</ul>
+
+<p><strong>除了第一个参数，剩下的所有的参数默认自动是外部参数。</strong></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">//调用</span>
+<a name="True-4"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span></code></pre></div>
+<p>如果不想要外部参数，在前面加<code>_</code>,像下面这样：</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="n">_</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="c1">//调用</span>
+<a name="True-4"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></code></pre></div>
+<p>一个Swift函数的名字是括号前面的名字加上外部参数的名字，如上面的<code>say(_:times:)</code>和<code>say(_:_:)</code>。</p>
+
+<h2 id="overloading">Overloading</h2>
+
+<p>两个函数如果有相同的signature但是外部参数名字不同不能说是重载；因为他们外部参数名称不同，因此他们是两个函数名不相同的函数。</p>
+
+<h2 id="default-parameter-values">Default Parameter Values</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span> <span class="n">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{}</span></code></pre></div><p>可以用<code>say("hi")</code>和<code>say("hi", times:3)</code>来调用该函数。</p>
+
+<h2 id="ignored-parameters">Ignored Parameters</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="n">loudly</span> <span class="nl">_</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="c1">//调用</span>
+<a name="True-3"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span><span class="nl">times</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nb">true</span><span class="p">)</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="k">func</span> <span class="n">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="nl">_</span><span class="p">:</span><span class="n">Int</span><span class="p">){}</span>
+<a name="True-6"></a><span class="c1">//调用</span>
+<a name="True-7"></a><span class="n">say</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">true</span><span class="p">)</span></code></pre></div>
+<p>当参数局部名称是<code>_</code>时在函数体内无法读取该参数值。</p>
+
+<h2 id="modifiable-parameter">Modifiable Parameter</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">say</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">times</span><span class="p">:</span><span class="n">Int</span><span class="p">,</span> <span class="k">var</span> <span class="nl">loudly</span><span class="p">:</span> <span class="n">Bool</span><span class="p">){}</span></code></pre></div><p>默认情况下函数参数隐式声明为常量(<code>let</code>),不能进行赋值。如果需要在函数体中对参数进行赋值，需要显式声明为<code>var</code>。虽然声明为var后可以进行赋值，但是不能修改函数体外部原来的值。如果要修改传递参数的原始的值，可以按下面操作：</p>
+
+<ol>
+  <li>把想要修改的参数声明为<code>inout</code></li>
+  <li>在调用函数时，想让函数修改其值的变量必须声明为<code>var</code></li>
+  <li>不要用变量来当参数，需要传递它的地址，在变量名前加<code>&amp;</code></li>
+</ol>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">removeFromeString</span><span class="p">(</span><span class="k">inout</span> <span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="n">character</span> <span class="nl">c</span><span class="p">:</span><span class="n">Character</span><span class="p">){}</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;hello&quot;</span>
+<a name="True-4"></a><span class="n">removeFromString</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span> <span class="s">&quot;l&quot;</span><span class="p">)</span></code></pre></div>
+<h4 id="unsafemutablepointer"><code>UnsafeMutablePointer</code></h4>
+
+<p>当需要与OC打交道而不是Swift时，需要使用<code>UnsafeMutablePointer </code>而不是<code>inout</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">CGRectDivide</span><span class="p">(</span><span class="nl">rect</span><span class="p">:</span> <span class="bp">CGRect</span><span class="p">,</span> <span class="n">_</span> <span class="nl">slice</span><span class="p">:</span> <span class="n">UnsafeMutablePointer</span><span class="o">&lt;</span><span class="bp">CGRect</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_</span> <span class="nl">remainder</span><span class="p">:</span> <span class="n">UnsafeMutablePointer</span><span class="o">&lt;</span><span class="bp">CGRect</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_</span> <span class="nl">amount</span><span class="p">:</span> <span class="n">CGFloat</span><span class="p">,</span> <span class="n">_</span> <span class="nl">edge</span><span class="p">:</span> <span class="bp">CGRectEdge</span><span class="p">)</span>
+<a name="True-2"></a>
+<a name="True-3"></a><span class="k">var</span> <span class="n">arrow</span> <span class="o">=</span> <span class="n">CGRectZero</span>
+<a name="True-4"></a><span class="k">var</span> <span class="n">body</span> <span class="o">=</span> <span class="n">CGRectZero</span>
+<a name="True-5"></a><span class="n">CGRectDivide</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">arrow</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">body</span><span class="p">,</span> <span class="n">Arrow</span><span class="p">.</span><span class="n">ARHEIGHT</span><span class="p">,</span> <span class="p">.</span><span class="n">MinYEdge</span><span class="p">)</span></code></pre></div>
+<p>当参数是class类型时，不需要声明为<code>inout</code>,因为class类型是引用类型的，其他的都是值类型。</p>
+
+<h2 id="function-as-value">Function As Value</h2>
+
+<p>函数要作为值需要有类型，函数的类型就是它的signature.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">doThis</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">f</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">func</span> <span class="nf">whatTodo</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;I did it&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="n">doThis</span><span class="p">(</span><span class="n">whatTodo</span><span class="p">)</span></code></pre></div>
+<p>可以使用<code>typealis</code>给某个函数类型一个名字，如<code>typealias VoidVoidFunc = () -&gt; ()</code></p>
+
+<h2 id="anonymous-functions">Anonymous Functions</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">f</span><span class="p">(</span><span class="nl">finished</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="p">{</span>
+<a name="True-6"></a>	<span class="p">(</span><span class="nl">finished</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">in</span>
+<a name="True-7"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div>
+<h5 id="section">匿名函数的使用：</h5>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="p">()</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">in</span>
+<a name="True-3"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-4"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="k">in</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">})</span></code></pre></div>
+<p>省略返回值</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="p">()</span> <span class="k">in</span>
+<a name="True-3"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-4"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">})</span></code></pre></div>
+<p>当没有参数时省略<code>in</code>行</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="p">(</span><span class="nl">finished</span><span class="p">:</span> <span class="n">Bool</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>省略参数类型</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="p">(</span><span class="n">finished</span><span class="p">)</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>省略括号</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">finished</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p>即使有参数也省略<code>in</code>行。如果返回值可以省略，并且如果编译器知道参数类型，你可以省略in行，在匿名函数体内直接用$0,$1,..引用对应的参数。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\($0)&quot;</span><span class="p">)</span>
+<a name="True-5"></a><span class="p">})</span></code></pre></div>
+<p>省略参数的名字。如果匿名函数体不需要引用参数，可以用<code>_</code>在in行替换参数列表，如果不需要引用任何参数，可以只用一个<code>_</code>来替换整个参数列表。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">},</span> <span class="nl">completion</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="n">_</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">})</span></code></pre></div>
+<p><strong>不能同时省略in行也不通过magic name引用参数！！</strong></p>
+
+<p>省略函数参数名。如果在调用函数时匿名函数作为最后一个参数，可以在倒数第二个参数闭合函数，将没有名称的匿名函数紧跟在后面。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="bp">UIView</span><span class="p">.</span><span class="n">animationWithDuration</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="nl">animations</span><span class="p">:</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="nb">self</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">20</span>
+<a name="True-3"></a>	<span class="p">}){</span>
+<a name="True-4"></a>		<span class="n">_</span> <span class="k">in</span>
+<a name="True-5"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;finished:\(finished)&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>省略调用函数的括号。如果你用了尾函数语法，并且你调用的函数只有一个函数作为参数，你可以在调用时省略空括号。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">doThis</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="n">f</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="n">doThis</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="n">print</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>省略关键字return</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">sayHi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="s">&quot;Hi&quot;</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">func</span> <span class="n">performAndPrint</span><span class="p">(</span><span class="nl">f</span><span class="p">:()</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>	<span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n">f</span><span class="p">()</span>
+<a name="True-6"></a>	<span class="n">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<a name="True-7"></a><span class="p">}</span>
+<a name="True-8"></a><span class="n">performAndPrint</span> <span class="p">{</span>
+<a name="True-9"></a>	<span class="n">sayHi</span><span class="p">()</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>JSPatch学习</title>
+      <link href="http://mrmign.github.io/2015/09/21/jspatch-xue-xi/"/>
+      <pubDate>2015-09-21T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/09/21/jspatch-xue-xi</guid>
+      <content:encoded><![CDATA[
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>iOS上播放消息提示音及振动总结</title>
+      <link href="http://mrmign.github.io/2015/09/21/ios-shang-bo-fang-xiao-xi-ti-shi-yin-ji-zhen-dong-zong-jie/"/>
+      <pubDate>2015-09-21T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/09/21/ios-shang-bo-fang-xiao-xi-ti-shi-yin-ji-zhen-dong-zong-jie</guid>
+      <content:encoded><![CDATA[<p>在QQ，微信中当收到新消息的时候会播放提示音或是振动，亦或是声音+振动，如何在自己的应用中实现同样的功能呢？</p>
+
+<h3 id="section">播放提示音</h3>
+
+<p>当应用在前台运行收到消息时，这个时候要播放消息的提示音了，如何播放直接上代码：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="cm">/* 播放完成回调 */</span>
+<a name="True-2"></a><span class="kt">void</span> <span class="nf">AudioSoundPlayComplete</span><span class="p">(</span><span class="n">SystemSoundID</span> <span class="n">soundid</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">clientData</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">{</span>
+<a name="True-4"></a>    <span class="n">AudioServicesRemoveSystemSoundCompletion</span><span class="p">(</span><span class="n">soundid</span><span class="p">);</span>
+<a name="True-5"></a>    <span class="n">AudioServicesDisposeSystemSoundID</span><span class="p">(</span><span class="n">soundid</span><span class="p">);</span>
+<a name="True-6"></a>    <span class="n">AlertSoundService</span> <span class="o">*</span><span class="n">alerService</span> <span class="o">=</span> <span class="p">(</span><span class="k">__bridge</span> <span class="n">AlertSoundService</span><span class="o">*</span><span class="p">)</span><span class="n">clientData</span><span class="p">;</span>
+<a name="True-7"></a>    <span class="p">[</span><span class="n">alerService</span> <span class="nl">stopPlaySound</span><span class="p">:</span><span class="n">soundid</span><span class="p">];</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="p">-</span> <span class="p">(</span><span class="n">SystemSoundID</span><span class="p">)</span><span class="nf">playSound:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">soundName</span>
+<a name="True-11"></a><span class="p">{</span>
+<a name="True-12"></a>    <span class="n">SystemSoundID</span> <span class="n">ssid</span><span class="p">;</span>
+<a name="True-13"></a>    <span class="bp">NSString</span><span class="o">*</span> <span class="n">pathName</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span> 
+<a name="True-14"></a>    <span class="n">pathName</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSBundle</span> <span class="n">mainBundle</span><span class="p">]</span><span class="nl">pathForResource</span><span class="p">:</span><span class="n">soundName</span> <span class="nl">ofType</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<a name="True-15"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">pathName</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>        <span class="c1">//将NSString类型路径名转换为NSURL类型</span>
+<a name="True-17"></a>        <span class="bp">NSURL</span><span class="o">*</span> <span class="n">pathUrl</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">NSURL</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initFileURLWithPath</span><span class="p">:</span><span class="n">pathName</span><span class="p">];</span>
+<a name="True-18"></a>        <span class="k">if</span> <span class="p">(</span><span class="n">pathUrl</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-19"></a>            <span class="n">OSStatus</span> <span class="n">err</span> <span class="o">=</span> <span class="n">AudioServicesCreateSystemSoundID</span><span class="p">((</span><span class="k">__bridge</span> <span class="n">CFURLRef</span><span class="p">)</span><span class="n">pathUrl</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ssid</span><span class="p">);</span>
+<a name="True-20"></a>            <span class="k">if</span> <span class="p">(</span><span class="n">err</span> <span class="o">==</span> <span class="n">kAudioServicesNoError</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-21"></a>                <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">ssid</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">AudioSoundPlayComplete</span><span class="p">,</span>  <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-22"></a>                <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">ssid</span><span class="p">);</span>
+<a name="True-23"></a>                <span class="k">return</span> <span class="n">ssid</span><span class="p">;</span>
+<a name="True-24"></a>            <span class="p">}</span>
+<a name="True-25"></a>            <span class="k">else</span>
+<a name="True-26"></a>            <span class="p">{</span>
+<a name="True-27"></a>                <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;create system sound id fail,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-28"></a>                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-29"></a>            <span class="p">}</span>
+<a name="True-30"></a>        <span class="p">}</span>
+<a name="True-31"></a>        <span class="k">else</span>
+<a name="True-32"></a>        <span class="p">{</span>
+<a name="True-33"></a>            <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;path with NSString convert to path with NSURL fail!!!,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-34"></a>            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-35"></a>        <span class="p">}</span>
+<a name="True-36"></a>    <span class="p">}</span>
+<a name="True-37"></a>    <span class="k">else</span>
+<a name="True-38"></a>    <span class="p">{</span>
+<a name="True-39"></a>        <span class="n">NSLog</span><span class="p">(</span><span class="s">@&quot;the path for sound play is nil,%s&quot;</span><span class="p">,</span><span class="n">__FUNCTION__</span><span class="p">);</span>
+<a name="True-40"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-41"></a>    <span class="p">}</span>
+<a name="True-42"></a><span class="p">}</span></code></pre></div>
+<p>播放提示音是传入要播放的声音文件的名称，从bundle寻找对应文件找到了就进行播放，这里添加了系统声音播放完成后的回调，以便在声音播放结束后进行其他处理，比如如果需要根据不同的消息播放不同的提示音，如果当前正在播放提示音1，此时收到其他消息要播放提示音2，这里就不能简单的直接调用该方法进行播放了，我们需要一个播放队列，把要播放的提示音添加到队列中来处理，当播放完成一个后就需要从队列移除，此时播放完成的回调就派上用场了。</p>
+
+<h3 id="section-1">振动</h3>
+
+<p>如果要振动提示又该如何实现呢？系统为我们提供了振动的soundID <code>kSystemSoundID_Vibrate</code>，可以直接使用该soundID实现振动，代码如下:</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="kt">void</span> <span class="nf">VibratePlayComplete</span><span class="p">(</span><span class="n">SystemSoundID</span> <span class="n">soundId</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">clientData</span><span class="p">)</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="n">AudioServicesRemoveSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-4"></a>    <span class="n">AudioServicesDisposeSystemSoundID</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-5"></a><span class="p">}</span>
+<a name="True-6"></a>
+<a name="True-7"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playVibrate</span>
+<a name="True-8"></a><span class="p">{</span>
+<a name="True-9"></a>    <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">VibratePlayComplete</span><span class="p">,</span> <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-10"></a>    <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-11"></a><span class="p">}</span></code></pre></div>
+<p>这里振动实现与播放提示音方法基本一致，只是传的soundID参数不同，在播放提示音时ssid是根据我们的音频文件生成的，而振动是系统定义的。振动完成后也有回调方法进行特殊处理，与播放声音的实现一致。</p>
+
+<p>通过上面的方法我们就实现了消息提示音及振动，这里只是简单的实现，但是在实际场景下还需要添加其他的逻辑处理，比如连续收消息，不能一直播放提示音或是振动吧，用户会不爽的，可以在播放完成提示音后设置一个时间间隔，比如2秒钟内收到消息就不播提示音不振动，超过2秒再有提示，这些都需要根据具体业务需求来处理了。</p>
+
+<p>既然已经实现了播放提示音与振动，那如果我想根据系统是否静音来选择哪种提示：</p>
+
+<ul>
+  <li>如果系统是静音模式，消息提示为振动</li>
+  <li>如果系统是正常模式，消息提示为提示音</li>
+</ul>
+
+<p>看起来不难嘛，我们读取系统的音量，根据音量大小来判断系统是否是静音不就OK了，那如何读取系统音量呢，一番查资料后，找到如下几种方案：</p>
+
+<h4 id="section-2">方案1：</h4>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">Float32</span> <span class="n">volume</span><span class="p">;</span>
+<a name="True-2"></a><span class="kt">UInt32</span> <span class="n">dataSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Float32</span><span class="p">);</span>
+<a name="True-3"></a><span class="n">AudioSessionGetProperty</span> <span class="p">(</span>
+<a name="True-4"></a>                     <span class="n">kAudioSessionProperty_CurrentHardwareOutputVolume</span><span class="p">,</span>
+<a name="True-5"></a>                     <span class="o">&amp;</span><span class="n">dataSize</span><span class="p">,</span>
+<a name="True-6"></a>                     <span class="o">&amp;</span><span class="n">volume</span>
+<a name="True-7"></a>                     <span class="p">);</span></code></pre></div>
+<p>该方案中获取的音量值一直不变。放弃！</p>
+
+<h4 id="httpblogcsdnnetslinlossarticledetails7870559">方案2：<a href="http://blog.csdn.net/slinloss/article/details/7870559">链接</a></h4>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a> <span class="o">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="n">isMuted</span>  
+<a name="True-2"></a><span class="p">{</span>  
+<a name="True-3"></a>    <span class="n">CFStringRef</span> <span class="n">route</span><span class="p">;</span>  
+<a name="True-4"></a>    <span class="kt">UInt32</span> <span class="n">routeSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">CFStringRef</span><span class="p">);</span>  
+<a name="True-5"></a>    <span class="n">OSStatus</span> <span class="n">status</span> <span class="o">=</span> <span class="n">AudioSessionGetProperty</span><span class="p">(</span><span class="n">kAudioSessionProperty_AudioRoute</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">routeSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">route</span><span class="p">);</span>  
+<a name="True-6"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="n">kAudioSessionNoError</span><span class="p">)</span>  
+<a name="True-7"></a>    <span class="p">{</span>  
+<a name="True-8"></a>        <span class="k">if</span> <span class="p">(</span><span class="n">route</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="o">!</span><span class="n">CFStringGetLength</span><span class="p">(</span><span class="n">route</span><span class="p">))</span>  
+<a name="True-9"></a>            <span class="k">return</span> <span class="nb">TRUE</span><span class="p">;</span>  
+<a name="True-10"></a>    <span class="p">}</span>  
+<a name="True-11"></a>    <span class="k">return</span> <span class="nb">FALSE</span><span class="p">;</span>  
+<a name="True-12"></a><span class="p">}</span> 
+<a name="True-13"></a>
+<a name="True-14"></a> <span class="o">-</span> <span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="n">addMutedListener</span>  
+<a name="True-15"></a><span class="p">{</span>  
+<a name="True-16"></a>    <span class="n">OSStatus</span> <span class="n">s</span> <span class="o">=</span> <span class="n">AudioSessionAddPropertyListener</span><span class="p">(</span><span class="n">kAudioSessionProperty_AudioRouteChange</span><span class="p">,</span>  
+<a name="True-17"></a>    <span class="n">audioRouteChangeListenerCallback</span><span class="p">,</span>  
+<a name="True-18"></a>    <span class="nb">self</span><span class="p">);</span>  
+<a name="True-19"></a>    <span class="k">return</span> <span class="n">s</span> <span class="o">==</span> <span class="n">kAudioSessionNoError</span><span class="p">;</span>  
+<a name="True-20"></a><span class="p">}</span>  
+<a name="True-21"></a><span class="kt">void</span> <span class="n">audioRouteChangeListenerCallback</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">inUserData</span><span class="p">,</span>  
+<a name="True-22"></a>                                       <span class="n">AudioSessionPropertyID</span> <span class="n">inPropertyID</span><span class="p">,</span>  
+<a name="True-23"></a>                                       <span class="kt">UInt32</span> <span class="n">inPropertyValueSize</span><span class="p">,</span>  
+<a name="True-24"></a>                                       <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">inPropertyValue</span>  
+<a name="True-25"></a>                                       <span class="p">)</span>  
+<a name="True-26"></a><span class="p">{</span>  
+<a name="True-27"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">inPropertyID</span> <span class="o">!=</span> <span class="n">kAudioSessionProperty_AudioRouteChange</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>  
+<a name="True-28"></a>    <span class="kt">BOOL</span> <span class="n">muted</span> <span class="o">=</span> <span class="p">[</span><span class="n">mediaVolume</span> <span class="n">isMuted</span><span class="p">];</span>  
+<a name="True-29"></a>    <span class="c1">// add code here  </span>
+<a name="True-30"></a><span class="p">}</span></code></pre></div>
+<p>该方案中使用的方法在iOS7中已不建议使用了，而且该方案在尝试的过程中一直不成功。</p>
+
+<h4 id="httpsharkfoodcomcontentdeveloperscontentsound20switch">方案3：<a href="http://sharkfood.com/content/Developers/content/Sound%20Switch/">链接</a></h4>
+
+<p>该方案中使用的方法是播放一段无声的系统声，判断播放完成所需要的时间，如果获得的时长接近0则表示系统处于静音状态。该方案通过笨方法实现静音的检测，虽然性能不高，因为要一直循环着播放无声的音频文件来检测系统静音状态，但是可以通过正常的API调用来得到系统状态。</p>
+
+<p>根据上面的三种方案感觉通过判断系统音量的方案可以放弃了，再想想其他办法，随着iOS系统的不断完善，硬件也有直接切换静音的按钮(可设置)，系统会不会自动帮我们处理静音振动与非静音播放声音呢？</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playMsgSound</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="p">[</span><span class="nb">self</span> <span class="n">playDefaultSound</span><span class="p">];</span>
+<a name="True-4"></a>    <span class="p">[</span><span class="nb">self</span> <span class="n">playVibrate</span><span class="p">];</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p>摒着试一试的心态在收到消息时先播放声音，再振动，并尝试通过按键设置系统的静音状态，这里先说明一下iOS系统的设置里针对振动的设置项：</p>
+
+<ol>
+  <li>响铃模式振动</li>
+  <li>静音模式振动</li>
+</ol>
+
+<ul>
+  <li>关闭1，在收到消息时切换静音状态，可以得到结果静音下只振动，非静音下只播放声音</li>
+  <li>关闭2，静音下不振动也没有播放声音，非静音下，振动+播放声音</li>
+  <li>关闭1和2，不管在静音状态还是非静音状态都没振动和声音</li>
+  <li>打开1和2，静音下振动，非静音下振动+声音</li>
+</ul>
+
+<p>因此我们可以得出系统已经根据用户的设置自动选择了振动与声音模式，我们可以不用判断系统音量来选择振动或是播放声音了，直接播放声音，然后振动。到此问题算是解决了。</p>
+
+<h3 id="section-3">插播一黑魔法</h3>
+
+<p>在上面的方法中振动我们使用系统定义的<code>kSystemSoundID_Vibrate</code>来实现，如果在设置中关闭振动选项，就不会再振动了，如果此时不管怎样都要振动，该怎么办呢？黑魔法黑科技来拯救你：</p>
+
+<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="cp">#define kSystemSoundID_Vibrate 1352</span>
+<a name="True-2"></a><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">playVibrate</span>
+<a name="True-3"></a><span class="p">{</span>
+<a name="True-4"></a>    <span class="n">AudioServicesAddSystemSoundCompletion</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">VibratePlayComplete</span><span class="p">,</span> <span class="p">(</span><span class="k">__bridge</span> <span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">);</span>
+<a name="True-5"></a>    <span class="n">AudioServicesPlaySystemSound</span><span class="p">(</span><span class="n">kSystemSoundID_Vibrate</span><span class="p">);</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>1352 完全无视系统的静音振动设置，至于为什么会成功还没有深入研究。待补充~~</p>
+
+<p>如果使用该方法能不能正常通过苹果审核不确定，如若被拒，后果自负~~</p>
+
+<h4 id="section-4">参考</h4>
+<ul>
+  <li><a href="http://stackoverflow.com/questions/4724980/making-the-iphone-vibrate?rq=1">http://stackoverflow.com/questions/4724980/making-the-iphone-vibrate?rq=1</a></li>
+  <li><a href="https://github.com/TUNER88/iOSSystemSoundsLibrary">https://github.com/TUNER88/iOSSystemSoundsLibrary</a></li>
+  <li><a href="http://sharkfood.com/content/Developers/content/Sound%20Switch/">http://sharkfood.com/content/Developers/content/Sound%20Switch/</a></li>
+  <li><a href="http://blog.csdn.net/slinloss/article/details/7870559">http://blog.csdn.net/slinloss/article/details/7870559</a></li>
+</ul>
+
+]]></content:encoded>
+    </item>
     
     <item>
       <title>jekyll个性化配置</title>
@@ -657,203 +1049,6 @@
 </ol>
 
 <p>上面的2，3中是针对集合的，这里只对简单的属性进行描述，集合的先略过。</p>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>iOS9 https问题</title>
-      <link href="http://mrmign.github.io/2015/07/11/ios9-https-wen-ti/"/>
-      <pubDate>2015-07-11T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/07/11/ios9-https-wen-ti</guid>
-      <content:encoded><![CDATA[<p>iOS9提高了http的请求安全，需要进行如下设置：</p>
-
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><a name="True-1"></a><span class="nt">&lt;key&gt;</span>NSAppTransportSecurity<span class="nt">&lt;/key&gt;</span>  
-<a name="True-2"></a>  <span class="nt">&lt;dict&gt;</span>  
-<a name="True-3"></a>  <span class="nt">&lt;key&gt;</span>NSAllowsArbitraryLoads<span class="nt">&lt;/key&gt;</span>  
-<a name="True-4"></a>  <span class="nt">&lt;true/&gt;</span>  
-<a name="True-5"></a>  <span class="nt">&lt;/dict&gt;</span></code></pre></div>]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>ARM汇编</title>
-      <link href="http://mrmign.github.io/2015/06/13/arm-hui-bian/"/>
-      <pubDate>2015-06-13T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/06/13/arm-hui-bian</guid>
-      <content:encoded><![CDATA[<h1 id="arm">ARM汇编</h1>
-
-<h2 id="section">特殊用途的寄存器</h2>
-
-<ul>
-  <li>R0-R3  传递参数与返回值</li>
-  <li>R7 帧指针，指向母函数与被调用子函数在栈中的交界</li>
-  <li>R9 iOS3以前系统保留</li>
-  <li>R12 内部过程调用寄存器，dynamic linker会用到</li>
-  <li>R13 SP寄存器</li>
-  <li>R14 LR寄存器，保存函数返回地址</li>
-  <li>R15 PC寄存器</li>
-</ul>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>新人实验站</title>
-      <link href="http://mrmign.github.io/2015/04/26/xin-ren-shi-yan-zhan/"/>
-      <pubDate>2015-04-26T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/04/26/xin-ren-shi-yan-zhan</guid>
-      <content:encoded><![CDATA[<h1 id="section">新人实验站</h1>
-
-<p>今天的新人实验站主要讲了做一个新产品的提出到最终发布的整个过程。</p>
-
-<p>我们小组提出的idea是一个记录日常饮食中的营养成分并帮助用户搭配均衡合理的饮食。</p>
-
-<h3 id="idea">idea简述</h3>
-
-<ul>
-  <li>
-    <p>APP名称: 营养助手</p>
-  </li>
-  <li>
-    <p>APP简述: 我们天天吃饭，却很少关注自己的营养搭配，“牙龈出血”、“脂肪肝”等问题比比皆是，均由营养失衡导致。“营养助手”是一款移动APP，通过“晒照-分析-评比”的使用模式，旨在健康饮食。用户首先设定自己的年龄、身高、体重、性别等信息，以供系统获取样本。在平时用餐时，将摄入食物拍照上传，系统同时识别并计算出你所摄入食物包含的营养成分并显示，以供其他用户参考。同时系统定期统计你这段时间的营养摄入，并与其他用户对比，同时给出建议，通过与其他用户的比较刺激用户改善饮食。</p>
-  </li>
-</ul>
-
-<h3 id="section-1">问卷调查</h3>
-
-<p>在提出了我们的idea后，还需要调查其他人的看法建义，其他人是否有遇到同样的问题等，我们是通过在线问卷调查及线下问答的形式进行的，我们设置的问卷问题如下所示：</p>
-
-<p>1 所从事的职业__<strong>__</strong><strong>__</strong></p>
-
-<p>2 日常饮食大多吃什么?</p>
-
-<ul>
-  <li>[ ] 自己做</li>
-  <li>[ ] 中式快餐</li>
-  <li>[ ] 西式</li>
-  <li>[ ] 其他</li>
-</ul>
-
-<p>3 平时有手机拍照的习惯吗?</p>
-
-<ul>
-  <li>[ ]经常</li>
-  <li>[ ]一般</li>
-  <li>[ ]少有</li>
-  <li>[ ]几乎不</li>
-</ul>
-
-<p>4 喜欢晒照片吗?</p>
-
-<ul>
-  <li>[ ] 很喜欢</li>
-  <li>[ ]比较喜欢</li>
-  <li>[ ] 一般</li>
-  <li>[ ]不喜欢</li>
-</ul>
-
-<p>5 自己认为吃的健康吗？</p>
-
-<ul>
-  <li>[ ] 很健康</li>
-  <li>[ ] 比较健康</li>
-  <li>[ ] 一般</li>
-  <li>[ ] 不健康</li>
-</ul>
-
-<p>6 吃饭时会刻意关注营养搭配吗？</p>
-
-<ul>
-  <li>[ ]很关注</li>
-  <li>[ ]比较关注</li>
-  <li>[ ]一般</li>
-  <li>[ ]不太关注</li>
-  <li>[ ]完全不关注</li>
-</ul>
-
-<p>7 是否关注身边人的饮食情况？</p>
-
-<ul>
-  <li>[ ]很关注</li>
-  <li>[ ]比较关注</li>
-  <li>[ ]一般</li>
-  <li>[ ]不太关注</li>
-  <li>[ ]不关注</li>
-</ul>
-
-<p>8 是否尔用过类似饮食健康的软件？</p>
-
-<ul>
-  <li>[ ]有</li>
-  <li>[ ]没有</li>
-</ul>
-
-<p>9 如果有一款软件能改善自己的饮食习惯，你会比较关注什么?</p>
-
-<ul>
-  <li>[ ]一顿饭的营养成分</li>
-  <li>[ ]他人的饮食情况</li>
-  <li>[ ]一段时间内的营养统计</li>
-  <li>[ ]营养搭配的推荐</li>
-</ul>
-
-<p>10 给营养助手的建议和意见__<strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong><strong>__</strong>__</p>
-
-<h4 id="section-2">问卷调查结果统计</h4>
-
-<p>从本次问卷调查可以看出参与问卷调查的人群当中80%是白领，超过90%的人吃中式快餐,并且没有用过健康类的APP,超过40%的人关注营养搭配，53%的人认为自己的食物营养搭配一般。从问卷调查的结果看，人们在日常用餐时急需要一款营养搭配的软件来帮助他们记录并改善自己的饮食习惯。</p>
-
-<p>详细问卷调查统计结果请查看附件.</p>
-
-<h3 id="app">APP原型设计</h3>
-
-<p>下面是我们针对营养助手设计的原型。</p>
-
-<p><img src="/images/20150426/14300573146165.jpg" alt="" /></p>
-
-<p><img src="/images/20150426/14300573309871.jpg" alt="" /></p>
-
-<p><img src="/images/20150426/14300573872487.jpg" alt="" /></p>
-
-<p><img src="/images/20150426/14300574008189.jpg" alt="" /></p>
-
-<p><img src="/images/20150426/14300574151294.jpg" alt="" /></p>
-
-<p><img src="/images/20150426/14300574294365.jpg" alt="" /></p>
-
-<h4 id="app-1">APP主要功能</h4>
-
-<ul>
-  <li>图片上传</li>
-  <li>食物图片识别</li>
-  <li>用餐(营养成分)记录</li>
-  <li>营养科普</li>
-  <li>营养搭配推荐</li>
-  <li>用户健康分享</li>
-  <li>用户健康报告生成</li>
-  <li>个人营养搭配建议</li>
-  <li>社区交流</li>
-</ul>
-
-<h4 id="section-3">主要功能详细描述</h4>
-
-<ol>
-  <li>图片上传。在用餐前将食物拍照上传，此时会记录用餐地点，用餐时间等。</li>
-  <li>食物图片识别。根据用户上传的图片自动识别出图片中的食物所包含的营养成分，如果识别有错，可人工纠正。</li>
-  <li>用餐记录。主要是记录每次用餐的食物，及食物中的各营养成分，用餐地点。</li>
-  <li>营养科普。对合理用餐的相关科学知识进行普及，让大家对合理饮食有更加全面的了解。</li>
-  <li>用户健康分享。用户可以分享自己的用餐情况，可以把自己饮食中的营养成分分配等数据与其他用户进行分享交流。</li>
-  <li>用户健康报告生成。根据用户的用餐记录，自动生成用户每个时间段(周，月，年)的用餐营养搭配情况，让用户对自己的饮食有一个全面的了解。</li>
-  <li>营养搭配推荐。系统根据用户饮食中的营养成分，按照科学的饮食搭配为用户推荐一个更合理的饮食搭配，帮助用户形成一个均衡的饮食习惯。</li>
-  <li>个人营养搭配建议。为用户提供个性化的营养搭配。</li>
-  <li>社区交流。可以分享自己的饮食营养搭配，与其他用户交流心得体会，帮助他人及自己找到一个合理均衡的饮食搭配。</li>
-</ol>
-
-<h3 id="section-4">总结</h3>
-
-<p>通过该APP，用户可以记录自己的饮食，并了解到自己摄入的营养成分分布，还可以根据系统及其他用户的建议形成自己的合理饮食搭配。</p>
 
 ]]></content:encoded>
     </item>
