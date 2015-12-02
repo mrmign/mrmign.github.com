@@ -1,0 +1,27 @@
+#markdown: rdiscount
+# markdown: kramdown
+markdown: KramdownPygments
+permalink: /:year/:month/:day/:title/
+url: http://mrmign.github.io
+name: Arming
+author: Arming
+qq: 21575831
+email: cloudniw1@126.com
+duoshuo: mrmign
+cnzz: 1000366411
+weibo: 2106103234
+github: mrmign
+about: "这里是 Arming 的个人博客."
+
+excerpt_separator: ""
+
+paginate: 15
+highlighter: pygments
+safe: false
+source: .
+destination: /Users/arming/Documents/GitBlog
+exclude: [Rakefile, README.md]
+#include: [files, .nojekyll]
+include: [files]
+
+plugins: ./_plugins
