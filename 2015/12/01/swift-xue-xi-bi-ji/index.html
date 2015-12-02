@@ -271,6 +271,127 @@
 <a name="True-8"></a><span class="n">performAndPrint</span> <span class="p">{</span>
 <a name="True-9"></a>	<span class="n">sayHi</span><span class="p">()</span>
 <a name="True-10"></a><span class="p">}</span></code></pre></div>
+<h2 id="closure">Closure</h2>
+
+<p>Swift函数就是闭包。</p>
+
+<h2 id="curried-functions">Curried Functions（柯里化函数）</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">makeRoundedRectangleMaker</span><span class="p">(</span><span class="nl">sz</span><span class="p">:</span><span class="bp">CGSize</span><span class="p">,</span> <span class="n">_</span> <span class="nl">r</span><span class="p">:</span><span class="n">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">UIImage</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="p">{</span>
+<a name="True-3"></a>		<span class="n">imageOfSize</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>			<span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">UIBezierPath</span><span class="p">(</span>
+<a name="True-5"></a>				<span class="nl">rounderRect</span><span class="p">:</span> <span class="bp">CGRect</span><span class="p">(</span><span class="nl">origin</span><span class="p">:</span><span class="n">CGPointZero</span><span class="p">,</span> <span class="nl">size</span><span class="p">:</span> <span class="n">sz</span><span class="p">),</span>
+<a name="True-6"></a>				<span class="nl">cornerRadius</span><span class="p">:</span><span class="n">r</span><span class="p">)</span>
+<a name="True-7"></a>			<span class="n">p</span><span class="p">.</span><span class="n">stroke</span><span class="p">()</span>
+<a name="True-8"></a>		<span class="p">}</span>
+<a name="True-9"></a>	<span class="p">}</span>
+<a name="True-10"></a><span class="p">}</span>
+<a name="True-11"></a>
+<a name="True-12"></a><span class="k">let</span> <span class="n">maker</span> <span class="o">=</span> <span class="n">makeRoundedRectangleMaker</span><span class="p">(</span><span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span><span class="mi">8</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">makeRoundedRectangleMaker</span><span class="p">(</span><span class="nl">sz</span><span class="p">:</span><span class="bp">CGSize</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">UIImage</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="p">{</span>
+<a name="True-3"></a>		<span class="n">r</span> <span class="k">in</span>
+<a name="True-4"></a>		<span class="n">imageOfSize</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>			<span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">UIBezierPath</span><span class="p">(</span>
+<a name="True-6"></a>				<span class="nl">rounderRect</span><span class="p">:</span> <span class="bp">CGRect</span><span class="p">(</span><span class="nl">origin</span><span class="p">:</span><span class="n">CGPointZero</span><span class="p">,</span><span class="nl">size</span><span class="p">:</span> <span class="n">sz</span><span class="p">),</span>
+<a name="True-7"></a>				<span class="nl">cornerRadius</span><span class="p">:</span><span class="n">r</span><span class="p">)</span>
+<a name="True-8"></a>			<span class="n">p</span><span class="p">.</span><span class="n">stroke</span><span class="p">()</span>
+<a name="True-9"></a>		<span class="p">}</span>
+<a name="True-10"></a>	<span class="p">}</span>
+<a name="True-11"></a><span class="p">}</span>
+<a name="True-12"></a>
+<a name="True-13"></a><span class="k">let</span> <span class="n">maker</span> <span class="o">=</span> <span class="n">makeRoundedRectangleMaker</span><span class="p">(</span><span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+<a name="True-14"></a><span class="k">let</span> <span class="n">image</span> <span class="o">=</span> <span class="n">maker</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">makeRoundedRectangleMaker</span><span class="p">(</span><span class="nl">sz</span><span class="p">:</span><span class="bp">CGSize</span><span class="p">)(</span><span class="n">_</span> <span class="nl">r</span><span class="p">:</span><span class="n">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">UIImage</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="n">imageOfSize</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-3"></a>			<span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">UIBezierPath</span><span class="p">(</span>
+<a name="True-4"></a>				<span class="nl">rounderRect</span><span class="p">:</span> <span class="bp">CGRect</span><span class="p">(</span><span class="nl">origin</span><span class="p">:</span><span class="n">CGPointZero</span><span class="p">,</span> <span class="nl">size</span><span class="p">:</span> <span class="n">sz</span><span class="p">),</span>
+<a name="True-5"></a>				<span class="nl">cornerRadius</span><span class="p">:</span><span class="n">r</span><span class="p">)</span>
+<a name="True-6"></a>			<span class="n">p</span><span class="p">.</span><span class="n">stroke</span><span class="p">()</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="k">let</span> <span class="n">image</span> <span class="o">=</span> <span class="n">makeRoundedRectangleMaker</span><span class="p">(</span><span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span><span class="mi">20</span><span class="p">))(</span><span class="mi">8</span><span class="p">)</span></code></pre></div>
+<h2 id="variable">Variable</h2>
+
+<p>变量的类型不能改变。</p>
+
+<h4 id="computed-initializer">Computed Initializer</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">let</span> <span class="nl">timed</span> <span class="p">:</span> <span class="n">Bool</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+<a name="True-3"></a>		<span class="k">return</span> <span class="nb">true</span>
+<a name="True-4"></a>	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="k">return</span> <span class="nb">false</span>
+<a name="True-6"></a>	<span class="p">}</span>
+<a name="True-7"></a><span class="p">}()</span></code></pre></div>
+<p>定义并调用匿名函数通常是唯一合法的方式来计算实例属性的初始值。因为在初始化实例属性时不能调用实例的方法(此时还没有实例，你正在创建实例)。</p>
+
+<h4 id="computed-variables">Computed Variables</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="nl">now</span><span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="kr">get</span> <span class="p">{</span>
+<a name="True-3"></a>		<span class="k">return</span> <span class="bp">NSDate</span><span class="p">().</span><span class="n">description</span>
+<a name="True-4"></a>	<span class="p">}</span>
+<a name="True-5"></a>	<span class="kr">set</span> <span class="p">{</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="n">newValue</span><span class="p">)</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div>
+<p><strong>注意：</strong></p>
+
+<ul>
+  <li>变量必须声明为<code>var</code>，类型必须显式声明</li>
+  <li>get 方法必须返回与变量类型一致的值</li>
+  <li>setter就像是有一个参数的函数，参数的局部名称默认是<code>newValue</code>，也可以修改该参数的局部名称<code>set (val) {}</code></li>
+  <li>setter函数不是必需的，如果省略setter，变量就变成只读的，如果尝试赋值会报编译错误。<strong>在swift中，一个没有setter的计算变量是创建一个只读变量的主要方式</strong></li>
+  <li>
+    <p><strong>一定要有getter!!</strong>,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。</p>
+
+    <p>~~~swift
+  var now: String {
+      return NSDate().description
+  }
+  ~~~</p>
+  </li>
+</ul>
+
+<h4 id="setter-observer">Setter Observer</h4>
+
+<p>与声明computed Variable类似。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;whatever&quot;</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="kr">willSet</span> <span class="p">{</span>
+<a name="True-3"></a>		<span class="n">print</span><span class="p">(</span><span class="n">newValue</span><span class="p">)</span>
+<a name="True-4"></a>	<span class="p">}</span>
+<a name="True-5"></a>	<span class="kr">didSet</span> <span class="p">{</span>
+<a name="True-6"></a>		<span class="n">print</span><span class="p">(</span><span class="n">oldValue</span><span class="p">)</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div>
+<p><strong>注意：</strong></p>
+
+<ul>
+  <li>变量必须是var,可以有初始值。</li>
+  <li>默认情况下<code>willSet</code>接收新值，局部名为newValue，同样也可以改成其他名字</li>
+  <li>默认情况下<code>didSet</code>接收旧的值，局部名为oldValue，同样也可以改为其他名字。新值已经存储了，在didSet里可以访问到，在didSet函数里修改为其他值也是合法的。</li>
+</ul>
+
+<p>Setter Observer函数在初始化或是在<code>didSet</code>里修改值时不会调用，否则会死循环！</p>
+
+<p>Computed Variable不能有setter observer!</p>
+
+<h4 id="lazy-initialization">Lazy Initialization</h4>
+
+<p>swift中有三种类型可以initialized lazily:</p>
+
+<ul>
+  <li><strong>global variables</strong>. 自动lazy.全局变量的初始化是在第一次访问的时候进行的。通过<code>dispatch_once</code>进行保护，使初始化只进行一次且是线程安全的。</li>
+  <li><strong>static properties</strong>. 静态属性行为与全局变量相似，原因也相同。(There are no stored class properties in Swift, so class properties can’t be initialized and thus can’t have lazy initialization.??这句是什么意思)</li>
+  <li><strong>Instance properties</strong>. 实例属性默认不是lazy的，可以在声明时用<code>lazy</code>标记，属性必须声明为var不能是let。</li>
+</ul>
+
+<p>Lazy initialization通常用来实现单例。</p>
+
 </section>
 <section align="right">
 <br/>
