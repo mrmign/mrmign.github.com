@@ -386,3 +386,49 @@ swift中有三种类型可以initialized lazily:
 * **Instance properties**. 实例属性默认不是lazy的，可以在声明时用`lazy`标记，属性必须声明为var不能是let。
 
 Lazy initialization通常用来实现单例。
+
+## Tuple
+
+tuple当作函数参数传递时必须是常量。
+
+## Optional
+
+`ImplicitlyUnwrappedOptional`,也是optional的，但是它的值可以直接用。
+
+~~~swift
+func realStringExpecter(s:String){}
+var str: ImplicitlyUnwrappedOptional<String> = "how"
+realStringExpecter(str)
+~~~
+
+`var str! = "how"` 效果一样
+
+**An implicitly unwrapped optional is still an Optional !**
+
+explicitly unwrapping an Optional contains nothing will crash!
+
+~~~swift
+var stringMaybe : String?
+let s = stringMaybe! //crash
+~~~
+
+#### Optional Chains
+
+To send a message safely to an Optional that might be empty, you can unwrap the Optional optionally.
+
+~~~swift
+var str: String?
+let upper = str?.uppercaseString
+~~~
+
+If any of them is unwrapped optionally, the entire expression produces an Optional wrapping the type.
+
+An assignment into an Optional chain with optional unwrapping returns an Optional wrapping `Void`.
+
+~~~swift
+let ok : Void ? = self.window?.rootViewController = UIViewController()
+if ok != nil {
+	//it worked
+}
+~~~
+
