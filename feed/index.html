@@ -7,7 +7,7 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-12-03T01:40:47+08:00</lastBuildDate>
+    <lastBuildDate>2015-12-07T00:36:01+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
     
     <item>
@@ -329,6 +329,40 @@
 </ul>
 
 <p>Lazy initialization通常用来实现单例。</p>
+
+<h2 id="tuple">Tuple</h2>
+
+<p>tuple当作函数参数传递时必须是常量。</p>
+
+<h2 id="optional">Optional</h2>
+
+<p><code>ImplicitlyUnwrappedOptional</code>,也是optional的，但是它的值可以直接用。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="nf">realStringExpecter</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">){}</span>
+<a name="True-2"></a><span class="k">var</span> <span class="nl">str</span><span class="p">:</span> <span class="n">ImplicitlyUnwrappedOptional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="o">=</span> <span class="s">&quot;how&quot;</span>
+<a name="True-3"></a><span class="n">realStringExpecter</span><span class="p">(</span><span class="n">str</span><span class="p">)</span></code></pre></div>
+<p><code>var str! = "how"</code> 效果一样</p>
+
+<p><strong>An implicitly unwrapped optional is still an Optional !</strong></p>
+
+<p>explicitly unwrapping an Optional contains nothing will crash!</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="nl">stringMaybe</span> <span class="p">:</span> <span class="n">String</span><span class="o">?</span>
+<a name="True-2"></a><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n">stringMaybe</span><span class="o">!</span> <span class="c1">//crash</span></code></pre></div>
+<h4 id="optional-chains">Optional Chains</h4>
+
+<p>To send a message safely to an Optional that might be empty, you can unwrap the Optional optionally.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="nl">str</span><span class="p">:</span> <span class="n">String</span><span class="o">?</span>
+<a name="True-2"></a><span class="k">let</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">str</span><span class="o">?</span><span class="p">.</span><span class="n">uppercaseString</span></code></pre></div>
+<p>If any of them is unwrapped optionally, the entire expression produces an Optional wrapping the type.</p>
+
+<p>An assignment into an Optional chain with optional unwrapping returns an Optional wrapping <code>Void</code>.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">let</span> <span class="nl">ok</span> <span class="p">:</span> <span class="n">Void</span> <span class="o">?</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">window</span><span class="o">?</span><span class="p">.</span><span class="n">rootViewController</span> <span class="o">=</span> <span class="bp">UIViewController</span><span class="p">()</span>
+<a name="True-2"></a><span class="k">if</span> <span class="n">ok</span> <span class="o">!=</span> <span class="nb">nil</span> <span class="p">{</span>
+<a name="True-3"></a>	<span class="c1">//it worked</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
 ]]></content:encoded>
     </item>
     
