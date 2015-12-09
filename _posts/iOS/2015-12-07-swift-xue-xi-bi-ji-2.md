@@ -138,5 +138,55 @@ class Moi {
 
 静态方法和类方法不能引用实例，因为根本就没有实例。因此静态方法和类方法不能直接引用任何实例属性和调用实例方法。反过来，实例方法可以访问静态属性和类属性，同样也可以调用静态方法和类方法。
 
+#### 关于实例方法的一个私密
 
+**实例方法实际上是静态/类方法**
 
+下面的代码是合法的
+
+~~~swift
+class MyClass {
+	var s = ""
+	func store(s:String) {
+		self.s = s
+	}
+}
+let m = MyClass()
+let f = MyClass.store(m)
+~~~
+
+`store`是一个实例方法，但是可以按类方法的方式来调用，参数是该类的一个实例。
+
+原因是**An instance method is actually a curried static/class method composed of two functions - one function that takes an instance, and another function that takes the parameters of the instance method.**
+
+因此，上面代码执行后`f`是第二种函数，can be called as a way of passing a parameter to the `store` method of the instance `m`.
+
+~~~swift
+f("howdy")
+print(m.s) //howdy
+~~~
+
+## Enums
+
+可以用`rawValue:`的实例化方法来初始化有初始值的enum.`let type = Filter(rawValue:"Album")`,因为这里给的raw value可能没有对应的case,因此这是个failable initializer,返回值是Optional的。
+
+### Enum Property
+
+enum可以有实例属性和静态属性，但是enum的实例属性不能是存储型的(stored),因为如果相同case的两个实例如果存储了不同的实例属性值，它们就不再相同了。computed的属性是可以的。
+
+## Struct
+
+自动会有一个无参的`init()`,但是如果显式地添加了你自己的初始化方法，就不能再访问`init()`了，但是可以添加`init()`方法。
+
+如果结构体有存储型属性但是没有显式的初始化方法，就会有一个根据实例属性衍生来的隐式初始化方法。
+
+~~~swift
+struct Digit {
+	var number : Int
+	var str : String
+}
+
+let d = Digit(number:2, str:"strut")
+~~~
+
+如果实例方法要设置属性值，该方法必须标识为`mutating`,调用该方法的实例必须是`var`类型的。
