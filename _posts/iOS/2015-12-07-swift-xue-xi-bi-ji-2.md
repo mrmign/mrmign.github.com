@@ -190,3 +190,19 @@ let d = Digit(number:2, str:"strut")
 ~~~
 
 如果实例方法要设置属性值，该方法必须标识为`mutating`,调用该方法的实例必须是`var`类型的。
+
+### Struct As Namespace
+
+~~~swift
+struct Default {
+	static let Rows = "Rows"
+	static let Columns = "Columns"
+}
+~~~
+
+**many Objective-C enums are bridged to Swift as this kind of Struct**
+
+## Classes
+
+在Objective-C中，类是唯一的对象类型。Some built-in Swift struct are magically bridged to Objective-C class types, **but your custom struct types dont't have that magic.** 这也是在与OC和Cocoa交互时，声明类而不是结构体的主要原因。
+
