@@ -206,3 +206,23 @@ struct Default {
 
 在Objective-C中，类是唯一的对象类型。Some built-in Swift struct are magically bridged to Objective-C class types, **but your custom struct types dont't have that magic.** 这也是在与OC和Cocoa交互时，声明类而不是结构体的主要原因。
 
+**递归引用**
+
+值类型与引用类型的区别：值类型不能结构上递归，也就是值类型的实例属性不能是相同类型的实例，如下代码就会编译失败
+
+~~~swift
+struct Dog {
+    var puppy : Dog?
+}
+~~~
+
+In Swift 2.0 an enum case's associated value can be an instance of that enum, provided the case( or the entire enum)is marked `indirect`
+
+~~~swift
+enum Node {
+    case None(Int)
+    indirect case Left(Int, Node)
+    indirect case Right(Int, Node)
+    indirect case Both(Int, Node, Node)
+}
+~~~
