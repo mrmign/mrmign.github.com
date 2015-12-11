@@ -226,3 +226,42 @@ enum Node {
     indirect case Both(Int, Node, Node)
 }
 ~~~
+
+子类可以继承父类的属性，也可以添加自己的属性，也可覆盖继承来的属性。
+
+* **通过`final`声明类可以阻止子类继承自该类。**
+* **同样也可以用`final`防止类成员被子类重写**
+
+### Class Initializer
+
+* Implicit initializer.如果一个类没有存储属性，亦或存储属性在声明时就初始化了，并且没有显式的初始化方法，就会有一个隐匿的初始化方法`init()`
+* Designated initializer.如果一个类有存储属性并且在声明时没有进行初始化，该类必须至少有一个designated initializer，当类初始化的时候所有的存储属性必须被初始化了。
+* Convenience initializer.用`convenience`修饰。必须有`self.init(...)`调用。在当前类中，必须调用一个designated initializer或是调用另一个convenience初始化方法。
+
+~~~swift
+class Dog {
+	var name : String
+	var license : Int
+	inti(name: String, license: Int) {
+		self.name = name
+		self.license = license
+	}
+	convenience init(license: Int) {
+		self.init(name:"Fido", license:license)
+	}
+	convenience init() {
+		self.init(license:1)
+	}
+}
+~~~
+
+### Subclass initializer
+
+* No declared initializer. 初始化方法由父类继承来的组成
+* Convenience initializer only. 
+* Designated initializer. **不再有继承的初始化方法了！**显式的designated initializer 阻止了初始化方法的继承。现在子类有的唯一的初始化方法就是显式定义的。子类的designated initializer必须做下面的事:
+	1. 必须保证子类所有的属性被初始化
+	2. 必须调用`super.init(...)`，而且该方法必须是父类的designated initializer
+	3. 然后才能使用`self`来调用实例方法，或访问继承来的属性。
+	
+### Override initializer
