@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>swift学习笔记-2</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>swift学习笔记-2</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-12-07">2015-12-07</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#swift" title="swift">swift</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h1 id="object-types">Object Types</h1>
+
+<p>函数参数可以有默认值</p>
+
+<p><strong>property必须在声明时或是在初始化方法中被初始化</strong></p>
+
+<h2 id="referring-to-self">Referring to self</h2>
+
+<p>在实例属性没有初始化完成前，初始化方法不能显式或隐匿的引用self(An initializer may not refer to self, explicitly or implicitly, until all instance properties have been initialized).</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Cat</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="n">meow</span><span class="p">()</span> <span class="c1">//compile error</span>
+<a name="True-7"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-8"></a>	<span class="p">}</span>
+<a name="True-9"></a>	<span class="k">func</span> <span class="n">meow</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-10"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;meow&quot;</span><span class="p">)</span>
+<a name="True-11"></a>	<span class="p">}</span>
+<a name="True-12"></a><span class="p">}</span></code></pre></div>
+<h2 id="delegating-initializer">Delegating initializer</h2>
+
+<p>An intializer that calls another initializer is called a delegating initializer.</p>
+
+<p>A delegating initailzer cannot set an immutable property(a <code>let</code> variable).因为只有在调用了其他初始化方法后才能引用属性，这个时候实例已经完全初始化了，已经无法再初始化let的属性了。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Digit</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">number</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">meaningOfLife</span><span class="p">:</span> <span class="n">Bool</span>
+<a name="True-4"></a>	<span class="c1">//let meaningOfLife :Bool</span>
+<a name="True-5"></a>	<span class="k">init</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
+<a name="True-7"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">meaningOfLife</span> <span class="o">=</span> <span class="nb">false</span>
+<a name="True-8"></a>	<span class="p">}</span>
+<a name="True-9"></a>	<span class="k">init</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-10"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="mi">43</span><span class="p">)</span>
+<a name="True-11"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">mearningOfLife</span> <span class="o">=</span> <span class="nb">true</span> <span class="c1">//如果meaningOfLife声明为let这里就编译错误了</span>
+<a name="True-12"></a>	<span class="p">}</span>
+<a name="True-13"></a><span class="p">}</span></code></pre></div>
+<h2 id="failable-initailizer">Failable initailizer</h2>
+
+<p>有可能返回nil的初始化方法。An initializer can return an Optional wrapping the new instance.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="n">calss</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="k">init</span><span class="o">!</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-7"></a>		<span class="k">if</span> <span class="n">name</span><span class="p">.</span><span class="n">isEmpty</span> <span class="p">{</span>
+<a name="True-8"></a>			<span class="k">return</span> <span class="nb">nil</span>
+<a name="True-9"></a>		<span class="p">}</span>
+<a name="True-10"></a>		<span class="k">if</span> <span class="n">license</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+<a name="True-11"></a>			<span class="k">return</span> <span class="nb">nil</span>
+<a name="True-12"></a>		<span class="p">}</span>
+<a name="True-13"></a>	<span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<p>上面的返回值是<code>Dog!</code>, the Optional is implicitly unwrapped.
+可以直接使用返回的结果，但是如果返回nil， 直接使用就会导致crash</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">let</span> <span class="n">fido</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+<a name="True-2"></a><span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="n">fido</span><span class="p">.</span><span class="n">name</span> <span class="c1">//crash</span></code></pre></div>
+<p><code>UIImage</code>的初始化方法<code>init?(named:)</code>也是failable initializer,它没有implicitly unwrapped,所以返回是<code>UIImage?</code>,在使用前必须unwrapped.</p>
+
+<h2 id="properties">Properties</h2>
+
+<ul>
+  <li>有固定的类型</li>
+  <li>可以是var或let</li>
+  <li>可以是stored或computed</li>
+  <li>可以有setter observer</li>
+  <li>实例属性可以声明为lazy</li>
+</ul>
+
+<p>存储型(stored)的实例属性必须有初始值(可以在声明时赋，也可以在初始化方法中赋值)。在属性初始化时不会调用Setter observer。</p>
+
+<p><strong>初始化属性的代码不能获取实例属性也不能调用实例方法</strong>，因为会显式或隐匿的引用到<code>self</code>，但是在初始化时还没有<code>self</code>。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Moi</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="n">first</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="s">&quot;Nur&quot;</span>
+<a name="True-4"></a>	<span class="k">let</span> <span class="n">whole</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span> <span class="c1">//compile error</span>
+<a name="True-5"></a>	<span class="k">let</span> <span class="nl">who</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span> <span class="c1">//改用计算型的</span>
+<a name="True-6"></a>		<span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a>	<span class="n">lazy</span> <span class="k">var</span> <span class="nl">who2</span><span class="p">:</span> <span class="n">String</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span>
+<a name="True-9"></a><span class="p">}</span></code></pre></div>
+<p>上面在初始化时访问了其他属性导致编译错误，可以改为用计算型的，因为计算型的不会真正计算直到<code>self</code>存在。</p>
+
+<p>另外，还可以通过声明whole为lazy来解决。同样只有在self存在的时候才执行。</p>
+
+<p>同样，计算型的和lazy的可以调用实例方法。</p>
+
+<p>属性的初始化方法可以有多行代码，你可以定义执行匿名函数。如果代码有访问其他的属性或是实例方法，必须声明为<code>lazy</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Moi</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="n">first</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="s">&quot;Nur&quot;</span>
+<a name="True-4"></a>	<span class="n">lazy</span> <span class="k">var</span> <span class="nl">whole2</span><span class="p">:</span> <span class="n">String</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-5"></a>        <span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span>
+<a name="True-6"></a>        <span class="n">s</span><span class="p">.</span><span class="n">appendContentsOf</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<a name="True-7"></a>        <span class="n">s</span><span class="p">.</span><span class="n">appendContentsOf</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">last</span><span class="p">)</span>
+<a name="True-8"></a>        <span class="k">return</span> <span class="n">s</span>
+<a name="True-9"></a>    <span class="p">}()</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<p>静态属性初始化时可以引用其他静态属性，因为静态属性的初始化是<code>lazy</code>的。</p>
+
+<h2 id="methods">Methods</h2>
+
+<p>静态方法和类方法是通过<code>type</code>来访问的，<code>self</code>也就是type.</p>
+
+<p>静态方法和类方法不能引用实例，因为根本就没有实例。因此静态方法和类方法不能直接引用任何实例属性和调用实例方法。反过来，实例方法可以访问静态属性和类属性，同样也可以调用静态方法和类方法。</p>
+
+<h4 id="section">关于实例方法的一个私密</h4>
+
+<p><strong>实例方法实际上是静态/类方法</strong></p>
+
+<p>下面的代码是合法的</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">MyClass</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+<a name="True-3"></a>	<span class="k">func</span> <span class="n">store</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
+<a name="True-5"></a>	<span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">let</span> <span class="n">m</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<a name="True-8"></a><span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="n">m</span><span class="p">)</span></code></pre></div>
+<p><code>store</code>是一个实例方法，但是可以按类方法的方式来调用，参数是该类的一个实例。</p>
+
+<p>原因是<strong>An instance method is actually a curried static/class method composed of two functions - one function that takes an instance, and another function that takes the parameters of the instance method.</strong></p>
+
+<p>因此，上面代码执行后<code>f</code>是第二种函数，can be called as a way of passing a parameter to the <code>store</code> method of the instance <code>m</code>.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="n">f</span><span class="p">(</span><span class="s">&quot;howdy&quot;</span><span class="p">)</span>
+<a name="True-2"></a><span class="n">print</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">s</span><span class="p">)</span> <span class="c1">//howdy</span></code></pre></div>
+<h2 id="enums">Enums</h2>
+
+<p>可以用<code>rawValue:</code>的实例化方法来初始化有初始值的enum.<code>let type = Filter(rawValue:"Album")</code>,因为这里给的raw value可能没有对应的case,因此这是个failable initializer,返回值是Optional的。</p>
+
+<h3 id="enum-property">Enum Property</h3>
+
+<p>enum可以有实例属性和静态属性，但是enum的实例属性不能是存储型的(stored),因为如果相同case的两个实例如果存储了不同的实例属性值，它们就不再相同了。computed的属性是可以的。</p>
+
+<h2 id="struct">Struct</h2>
+
+<p>自动会有一个无参的<code>init()</code>,但是如果显式地添加了你自己的初始化方法，就不能再访问<code>init()</code>了，但是可以添加<code>init()</code>方法。</p>
+
+<p>如果结构体有存储型属性但是没有显式的初始化方法，就会有一个根据实例属性衍生来的隐式初始化方法。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Digit</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">number</span> <span class="p">:</span> <span class="n">Int</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">str</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-4"></a><span class="p">}</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Digit</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nl">str</span><span class="p">:</span><span class="s">&quot;strut&quot;</span><span class="p">)</span></code></pre></div>
+<p>如果实例方法要设置属性值，该方法必须标识为<code>mutating</code>,调用该方法的实例必须是<code>var</code>类型的。</p>
+
+<h3 id="struct-as-namespace">Struct As Namespace</h3>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Default</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">static</span> <span class="k">let</span> <span class="n">Rows</span> <span class="o">=</span> <span class="s">&quot;Rows&quot;</span>
+<a name="True-3"></a>	<span class="k">static</span> <span class="k">let</span> <span class="n">Columns</span> <span class="o">=</span> <span class="s">&quot;Columns&quot;</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p><strong>many Objective-C enums are bridged to Swift as this kind of Struct</strong></p>
+
+<h2 id="classes">Classes</h2>
+
+<p>在Objective-C中，类是唯一的对象类型。Some built-in Swift struct are magically bridged to Objective-C class types, <strong>but your custom struct types dont’t have that magic.</strong> 这也是在与OC和Cocoa交互时，声明类而不是结构体的主要原因。</p>
+
+<p><strong>递归引用</strong></p>
+
+<p>值类型与引用类型的区别：值类型不能结构上递归，也就是值类型的实例属性不能是相同类型的实例，如下代码就会编译失败</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">puppy</span> <span class="p">:</span> <span class="n">Dog</span><span class="o">?</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<p>In Swift 2.0 an enum case’s associated value can be an instance of that enum, provided the case( or the entire enum)is marked <code>indirect</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">enum</span> <span class="n">Node</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">case</span> <span class="n">None</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span>
+<a name="True-3"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Left</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-4"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Right</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-5"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Both</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>子类可以继承父类的属性，也可以添加自己的属性，也可覆盖继承来的属性。</p>
+
+<ul>
+  <li><strong>通过<code>final</code>声明类可以阻止子类继承自该类。</strong></li>
+  <li><strong>同样也可以用<code>final</code>防止类成员被子类重写</strong></li>
+</ul>
+
+<h3 id="class-initializer">Class Initializer</h3>
+
+<ul>
+  <li>Implicit initializer.如果一个类没有存储属性，亦或存储属性在声明时就初始化了，并且没有显式的初始化方法，就会有一个隐匿的初始化方法<code>init()</code></li>
+  <li>Designated initializer.如果一个类有存储属性并且在声明时没有进行初始化，该类必须至少有一个designated initializer，当类初始化的时候所有的存储属性必须被初始化了。</li>
+  <li>Convenience initializer.用<code>convenience</code>修饰。必须有<code>self.init(...)</code>调用。在当前类中，必须调用一个designated initializer或是调用另一个convenience初始化方法。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">license</span> <span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="n">inti</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a>	<span class="n">convenience</span> <span class="k">init</span><span class="p">(</span><span class="nl">license</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-9"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">license</span><span class="p">)</span>
+<a name="True-10"></a>	<span class="p">}</span>
+<a name="True-11"></a>	<span class="n">convenience</span> <span class="k">init</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-12"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">license</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+<a name="True-13"></a>	<span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<h3 id="subclass-initializer">Subclass initializer</h3>
+
+<ul>
+  <li>No declared initializer. 初始化方法由父类继承来的组成</li>
+  <li>Convenience initializer only.</li>
+  <li>Designated initializer. <strong>不再有继承的初始化方法了！</strong>显式的designated initializer 阻止了初始化方法的继承。现在子类有的唯一的初始化方法就是显式定义的。子类的designated initializer必须做下面的事:
+    <ol>
+      <li>必须保证子类所有的属性被初始化</li>
+      <li>必须调用<code>super.init(...)</code>，而且该方法必须是父类的designated initializer</li>
+      <li>然后才能使用<code>self</code>来调用实例方法，或访问继承来的属性。</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="override-initializer">Override initializer</h3>
+
+<ul>
+  <li>如果子类初始化方法的签名与父类的convenience初始化方法相同，必须也是convenience的，并且不要标识<code>override</code></li>
+  <li>如果子类初始化方法的签名与父类的designated初始化方法相同，可以是designated或是convenience初始化方法，并且必须标识为<code>override</code></li>
+</ul>
+
+<h3 id="failable-initializer">Failable initializer</h3>
+
+<p>A failable initializer that returns an implicitly umwrapped Optional(<code>init!</code>) is treated just like a normal initializer(<code>init</code>) for purpose of overriding and delegation.对于返回<code>init?</code>的failable initializer,有其他的限制：</p>
+
+<ul>
+  <li><code>init</code>可以重写<code>init?</code>，反过来不行</li>
+  <li><code>init?</code>可以调用<code>init</code></li>
+  <li><code>init</code>可以通过<code>init</code>来调用<code>init?</code>，将返回结果解包</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">A</span><span class="p">:</span><span class="bp">NSObject</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">init</span><span class="o">?</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span> <span class="c1">// init? call init</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a><span class="p">}</span>
+<a name="True-6"></a><span class="k">class</span> <span class="nl">B</span><span class="p">:</span><span class="n">A</span> <span class="p">{</span>
+<a name="True-7"></a>    <span class="kr">override</span> <span class="k">init</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// init override init?</span>
+<a name="True-8"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">ok</span><span class="p">)</span><span class="o">!</span>   <span class="c1">// init call init? using &quot;!&quot;</span>
+<a name="True-9"></a>    <span class="p">}</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<h3 id="required-intializer">Required intializer</h3>
+
+<p>如果初始化方法标识为<code>required</code>,子类不能少了该初始化方法。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">class</span> <span class="nl">NosiyDog</span><span class="p">:</span><span class="n">Dog</span> <span class="p">{</span>
+<a name="True-8"></a>    <span class="k">var</span> <span class="n">obedient</span> <span class="o">=</span> <span class="nb">false</span>
+<a name="True-9"></a>    <span class="k">init</span><span class="p">(</span><span class="nl">obedient</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-10"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">obedient</span> <span class="o">=</span> <span class="n">obedient</span>
+<a name="True-11"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-12"></a>    <span class="p">}</span>
+<a name="True-13"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-14"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">name</span><span class="p">)</span>
+<a name="True-15"></a>    <span class="p">}</span>
+<a name="True-16"></a><span class="p">}</span></code></pre></div>
+<p>从上面代码中看到我们重写的required初始化方法没有标识为<code>override</code>，但是标识为了<code>required</code>,因此可以保证该要求可以一直往子类传。</p>
+
+<h3 id="class-deinitializer">Class Deinitializer</h3>
+
+<p>方法名是<code>deinit</code>。如果一个类有父类，子类的deinitializer方法先调用，再调用父类的。</p>
+
+<h2 id="class-properties-and-methods">Class Properties and Methods</h2>
+
+<p>子类可以重写继承的属性，但是必须与要继承的属性有相同的名字和类型，并且必须标识为<code>override</code>。</p>
+
+<ul>
+  <li>如果父类属性是可写的(存储属性或是有setter方法的计算属性），子类的重写可以为属性添加setter observer</li>
+  <li>子类可以重写为计算属性，但是：
+    <ul>
+      <li>如果父类是存储属性，子类重写为计算属性必须同时有getter和setter方法</li>
+      <li>如果父类属性是计算的，子类重写的计算属性必须重新实现所有父类的accessors。如果父类的属性是只读的(只有getter方法)，子类重写可以添加setter方法。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>重写的属性的方法可以用<code>super</code>来访问被继承的属性。</p>
+
+<p><code>static</code>和<code>class</code>成员都会被子类继承，并且也是<code>static</code>或是<code>class</code>成员。</p>
+
+<p><strong>从程序员角度看<code>static</code>方法与<code>class</code>方法的主要不同是static方法不能重写。</strong></p>
+
+<p>静态属性与类属性之间的区别也差不多，非常明显的就是静态属性可以是stored,类属性只能是computed.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">class</span> <span class="k">var</span> <span class="nl">whatDogSay</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="k">return</span> <span class="s">&quot;woof&quot;</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a>    <span class="k">func</span> <span class="n">bark</span> <span class="p">()</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="n">print</span><span class="p">(</span><span class="n">Dog</span><span class="p">.</span><span class="n">whatDogSay</span><span class="p">)</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="n">calss</span> <span class="nl">NosiyDog</span> <span class="p">:</span><span class="n">Dog</span> <span class="p">{</span>
+<a name="True-11"></a>    <span class="kr">override</span> <span class="k">static</span> <span class="k">var</span> <span class="nl">whatDogSay</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-12"></a>        <span class="k">return</span> <span class="s">&quot;WOOF&quot;</span>
+<a name="True-13"></a>    <span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<p>上面代码中子类继承了<code>whatDogSay</code>并且重写为类属性或是静态属性。<strong>但是即使重写为static类型的，也不能是存储属性。</strong></p>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/12/01/swift-xue-xi-bi-ji/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a   class="pageNavInvalid"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

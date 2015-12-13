@@ -7,8 +7,337 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-12-07T00:36:01+08:00</lastBuildDate>
+    <lastBuildDate>2015-12-13T16:03:04+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
+    
+    <item>
+      <title>swift学习笔记-2</title>
+      <link href="http://mrmign.github.io/2015/12/07/swift-xue-xi-bi-ji-2/"/>
+      <pubDate>2015-12-07T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/12/07/swift-xue-xi-bi-ji-2</guid>
+      <content:encoded><![CDATA[<h1 id="object-types">Object Types</h1>
+
+<p>函数参数可以有默认值</p>
+
+<p><strong>property必须在声明时或是在初始化方法中被初始化</strong></p>
+
+<h2 id="referring-to-self">Referring to self</h2>
+
+<p>在实例属性没有初始化完成前，初始化方法不能显式或隐匿的引用self(An initializer may not refer to self, explicitly or implicitly, until all instance properties have been initialized).</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Cat</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="n">meow</span><span class="p">()</span> <span class="c1">//compile error</span>
+<a name="True-7"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-8"></a>	<span class="p">}</span>
+<a name="True-9"></a>	<span class="k">func</span> <span class="n">meow</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-10"></a>		<span class="n">print</span><span class="p">(</span><span class="s">&quot;meow&quot;</span><span class="p">)</span>
+<a name="True-11"></a>	<span class="p">}</span>
+<a name="True-12"></a><span class="p">}</span></code></pre></div>
+<h2 id="delegating-initializer">Delegating initializer</h2>
+
+<p>An intializer that calls another initializer is called a delegating initializer.</p>
+
+<p>A delegating initailzer cannot set an immutable property(a <code>let</code> variable).因为只有在调用了其他初始化方法后才能引用属性，这个时候实例已经完全初始化了，已经无法再初始化let的属性了。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Digit</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">number</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">meaningOfLife</span><span class="p">:</span> <span class="n">Bool</span>
+<a name="True-4"></a>	<span class="c1">//let meaningOfLife :Bool</span>
+<a name="True-5"></a>	<span class="k">init</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
+<a name="True-7"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">meaningOfLife</span> <span class="o">=</span> <span class="nb">false</span>
+<a name="True-8"></a>	<span class="p">}</span>
+<a name="True-9"></a>	<span class="k">init</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-10"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="mi">43</span><span class="p">)</span>
+<a name="True-11"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">mearningOfLife</span> <span class="o">=</span> <span class="nb">true</span> <span class="c1">//如果meaningOfLife声明为let这里就编译错误了</span>
+<a name="True-12"></a>	<span class="p">}</span>
+<a name="True-13"></a><span class="p">}</span></code></pre></div>
+<h2 id="failable-initailizer">Failable initailizer</h2>
+
+<p>有可能返回nil的初始化方法。An initializer can return an Optional wrapping the new instance.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="n">calss</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="k">init</span><span class="o">!</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-7"></a>		<span class="k">if</span> <span class="n">name</span><span class="p">.</span><span class="n">isEmpty</span> <span class="p">{</span>
+<a name="True-8"></a>			<span class="k">return</span> <span class="nb">nil</span>
+<a name="True-9"></a>		<span class="p">}</span>
+<a name="True-10"></a>		<span class="k">if</span> <span class="n">license</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+<a name="True-11"></a>			<span class="k">return</span> <span class="nb">nil</span>
+<a name="True-12"></a>		<span class="p">}</span>
+<a name="True-13"></a>	<span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<p>上面的返回值是<code>Dog!</code>, the Optional is implicitly unwrapped.
+可以直接使用返回的结果，但是如果返回nil， 直接使用就会导致crash</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">let</span> <span class="n">fido</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+<a name="True-2"></a><span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="n">fido</span><span class="p">.</span><span class="n">name</span> <span class="c1">//crash</span></code></pre></div>
+<p><code>UIImage</code>的初始化方法<code>init?(named:)</code>也是failable initializer,它没有implicitly unwrapped,所以返回是<code>UIImage?</code>,在使用前必须unwrapped.</p>
+
+<h2 id="properties">Properties</h2>
+
+<ul>
+  <li>有固定的类型</li>
+  <li>可以是var或let</li>
+  <li>可以是stored或computed</li>
+  <li>可以有setter observer</li>
+  <li>实例属性可以声明为lazy</li>
+</ul>
+
+<p>存储型(stored)的实例属性必须有初始值(可以在声明时赋，也可以在初始化方法中赋值)。在属性初始化时不会调用Setter observer。</p>
+
+<p><strong>初始化属性的代码不能获取实例属性也不能调用实例方法</strong>，因为会显式或隐匿的引用到<code>self</code>，但是在初始化时还没有<code>self</code>。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Moi</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="n">first</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="s">&quot;Nur&quot;</span>
+<a name="True-4"></a>	<span class="k">let</span> <span class="n">whole</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span> <span class="c1">//compile error</span>
+<a name="True-5"></a>	<span class="k">let</span> <span class="nl">who</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span> <span class="c1">//改用计算型的</span>
+<a name="True-6"></a>		<span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a>	<span class="n">lazy</span> <span class="k">var</span> <span class="nl">who2</span><span class="p">:</span> <span class="n">String</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">self</span><span class="p">.</span><span class="n">last</span>
+<a name="True-9"></a><span class="p">}</span></code></pre></div>
+<p>上面在初始化时访问了其他属性导致编译错误，可以改为用计算型的，因为计算型的不会真正计算直到<code>self</code>存在。</p>
+
+<p>另外，还可以通过声明whole为lazy来解决。同样只有在self存在的时候才执行。</p>
+
+<p>同样，计算型的和lazy的可以调用实例方法。</p>
+
+<p>属性的初始化方法可以有多行代码，你可以定义执行匿名函数。如果代码有访问其他的属性或是实例方法，必须声明为<code>lazy</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Moi</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">let</span> <span class="n">first</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<a name="True-3"></a>	<span class="k">let</span> <span class="n">last</span> <span class="o">=</span> <span class="s">&quot;Nur&quot;</span>
+<a name="True-4"></a>	<span class="n">lazy</span> <span class="k">var</span> <span class="nl">whole2</span><span class="p">:</span> <span class="n">String</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-5"></a>        <span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">first</span>
+<a name="True-6"></a>        <span class="n">s</span><span class="p">.</span><span class="n">appendContentsOf</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<a name="True-7"></a>        <span class="n">s</span><span class="p">.</span><span class="n">appendContentsOf</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">last</span><span class="p">)</span>
+<a name="True-8"></a>        <span class="k">return</span> <span class="n">s</span>
+<a name="True-9"></a>    <span class="p">}()</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<p>静态属性初始化时可以引用其他静态属性，因为静态属性的初始化是<code>lazy</code>的。</p>
+
+<h2 id="methods">Methods</h2>
+
+<p>静态方法和类方法是通过<code>type</code>来访问的，<code>self</code>也就是type.</p>
+
+<p>静态方法和类方法不能引用实例，因为根本就没有实例。因此静态方法和类方法不能直接引用任何实例属性和调用实例方法。反过来，实例方法可以访问静态属性和类属性，同样也可以调用静态方法和类方法。</p>
+
+<h4 id="section">关于实例方法的一个私密</h4>
+
+<p><strong>实例方法实际上是静态/类方法</strong></p>
+
+<p>下面的代码是合法的</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">MyClass</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+<a name="True-3"></a>	<span class="k">func</span> <span class="n">store</span><span class="p">(</span><span class="nl">s</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
+<a name="True-5"></a>	<span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">let</span> <span class="n">m</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<a name="True-8"></a><span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="n">m</span><span class="p">)</span></code></pre></div>
+<p><code>store</code>是一个实例方法，但是可以按类方法的方式来调用，参数是该类的一个实例。</p>
+
+<p>原因是<strong>An instance method is actually a curried static/class method composed of two functions - one function that takes an instance, and another function that takes the parameters of the instance method.</strong></p>
+
+<p>因此，上面代码执行后<code>f</code>是第二种函数，can be called as a way of passing a parameter to the <code>store</code> method of the instance <code>m</code>.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="n">f</span><span class="p">(</span><span class="s">&quot;howdy&quot;</span><span class="p">)</span>
+<a name="True-2"></a><span class="n">print</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">s</span><span class="p">)</span> <span class="c1">//howdy</span></code></pre></div>
+<h2 id="enums">Enums</h2>
+
+<p>可以用<code>rawValue:</code>的实例化方法来初始化有初始值的enum.<code>let type = Filter(rawValue:"Album")</code>,因为这里给的raw value可能没有对应的case,因此这是个failable initializer,返回值是Optional的。</p>
+
+<h3 id="enum-property">Enum Property</h3>
+
+<p>enum可以有实例属性和静态属性，但是enum的实例属性不能是存储型的(stored),因为如果相同case的两个实例如果存储了不同的实例属性值，它们就不再相同了。computed的属性是可以的。</p>
+
+<h2 id="struct">Struct</h2>
+
+<p>自动会有一个无参的<code>init()</code>,但是如果显式地添加了你自己的初始化方法，就不能再访问<code>init()</code>了，但是可以添加<code>init()</code>方法。</p>
+
+<p>如果结构体有存储型属性但是没有显式的初始化方法，就会有一个根据实例属性衍生来的隐式初始化方法。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Digit</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">number</span> <span class="p">:</span> <span class="n">Int</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">str</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-4"></a><span class="p">}</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Digit</span><span class="p">(</span><span class="nl">number</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nl">str</span><span class="p">:</span><span class="s">&quot;strut&quot;</span><span class="p">)</span></code></pre></div>
+<p>如果实例方法要设置属性值，该方法必须标识为<code>mutating</code>,调用该方法的实例必须是<code>var</code>类型的。</p>
+
+<h3 id="struct-as-namespace">Struct As Namespace</h3>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Default</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">static</span> <span class="k">let</span> <span class="n">Rows</span> <span class="o">=</span> <span class="s">&quot;Rows&quot;</span>
+<a name="True-3"></a>	<span class="k">static</span> <span class="k">let</span> <span class="n">Columns</span> <span class="o">=</span> <span class="s">&quot;Columns&quot;</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p><strong>many Objective-C enums are bridged to Swift as this kind of Struct</strong></p>
+
+<h2 id="classes">Classes</h2>
+
+<p>在Objective-C中，类是唯一的对象类型。Some built-in Swift struct are magically bridged to Objective-C class types, <strong>but your custom struct types dont’t have that magic.</strong> 这也是在与OC和Cocoa交互时，声明类而不是结构体的主要原因。</p>
+
+<p><strong>递归引用</strong></p>
+
+<p>值类型与引用类型的区别：值类型不能结构上递归，也就是值类型的实例属性不能是相同类型的实例，如下代码就会编译失败</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">puppy</span> <span class="p">:</span> <span class="n">Dog</span><span class="o">?</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<p>In Swift 2.0 an enum case’s associated value can be an instance of that enum, provided the case( or the entire enum)is marked <code>indirect</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">enum</span> <span class="n">Node</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">case</span> <span class="n">None</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span>
+<a name="True-3"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Left</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-4"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Right</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-5"></a>    <span class="n">indirect</span> <span class="k">case</span> <span class="n">Both</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>子类可以继承父类的属性，也可以添加自己的属性，也可覆盖继承来的属性。</p>
+
+<ul>
+  <li><strong>通过<code>final</code>声明类可以阻止子类继承自该类。</strong></li>
+  <li><strong>同样也可以用<code>final</code>防止类成员被子类重写</strong></li>
+</ul>
+
+<h3 id="class-initializer">Class Initializer</h3>
+
+<ul>
+  <li>Implicit initializer.如果一个类没有存储属性，亦或存储属性在声明时就初始化了，并且没有显式的初始化方法，就会有一个隐匿的初始化方法<code>init()</code></li>
+  <li>Designated initializer.如果一个类有存储属性并且在声明时没有进行初始化，该类必须至少有一个designated initializer，当类初始化的时候所有的存储属性必须被初始化了。</li>
+  <li>Convenience initializer.用<code>convenience</code>修饰。必须有<code>self.init(...)</code>调用。在当前类中，必须调用一个designated initializer或是调用另一个convenience初始化方法。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>	<span class="k">var</span> <span class="nl">license</span> <span class="p">:</span> <span class="n">Int</span>
+<a name="True-4"></a>	<span class="n">inti</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-6"></a>		<span class="nb">self</span><span class="p">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">license</span>
+<a name="True-7"></a>	<span class="p">}</span>
+<a name="True-8"></a>	<span class="n">convenience</span> <span class="k">init</span><span class="p">(</span><span class="nl">license</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-9"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">,</span> <span class="nl">license</span><span class="p">:</span><span class="n">license</span><span class="p">)</span>
+<a name="True-10"></a>	<span class="p">}</span>
+<a name="True-11"></a>	<span class="n">convenience</span> <span class="k">init</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-12"></a>		<span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">license</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+<a name="True-13"></a>	<span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<h3 id="subclass-initializer">Subclass initializer</h3>
+
+<ul>
+  <li>No declared initializer. 初始化方法由父类继承来的组成</li>
+  <li>Convenience initializer only.</li>
+  <li>Designated initializer. <strong>不再有继承的初始化方法了！</strong>显式的designated initializer 阻止了初始化方法的继承。现在子类有的唯一的初始化方法就是显式定义的。子类的designated initializer必须做下面的事:
+    <ol>
+      <li>必须保证子类所有的属性被初始化</li>
+      <li>必须调用<code>super.init(...)</code>，而且该方法必须是父类的designated initializer</li>
+      <li>然后才能使用<code>self</code>来调用实例方法，或访问继承来的属性。</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="override-initializer">Override initializer</h3>
+
+<ul>
+  <li>如果子类初始化方法的签名与父类的convenience初始化方法相同，必须也是convenience的，并且不要标识<code>override</code></li>
+  <li>如果子类初始化方法的签名与父类的designated初始化方法相同，可以是designated或是convenience初始化方法，并且必须标识为<code>override</code></li>
+</ul>
+
+<h3 id="failable-initializer">Failable initializer</h3>
+
+<p>A failable initializer that returns an implicitly umwrapped Optional(<code>init!</code>) is treated just like a normal initializer(<code>init</code>) for purpose of overriding and delegation.对于返回<code>init?</code>的failable initializer,有其他的限制：</p>
+
+<ul>
+  <li><code>init</code>可以重写<code>init?</code>，反过来不行</li>
+  <li><code>init?</code>可以调用<code>init</code></li>
+  <li><code>init</code>可以通过<code>init</code>来调用<code>init?</code>，将返回结果解包</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">A</span><span class="p">:</span><span class="bp">NSObject</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">init</span><span class="o">?</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span> <span class="c1">// init? call init</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a><span class="p">}</span>
+<a name="True-6"></a><span class="k">class</span> <span class="nl">B</span><span class="p">:</span><span class="n">A</span> <span class="p">{</span>
+<a name="True-7"></a>    <span class="kr">override</span> <span class="k">init</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// init override init?</span>
+<a name="True-8"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">ok</span><span class="p">:</span><span class="n">ok</span><span class="p">)</span><span class="o">!</span>   <span class="c1">// init call init? using &quot;!&quot;</span>
+<a name="True-9"></a>    <span class="p">}</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<h3 id="required-intializer">Required intializer</h3>
+
+<p>如果初始化方法标识为<code>required</code>,子类不能少了该初始化方法。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span><span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">class</span> <span class="nl">NosiyDog</span><span class="p">:</span><span class="n">Dog</span> <span class="p">{</span>
+<a name="True-8"></a>    <span class="k">var</span> <span class="n">obedient</span> <span class="o">=</span> <span class="nb">false</span>
+<a name="True-9"></a>    <span class="k">init</span><span class="p">(</span><span class="nl">obedient</span><span class="p">:</span><span class="n">Bool</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-10"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">obedient</span> <span class="o">=</span> <span class="n">obedient</span>
+<a name="True-11"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-12"></a>    <span class="p">}</span>
+<a name="True-13"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-14"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="n">name</span><span class="p">)</span>
+<a name="True-15"></a>    <span class="p">}</span>
+<a name="True-16"></a><span class="p">}</span></code></pre></div>
+<p>从上面代码中看到我们重写的required初始化方法没有标识为<code>override</code>，但是标识为了<code>required</code>,因此可以保证该要求可以一直往子类传。</p>
+
+<h3 id="class-deinitializer">Class Deinitializer</h3>
+
+<p>方法名是<code>deinit</code>。如果一个类有父类，子类的deinitializer方法先调用，再调用父类的。</p>
+
+<h2 id="class-properties-and-methods">Class Properties and Methods</h2>
+
+<p>子类可以重写继承的属性，但是必须与要继承的属性有相同的名字和类型，并且必须标识为<code>override</code>。</p>
+
+<ul>
+  <li>如果父类属性是可写的(存储属性或是有setter方法的计算属性），子类的重写可以为属性添加setter observer</li>
+  <li>子类可以重写为计算属性，但是：
+    <ul>
+      <li>如果父类是存储属性，子类重写为计算属性必须同时有getter和setter方法</li>
+      <li>如果父类属性是计算的，子类重写的计算属性必须重新实现所有父类的accessors。如果父类的属性是只读的(只有getter方法)，子类重写可以添加setter方法。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>重写的属性的方法可以用<code>super</code>来访问被继承的属性。</p>
+
+<p><code>static</code>和<code>class</code>成员都会被子类继承，并且也是<code>static</code>或是<code>class</code>成员。</p>
+
+<p><strong>从程序员角度看<code>static</code>方法与<code>class</code>方法的主要不同是static方法不能重写。</strong></p>
+
+<p>静态属性与类属性之间的区别也差不多，非常明显的就是静态属性可以是stored,类属性只能是computed.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">class</span> <span class="k">var</span> <span class="nl">whatDogSay</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="k">return</span> <span class="s">&quot;woof&quot;</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a>    <span class="k">func</span> <span class="n">bark</span> <span class="p">()</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="n">print</span><span class="p">(</span><span class="n">Dog</span><span class="p">.</span><span class="n">whatDogSay</span><span class="p">)</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="n">calss</span> <span class="nl">NosiyDog</span> <span class="p">:</span><span class="n">Dog</span> <span class="p">{</span>
+<a name="True-11"></a>    <span class="kr">override</span> <span class="k">static</span> <span class="k">var</span> <span class="nl">whatDogSay</span> <span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-12"></a>        <span class="k">return</span> <span class="s">&quot;WOOF&quot;</span>
+<a name="True-13"></a>    <span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<p>上面代码中子类继承了<code>whatDogSay</code>并且重写为类属性或是静态属性。<strong>但是即使重写为static类型的，也不能是存储属性。</strong></p>
+
+]]></content:encoded>
+    </item>
     
     <item>
       <title>swift学习笔记</title>
@@ -1084,127 +1413,6 @@
 #### 移除观察者</p>
 
 <p><code>[observedObject removeObserver:inspector forKeyPath:@"openingBalance"];</code>，如果context是一个对象，在移除观察者前一定要保持强引用。</p>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>KVC Programming基础</title>
-      <link href="http://mrmign.github.io/2015/07/18/kvc-programming-ji-chu/"/>
-      <pubDate>2015-07-18T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/07/18/kvc-programming-ji-chu</guid>
-      <content:encoded><![CDATA[<h1 id="kvckey-value-coding-programming">KVC(Key-value Coding) Programming基础</h1>
-
-<p>KVC是KVO(Key-value Observeing)的基础。</p>
-
-<h2 id="kvc">什么是KVC?</h2>
-
-<p>KVC是一种间接访问对象属性的机制，使用字符串来区分属性，而不是通过访问方法调用或是直接通过实例变量访问。实质上KVC定义了你的应用的访问方法实现的模式和方法签名。</p>
-
-<p>KVC必需的方法在<code>NSKeyValueCoding</code>中声明的，默认的实现是在<code>NSObject</code>中提供。</p>
-
-<blockquote>
-  <p>Key-value coding supports properties with object values, as well as the scalar types and structs. Non-object parameters and return types are detected and automatically wrapped, and unwrapped, as described in Scalar and Structure Support.</p>
-</blockquote>
-
-<h2 id="kvc-1">使用KVC简化代码</h2>
-
-<p>不使用KVC时的代码：</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
-<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
-<a name="True-3"></a> 
-<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
-<a name="True-5"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;name&quot;</span><span class="p">])</span> <span class="p">{</span>
-<a name="True-6"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">name</span><span class="p">];</span>
-<a name="True-7"></a>    <span class="p">}</span>
-<a name="True-8"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;age&quot;</span><span class="p">])</span> <span class="p">{</span>
-<a name="True-9"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">age</span><span class="p">];</span>
-<a name="True-10"></a>    <span class="p">}</span>
-<a name="True-11"></a>    <span class="k">if</span> <span class="p">([[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]</span> <span class="nl">isEqualToString</span><span class="p">:</span><span class="s">@&quot;favoriteColor&quot;</span><span class="p">])</span> <span class="p">{</span>
-<a name="True-12"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="n">favoriteColor</span><span class="p">];</span>
-<a name="True-13"></a>    <span class="p">}</span>
-<a name="True-14"></a>    <span class="c1">// And so on.</span>
-<a name="True-15"></a><span class="p">}</span></code></pre></div><p>使用KVC的代码：</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="p">-</span> <span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">NSTableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableview</span>
-<a name="True-2"></a>      <span class="nf">objectValueForTableColumn:</span><span class="p">(</span><span class="kt">id</span><span class="p">)</span><span class="nv">column</span> <span class="nf">row:</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">)</span><span class="nv">row</span> <span class="p">{</span>
-<a name="True-3"></a> 
-<a name="True-4"></a>    <span class="n">ChildObject</span> <span class="o">*</span><span class="n">child</span> <span class="o">=</span> <span class="p">[</span><span class="n">childrenArray</span> <span class="nl">objectAtIndex</span><span class="p">:</span><span class="n">row</span><span class="p">];</span>
-<a name="True-5"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">child</span> <span class="nl">valueForKey</span><span class="p">:[</span><span class="n">column</span> <span class="n">identifier</span><span class="p">]];</span>
-<a name="True-6"></a><span class="p">}</span></code></pre></div>
-<p>从上面的两段代码比较看出，KVC可以明显的简化代码。</p>
-
-<h2 id="terminology">术语(Terminology)</h2>
-
-<p>除了已经有的术语，KVC定义了它自己的特殊术语。</p>
-
-<p>KVC可以用来获取3类不同类型的对象值：<code>attributes</code>, <code>to-one relationships</code>, 和 <code>to-many relationships</code> 。术语<em><code>property</code></em>就是指这些类型的任意一种。</p>
-
-<ul>
-  <li>attribute, 简单的值，如scalar(char, NSTimeInterval, int, float, or double等), string, 布尔值， <strong>Value objects</strong>也是</li>
-  <li>to-one relationship.不太理解，直接引用原文</li>
-</ul>
-
-<blockquote>
-  <p>A property that specifies a to-one relationship is an object that has properties of its own. These underlying properties can change without the object itself changing. For example, an NSView instance’s superview is a to-one relationship.</p>
-</blockquote>
-
-<ul>
-  <li>a property that specifies a to-many relationship consists of a collection of related objects</li>
-</ul>
-
-<h2 id="kvc-2">KVC基础</h2>
-
-<h3 id="keyskey-paths">keys和key Paths</h3>
-
-<p>key,是用来识别一个对象的特定属性的字符串。必须用ASCII编码，以小写字母开头，不能有空格。</p>
-
-<p>key path是用<code>.</code>来分隔的keys的字符串，指定要遍历的对象属性序列。</p>
-
-<h3 id="kvc-3">用KVC获取属性值</h3>
-
-<p><code>valueForKey:</code>返回指定key的值，如果没有与指定key的方法或实例变量，接收者会给自己发送<code>valueForUndefinedKey:</code>消息，默认的<code>valueForUndefinedKey:</code>实现触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写这个行为。</p>
-
-<p><code>valueForKeyPath:</code>返回指定的key path的值，如果没有对应的key对象就会收到<code>valueForUndefinedKey:</code>消息。</p>
-
-<p><code>dictionaryWithValuesForKeys:</code> 返回一个数组keys的值。返回的NSDictionary包含对应的key和value.</p>
-
-<h3 id="kvc-4">用KVC设置属性值</h3>
-
-<p><code>setValue:forKey:</code>设置指定key的值，<code>setValue:forKey:</code>的默认实现会自动展开表示scalar和结构体的<code>NSValue</code>对象，并给属性赋值。如果指定的key不存在，接收者会收到<code>setValue:forUndefinedKey:</code>消息，默认的实现也会触发<strong>NSUndefinedKeyException</strong>异常，子类可以重写该方法。</p>
-
-<p><code>setValue:forKeyPath:</code>跟单个key差不多的做法。</p>
-
-<p><code>setValuesForKeysWithDictionary:</code>用NSDictionary的keys来指定相应属性的值，默认实现会调用<code>setValue:forKey:</code>，如果需要用nil来替换NSNull对象。</p>
-
-<p>如果尝试给一个非对象属性设置nil值，接收者会给自己发送<code>setNilValueForKey:</code>消息，默认实现会触发<strong>NSInvalidArgumentException</strong>异常。应用可以重写该方法替换一个默认值或标记值，然后调用<code>setValue:forKey:</code>来设置新值。</p>
-
-<h3 id="section">简单属性的访问方法搜索模式</h3>
-
-<h4 id="setvalueforkey"><code>setValue:forKey:</code>的默认搜索模式</h4>
-
-<ol>
-  <li>搜索接收者的类是否有方法的名字匹配<code>set&lt;Key&gt;:</code></li>
-  <li>如果没有找到相应的方法，并且接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，搜索接收者的实例变量的名字是否有按下面顺序匹配的，<code>_&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code></li>
-  <li>如果找到了访问方法或实例变量，就对它进行赋值</li>
-  <li>如果没有找到对应的访问方法或实例变量，调用接收者的<code>setValue:forUndefinedKey:</code></li>
-</ol>
-
-<h4 id="valueforkey"><code>valueForKey:</code>的默认搜索模式</h4>
-
-<ol>
-  <li>搜索接收者类的访问方法名称是否有按<code>get&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>这个顺序匹配的。如果有这样的方法就调用。如果方法的返回值类型是对象指针就直接返回。如果返回值类型是scalar(简单)类型，并且可以转换为NSNumber，就返回NSNumber。其他的就转化为NSValue并返回。</li>
-  <li>Otherwise (no simple accessor method is found), searches the class of the receiver for methods whose names match the patterns <code>countOf&lt;Key&gt;</code> and <code>objectIn&lt;Key&gt;AtIndex:</code> (corresponding to the primitive methods defined by the NSArray class) and <code>&lt;key&gt;AtIndexes:</code> (corresponding to the NSArray method <code>objectsAtIndexes:</code>).
- If the <code>countOf&lt;Key&gt;</code> method and at least one of the other two possible methods are found, a collection proxy object that   responds to all NSArray methods is returned. Each NSArray   message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>objectIn&lt;Key&gt;AtIndex:</code>, and <code>&lt;key&gt;AtIndexes:</code> messages being sent to the original receiver of <code>valueForKey:</code>. If the class of the receiver also    implements an optional method whose name matches the pattern <code>get&lt;Key&gt;:range:</code> that method will be used when appropriate for best performance.</li>
-  <li>Otherwise (no simple accessor method or set of array access methods is found), searches the class of the receiver for a threesome of methods whose names match the patterns <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and <code>memberOf&lt;Key&gt;:</code> (corresponding to the primitive methods defined by the NSSet class).
- If all three methods are found, a collection proxy object   that responds to all NSSet methods is returned. Each NSSet  message sent to the collection proxy object will result in  some combination of <code>countOf&lt;Key&gt;</code>, <code>enumeratorOf&lt;Key&gt;</code>, and    <code>memberOf&lt;Key&gt;:</code> messages being sent to the original    receiver of <code>valueForKey:</code>.</li>
-  <li>如果没有找到简单的访问方法或集合访问方法，如果接收者的类方法<code>accessInstanceVariablesDirectly</code>返回YES，就按下面的顺序搜索接收者类的实例变量，<code> _&lt;key&gt;, _is&lt;Key&gt;, &lt;key&gt;, or is&lt;Key&gt;</code>，如果找到了就返回对应实例变量的值，返回值类型如1中所描述的</li>
-  <li>如果上面的任何一种都没找到就返回<code>valueForUndefinedKey:</code>默认实现的值。</li>
-</ol>
-
-<p>上面的2，3中是针对集合的，这里只对简单的属性进行描述，集合的先略过。</p>
-
 ]]></content:encoded>
     </item>
     
