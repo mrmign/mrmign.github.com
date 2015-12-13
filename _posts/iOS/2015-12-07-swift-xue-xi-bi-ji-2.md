@@ -265,3 +265,96 @@ class Dog {
 	3. 然后才能使用`self`来调用实例方法，或访问继承来的属性。
 	
 ### Override initializer
+
+* 如果子类初始化方法的签名与父类的convenience初始化方法相同，必须也是convenience的，并且不要标识`override`
+* 如果子类初始化方法的签名与父类的designated初始化方法相同，可以是designated或是convenience初始化方法，并且必须标识为`override`
+
+### Failable initializer
+
+A failable initializer that returns an implicitly umwrapped Optional(`init!`) is treated just like a normal initializer(`init`) for purpose of overriding and delegation.对于返回`init?`的failable initializer,有其他的限制：
+
+* `init`可以重写`init?`，反过来不行
+* `init?`可以调用`init`
+* `init`可以通过`init`来调用`init?`，将返回结果解包
+
+~~~swift
+class A:NSObject {
+    init?(ok:Bool) {
+        super.init() // init? call init
+    }
+}
+class B:A {
+    override init(ok:Bool) { // init override init?
+        super.init(ok:ok)!   // init call init? using "!"
+    }
+}
+~~~
+
+### Required intializer
+
+如果初始化方法标识为`required`,子类不能少了该初始化方法。
+
+~~~swift
+class Dog {
+    var name: String
+    required init(name:String) {
+        self.name = name
+    }
+}
+class NosiyDog:Dog {
+    var obedient = false
+    init(obedient:Bool) {
+        self.obedient = obedient
+        super.init(name:"Fido")
+    }
+    required init(name:String) {
+        super.init(name:name)
+    }
+}
+~~~
+
+从上面代码中看到我们重写的required初始化方法没有标识为`override`，但是标识为了`required`,因此可以保证该要求可以一直往子类传。
+
+### Class Deinitializer
+
+方法名是`deinit`。如果一个类有父类，子类的deinitializer方法先调用，再调用父类的。
+
+## Class Properties and Methods
+
+子类可以重写继承的属性，但是必须与要继承的属性有相同的名字和类型，并且必须标识为`override`。
+
+* 如果父类属性是可写的(存储属性或是有setter方法的计算属性），子类的重写可以为属性添加setter observer
+* 子类可以重写为计算属性，但是：
+    * 如果父类是存储属性，子类重写为计算属性必须同时有getter和setter方法
+    * 如果父类属性是计算的，子类重写的计算属性必须重新实现所有父类的accessors。如果父类的属性是只读的(只有getter方法)，子类重写可以添加setter方法。
+
+重写的属性的方法可以用`super`来访问被继承的属性。
+
+`static`和`class`成员都会被子类继承，并且也是`static`或是`class`成员。
+
+**从程序员角度看`static`方法与`class`方法的主要不同是static方法不能重写。**
+
+静态属性与类属性之间的区别也差不多，非常明显的就是静态属性可以是stored,类属性只能是computed.
+
+~~~swift
+class Dog {
+    class var whatDogSay : String {
+        return "woof"
+    }
+    func bark () {
+        print(Dog.whatDogSay)
+    }
+}
+
+calss NosiyDog :Dog {
+    override static var whatDogSay : String {
+        return "WOOF"
+    }
+}
+~~~
+
+上面代码中子类继承了`whatDogSay`并且重写为类属性或是静态属性。**但是即使重写为static类型的，也不能是存储属性。**
+
+
+
+
