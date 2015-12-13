@@ -345,17 +345,12 @@
   <li>get 方法必须返回与变量类型一致的值</li>
   <li>setter就像是有一个参数的函数，参数的局部名称默认是<code>newValue</code>，也可以修改该参数的局部名称<code>set (val) {}</code></li>
   <li>setter函数不是必需的，如果省略setter，变量就变成只读的，如果尝试赋值会报编译错误。<strong>在swift中，一个没有setter的计算变量是创建一个只读变量的主要方式</strong></li>
-  <li>
-    <p><strong>一定要有getter!!</strong>,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。</p>
-
-    <p>~~~swift
-  var now: String {
-      return NSDate().description
-  }
-  ~~~</p>
-  </li>
+  <li><strong>一定要有getter!!</strong>,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。</li>
 </ul>
 
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="nl">now</span><span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="bp">NSDate</span><span class="p">().</span><span class="n">description</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
 <h4 id="setter-observer">Setter Observer</h4>
 
 <p>与声明computed Variable类似。</p>

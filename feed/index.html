@@ -7,8 +7,235 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-12-13T16:03:04+08:00</lastBuildDate>
+    <lastBuildDate>2015-12-13T23:54:29+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
+    
+    <item>
+      <title>Swift学习笔记3</title>
+      <link href="http://mrmign.github.io/2015/12/13/swift-xue-xi-bi-ji-3/"/>
+      <pubDate>2015-12-13T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/12/13/swift-xue-xi-bi-ji-3</guid>
+      <content:encoded><![CDATA[<h2 id="casting">Casting</h2>
+
+<p>用<code>as!</code>进行转换时可能会出错，可以先用<code>is</code>进行判断，然后再转。另一种方法就是用<code>as?</code>来转，结果是Optional的。</p>
+
+<h2 id="type-reference">Type Reference</h2>
+
+<p>实例可以通过<code>dynamicType</code>方法来获取它的类型。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">class</span> <span class="k">var</span> <span class="nl">whatDogSay</span><span class="p">:</span><span class="n">String</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="k">return</span> <span class="s">&quot;woof&quot;</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a>    <span class="n">fun</span> <span class="n">bark</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="n">print</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="kt">dynamicType</span><span class="p">.</span><span class="n">whatDogSay</span><span class="p">)</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div><p>用<code>dynaimicType</code>而不是硬编码用爆大锅是因为它遵循多态。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">dogMakerAndNamer</span><span class="p">(</span><span class="nl">whattye</span><span class="p">:</span><span class="n">Dog</span><span class="p">.</span><span class="kt">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">whattype</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-3"></a>    <span class="k">return</span> <span class="n">d</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>因为这里不确定是否Dog的每个子类型都实现了init(name:)初始化方法，因此会编译失败。 为了保证每个类型都有<code>init(name:)</code>初始化方法，我们需要添加<code>required</code>关键字。</p>
+
+<h3 id="type-self">Type <code>Self</code></h3>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a>    <span class="k">class</span> <span class="n">fun</span> <span class="n">makeAndName</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Self</span> <span class="p">{</span>
+<a name="True-7"></a>        <span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-8"></a>        <span class="k">return</span> <span class="n">d</span>
+<a name="True-9"></a>    <span class="p">}</span>
+<a name="True-10"></a><span class="p">}</span>
+<a name="True-11"></a>
+<a name="True-12"></a><span class="k">class</span> <span class="nl">NoisyDog</span><span class="p">:</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-13"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li><code>.dynamicType</code> sent to an instance</li>
+  <li><code>.Type</code> sent to a type</li>
+  <li><code>.self</code> sent to a type: the type.如果需要Dog.Type, 可以传Dog.self</li>
+  <li><code>self</code> 在实例代码中表示实例；在静态或类代码中表示这个类型</li>
+  <li><code>Self</code> 在方法声明中，指定返回类型</li>
+</ul>
+
+<h2 id="protocols">Protocols</h2>
+
+<blockquote>
+  <p>A protocol is an object type, but there are no protocol objects.</p>
+</blockquote>
+
+<p>一个对象类型实现了一个协议也就是实现了协议中的属性和方法。</p>
+
+<blockquote>
+  <p>Any type — enum, struct, class, another protocol—can adopt protocol.</p>
+</blockquote>
+
+<p>swift中最有用的一个协议就是<code>CustomStringConvertible</code>, 该协议要求我们实现<code>description</code>属性。</p>
+
+<h3 id="declaring-a-protocol">Declaring a protocol</h3>
+
+<p>协议声明只能在文件的最顶层。协议可以包含：</p>
+
+<ul>
+  <li>Properties. 协议中的属性声明用<code>var</code>, name, type {get} 或者 {get set}。如果是{get}，实现协议的属性也可以是writable,如果是{get set}，实现协议的属性就不能是保读的。用static声明static/class属性，类实现者可以实现为class属性，也可以是static的。</li>
+  <li>Methods. 协议中方法的声明没有方法体，没有{}。用static声明static/class方法，类实现时可以实现为class方法。
+    <ul>
+      <li>如果enum/struct实现的方法需要声明为<code>mutating</code>，协议必须指定<code>mutating</code>。如果协议没有指定，实现者不能添加<code>mutating</code></li>
+      <li>如果协议有指定<code>mutating</code>,实现者可以省略</li>
+    </ul>
+  </li>
+  <li>Type alias.</li>
+  <li>Protocol adoption.</li>
+</ul>
+
+<h3 id="optional-protocol-members">Optional Protocol Members</h3>
+
+<p>在声明协议为<code>@objc</code>时，Swfit允许有可选的协议成员。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="p">@</span><span class="n">objc</span> <span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="n">optional</span> <span class="k">var</span> <span class="nl">song</span><span class="p">:</span> <span class="n">String</span> <span class="p">{</span><span class="kr">get</span><span class="p">}</span>
+<a name="True-3"></a>    <span class="n">optioanl</span> <span class="k">func</span> <span class="n">sing</span><span class="p">()</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>只有类能实现这样的协议，而且该特性只有在类是<code>NSObject</code>的子类时才管用，或者是可选的成员标识为<code>@objc</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">Bird</span> <span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="p">@</span><span class="n">objc</span> <span class="k">func</span> <span class="n">sing</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="n">print</span><span class="p">(</span><span class="s">&quot;tweet&quot;</span><span class="p">)</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p><strong>如果可选方法有返回值，返回类型是Optional的</strong></p>
+
+<h3 id="class-protocol">Class Protocol</h3>
+
+<blockquote>
+  <p>A protoco declared with keyword <code>class</code> after the colon after its name is a <em>class protocol</em> ,meanig that it can be adopted only by class object type.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="nl">SecondViewControllerDelegate</span><span class="p">:</span> <span class="k">class</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">func</span> <span class="n">acceptData</span><span class="p">(</span><span class="nl">data</span><span class="p">:</span> <span class="n">AnyObject</span><span class="o">!</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<p>如果协议已经标记为<code>@objc</code>就没必要再声明class，<code>@objc</code>也暗示这是个类协议。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">SecondViewController</span><span class="p">:</span> <span class="bp">UIViewController</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">weak</span> <span class="k">var</span> <span class="nl">delegate</span> <span class="p">:</span> <span class="n">SecondViewControllerDelegate</span><span class="o">?</span>
+<a name="True-3"></a>    <span class="p">...</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>只有类实例才会有特殊的内存管理。</p>
+
+<h3 id="implicitly-required-initializer">Implicitly Required Initializer</h3>
+
+<blockquote>
+  <p>An initializer declared in a protocol is implicitly required, and the class is forced to make that requirement explicit.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">}</span>
+<a name="True-2"></a>    <span class="k">init</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">class</span> <span class="nl">Bird</span> <span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-5"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">()</span> <span class="p">{}</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>如果Bird标记为<code>final</code>就没有必要把<code>init</code>标记为<code>required</code></p>
+
+<h2 id="generics">Generics</h2>
+
+<p>在编译时确定真正的类型。</p>
+
+<h3 id="generic-declaration">Generic declaration</h3>
+
+<ul>
+  <li>Generic protocol with Self.在协议中，用<code>Self</code>把协议变成一个generic.<code>Self</code>是实现协议的类型。如下面的协议，如果是<code>Bird</code>实现了该协议，在实现<code>flockTogetherWith</code>方法时需要声明参数类型为<code>Bird</code>。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="kt">Self</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li>Generic protocol with empty type alias.协议可以声明一个type alias但不指定代表什么类型，也就是没有包含赋值符号，这样就把协议变成了generic。实现协议的要声明一个具体的类型</li>
+  <li>Generic functions.</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">take</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">t</span><span class="p">:</span><span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="k">return</span> <span class="n">t</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li>Generic object types</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Something</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">first</span><span class="p">:</span> <span class="n">T</span>
+<a name="True-3"></a>    <span class="k">var</span> <span class="nl">second</span><span class="p">:</span> <span class="n">T</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<h3 id="type-constraints">Type Constraints</h3>
+
+<blockquote>
+  <p>You can limit the types that eligible to be used for resolving a particular placeholder. 
+The simplest form of type constraint is to <strong>put a colon and type name after the placeholder’s name</strong> when it first appears.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">typealias</span> <span class="nl">Other</span> <span class="p">:</span> <span class="n">Flier</span>
+<a name="True-3"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="n">Other</span><span class="p">)</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>上面的代码是不合法的，protocol不能用自己作为类型限制。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Superfiler</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">protocol</span> <span class="nl">Flier</span> <span class="p">:</span> <span class="n">Superflier</span> <span class="p">{</span>
+<a name="True-3"></a>    <span class="k">typealias</span> <span class="nl">Other</span> <span class="p">:</span> <span class="n">Superflier</span>
+<a name="True-4"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="n">Other</span><span class="p">)</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p>上面通过声明另一个protocol，让Flier adopt,并且限制Other为该Protocol。</p>
+
+<h3 id="explicit-specialization">Explicit Specialization</h3>
+
+<h4 id="generic-protocol-with-associated-type">Generic protocol with associated type</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">typealias</span> <span class="n">Other</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">struct</span> <span class="nl">Bird</span><span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-5"></a>    <span class="k">typealias</span> <span class="n">Other</span> <span class="o">=</span> <span class="n">String</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<h4 id="generic-object-type">Generic object type</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">T</span><span class="o">?</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">()</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="k">class</span> <span class="n">NoisyDog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{}</span>
+<a name="True-7"></a>
+<a name="True-8"></a><span class="k">class</span> <span class="nl">NoisyDog</span> <span class="p">:</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="p">{}</span></code></pre></div>
+<h2 id="associated-type-chain">Associated Type Chain</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">struct</span> <span class="nl">Sword</span> <span class="p">:</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-3"></a><span class="k">struct</span> <span class="nl">Bow</span> <span class="p">:</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="k">protocol</span> <span class="n">Superfighter</span> <span class="p">{</span>
+<a name="True-6"></a>    <span class="k">typealias</span> <span class="nl">Weapon</span> <span class="p">:</span> <span class="n">Wieldable</span>
+<a name="True-7"></a><span class="p">}</span>
+<a name="True-8"></a><span class="k">protocol</span> <span class="nl">Fighter</span> <span class="p">:</span> <span class="n">Superfighter</span> <span class="p">{</span>
+<a name="True-9"></a>    <span class="k">typealias</span> <span class="nl">Enemy</span> <span class="p">:</span> <span class="n">Superfighter</span>
+<a name="True-10"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span><span class="kt">Self</span><span class="p">.</span><span class="n">Enemy</span><span class="p">.</span><span class="n">Weapon</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="kt">Self</span><span class="p">.</span><span class="n">Enemy</span><span class="p">)</span>
+<a name="True-11"></a><span class="p">}</span>
+<a name="True-12"></a><span class="k">struct</span> <span class="nl">Soldier</span> <span class="p">:</span> <span class="n">Fighter</span> <span class="p">{</span>
+<a name="True-13"></a>    <span class="k">typealias</span> <span class="n">Weapon</span> <span class="o">=</span> <span class="n">Sword</span>
+<a name="True-14"></a>    <span class="k">typealias</span> <span class="n">Enemy</span> <span class="o">=</span> <span class="n">Archer</span>
+<a name="True-15"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span><span class="n">Bow</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="n">Archer</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>    <span class="p">}</span>
+<a name="True-17"></a><span class="p">}</span>
+<a name="True-18"></a><span class="k">struct</span> <span class="nl">Archer</span> <span class="p">:</span> <span class="n">Fighter</span> <span class="p">{</span>
+<a name="True-19"></a>    <span class="k">typealias</span> <span class="n">Weapon</span> <span class="o">=</span> <span class="n">Bow</span>
+<a name="True-20"></a>    <span class="k">typealias</span> <span class="n">Enemy</span> <span class="o">=</span> <span class="n">Soldier</span>
+<a name="True-21"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span> <span class="n">Sword</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="n">Soldier</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-22"></a>    <span class="p">}</span>
+<a name="True-23"></a><span class="p">}</span></code></pre></div>]]></content:encoded>
+    </item>
     
     <item>
       <title>swift学习笔记-2</title>
@@ -612,17 +839,12 @@
   <li>get 方法必须返回与变量类型一致的值</li>
   <li>setter就像是有一个参数的函数，参数的局部名称默认是<code>newValue</code>，也可以修改该参数的局部名称<code>set (val) {}</code></li>
   <li>setter函数不是必需的，如果省略setter，变量就变成只读的，如果尝试赋值会报编译错误。<strong>在swift中，一个没有setter的计算变量是创建一个只读变量的主要方式</strong></li>
-  <li>
-    <p><strong>一定要有getter!!</strong>,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。</p>
-
-    <p>~~~swift
-  var now: String {
-      return NSDate().description
-  }
-  ~~~</p>
-  </li>
+  <li><strong>一定要有getter!!</strong>,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。</li>
 </ul>
 
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">var</span> <span class="nl">now</span><span class="p">:</span> <span class="n">String</span> <span class="p">{</span>
+<a name="True-2"></a>	<span class="k">return</span> <span class="bp">NSDate</span><span class="p">().</span><span class="n">description</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
 <h4 id="setter-observer">Setter Observer</h4>
 
 <p>与声明computed Variable类似。</p>
@@ -1371,48 +1593,6 @@
   <li><a href="https://dribbble.com/search?q=animation">Dribble</a></li>
 </ul>
 
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>KVO Programming基础</title>
-      <link href="http://mrmign.github.io/2015/07/23/kvo-programming-ji-chu/"/>
-      <pubDate>2015-07-23T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/07/23/kvo-programming-ji-chu</guid>
-      <content:encoded><![CDATA[<h1 id="key-value-observing-programming">Key-Value Observing Programming</h1>
-
-<h2 id="section">一个属性观察者的设置步骤：</h2>
-
-<ol>
-  <li>首先要想想有没有场景使用KVO比较好，如一个对象的某个特定属性修改了需要通知另一个对象时。如当BankObject中的<code>accountBalance</code>修改了就要通知PersonObject。
-<img src="/images/20150723/14376628801388.jpg" alt="" />￼</li>
-  <li>PersonObject必须通过<code>addObserver:forKeyPath:options:context:</code> 注册为BankObject的accountBalance的观察者。<code>addObserver:forKeyPath:options:context:</code>在这两个实例对象之间建立一个关联，该关联不是在这两个类之间，而是这两个特定的实例对象间。
-<img src="/images/20150723/14376633250086.jpg" alt="" />￼</li>
-  <li>为了响应值改变时的通知，观察者必须实现<code>observeValueForKeyPath:ofObject:change:context: </code>方法，，这个方法实现定义了观察者如何响应通知。<img src="/images/20150723/14376636509368.jpg" alt="" />￼</li>
-  <li>当被观察的属性或是所依赖的一个key发生改变时，<code>observeValueForKeyPath:ofObject:change:context:</code>方法会自动触发。</li>
-</ol>
-
-<h2 id="kvo">注册KVO</h2>
-
-<h3 id="section-1">要符合下面三条：</h3>
-
-<ol>
-  <li>你想观察的属性所属的类必须符合KVC规范</li>
-  <li>必须通过<code>addObserver:forKeyPath:options:context:</code>方法给观察者注册被观察者</li>
-  <li>观察者必须实现<code>observeValueForKeyPath:ofObject:change:context:</code></li>
-</ol>
-
-<h4 id="section-2">注册观察者</h4>
-
-<p><code>addObserver:forKeyPath:options:context:</code>的options参数指定传递给观察者的值类型，有<code>NSKeyValueObservingOptionOld</code>和<code>NSKeyValueObservingOptionNew</code>两种，可以两个都传用or操作。该方法对观察者，被观察者，及contex没有强引用，需要自己管理好。</p>
-
-<h4 id="section-3">接收变化通知</h4>
-
-<p>根据change字典的<code>NSKeyValueChangeKindKey</code>判断是哪种改变类型，有<code>NSKeyValueChangeSetting</code>，<code>NSKeyValueChangeInsertion</code>, <code>NSKeyValueChangeRemoval</code>, or <code>NSKeyValueChangeReplacement</code>。
-#### 移除观察者</p>
-
-<p><code>[observedObject removeObserver:inspector forKeyPath:@"openingBalance"];</code>，如果context是一个对象，在移除观察者前一定要保持强引用。</p>
 ]]></content:encoded>
     </item>
     

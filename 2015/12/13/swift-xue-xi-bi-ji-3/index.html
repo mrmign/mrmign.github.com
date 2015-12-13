@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Swift学习笔记3</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Swift学习笔记3</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-12-13">2015-12-13</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#[swift]" title="[swift]">[swift]</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="casting">Casting</h2>
+
+<p>用<code>as!</code>进行转换时可能会出错，可以先用<code>is</code>进行判断，然后再转。另一种方法就是用<code>as?</code>来转，结果是Optional的。</p>
+
+<h2 id="type-reference">Type Reference</h2>
+
+<p>实例可以通过<code>dynamicType</code>方法来获取它的类型。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">class</span> <span class="k">var</span> <span class="nl">whatDogSay</span><span class="p">:</span><span class="n">String</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="k">return</span> <span class="s">&quot;woof&quot;</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a>    <span class="n">fun</span> <span class="n">bark</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-6"></a>        <span class="n">print</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="kt">dynamicType</span><span class="p">.</span><span class="n">whatDogSay</span><span class="p">)</span>
+<a name="True-7"></a>    <span class="p">}</span>
+<a name="True-8"></a><span class="p">}</span></code></pre></div><p>用<code>dynaimicType</code>而不是硬编码用爆大锅是因为它遵循多态。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">dogMakerAndNamer</span><span class="p">(</span><span class="nl">whattye</span><span class="p">:</span><span class="n">Dog</span><span class="p">.</span><span class="kt">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">whattype</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-3"></a>    <span class="k">return</span> <span class="n">d</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>因为这里不确定是否Dog的每个子类型都实现了init(name:)初始化方法，因此会编译失败。 为了保证每个类型都有<code>init(name:)</code>初始化方法，我们需要添加<code>required</code>关键字。</p>
+
+<h3 id="type-self">Type <code>Self</code></h3>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">String</span>
+<a name="True-3"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a>    <span class="k">class</span> <span class="n">fun</span> <span class="n">makeAndName</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Self</span> <span class="p">{</span>
+<a name="True-7"></a>        <span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="k">init</span><span class="p">(</span><span class="nl">name</span><span class="p">:</span><span class="s">&quot;Fido&quot;</span><span class="p">)</span>
+<a name="True-8"></a>        <span class="k">return</span> <span class="n">d</span>
+<a name="True-9"></a>    <span class="p">}</span>
+<a name="True-10"></a><span class="p">}</span>
+<a name="True-11"></a>
+<a name="True-12"></a><span class="k">class</span> <span class="nl">NoisyDog</span><span class="p">:</span> <span class="n">Dog</span> <span class="p">{</span>
+<a name="True-13"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li><code>.dynamicType</code> sent to an instance</li>
+  <li><code>.Type</code> sent to a type</li>
+  <li><code>.self</code> sent to a type: the type.如果需要Dog.Type, 可以传Dog.self</li>
+  <li><code>self</code> 在实例代码中表示实例；在静态或类代码中表示这个类型</li>
+  <li><code>Self</code> 在方法声明中，指定返回类型</li>
+</ul>
+
+<h2 id="protocols">Protocols</h2>
+
+<blockquote>
+  <p>A protocol is an object type, but there are no protocol objects.</p>
+</blockquote>
+
+<p>一个对象类型实现了一个协议也就是实现了协议中的属性和方法。</p>
+
+<blockquote>
+  <p>Any type — enum, struct, class, another protocol—can adopt protocol.</p>
+</blockquote>
+
+<p>swift中最有用的一个协议就是<code>CustomStringConvertible</code>, 该协议要求我们实现<code>description</code>属性。</p>
+
+<h3 id="declaring-a-protocol">Declaring a protocol</h3>
+
+<p>协议声明只能在文件的最顶层。协议可以包含：</p>
+
+<ul>
+  <li>Properties. 协议中的属性声明用<code>var</code>, name, type {get} 或者 {get set}。如果是{get}，实现协议的属性也可以是writable,如果是{get set}，实现协议的属性就不能是保读的。用static声明static/class属性，类实现者可以实现为class属性，也可以是static的。</li>
+  <li>Methods. 协议中方法的声明没有方法体，没有{}。用static声明static/class方法，类实现时可以实现为class方法。
+    <ul>
+      <li>如果enum/struct实现的方法需要声明为<code>mutating</code>，协议必须指定<code>mutating</code>。如果协议没有指定，实现者不能添加<code>mutating</code></li>
+      <li>如果协议有指定<code>mutating</code>,实现者可以省略</li>
+    </ul>
+  </li>
+  <li>Type alias.</li>
+  <li>Protocol adoption.</li>
+</ul>
+
+<h3 id="optional-protocol-members">Optional Protocol Members</h3>
+
+<p>在声明协议为<code>@objc</code>时，Swfit允许有可选的协议成员。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="p">@</span><span class="n">objc</span> <span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="n">optional</span> <span class="k">var</span> <span class="nl">song</span><span class="p">:</span> <span class="n">String</span> <span class="p">{</span><span class="kr">get</span><span class="p">}</span>
+<a name="True-3"></a>    <span class="n">optioanl</span> <span class="k">func</span> <span class="n">sing</span><span class="p">()</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>只有类能实现这样的协议，而且该特性只有在类是<code>NSObject</code>的子类时才管用，或者是可选的成员标识为<code>@objc</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">Bird</span> <span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="p">@</span><span class="n">objc</span> <span class="k">func</span> <span class="n">sing</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-3"></a>        <span class="n">print</span><span class="p">(</span><span class="s">&quot;tweet&quot;</span><span class="p">)</span>
+<a name="True-4"></a>    <span class="p">}</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p><strong>如果可选方法有返回值，返回类型是Optional的</strong></p>
+
+<h3 id="class-protocol">Class Protocol</h3>
+
+<blockquote>
+  <p>A protoco declared with keyword <code>class</code> after the colon after its name is a <em>class protocol</em> ,meanig that it can be adopted only by class object type.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="nl">SecondViewControllerDelegate</span><span class="p">:</span> <span class="k">class</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">func</span> <span class="n">acceptData</span><span class="p">(</span><span class="nl">data</span><span class="p">:</span> <span class="n">AnyObject</span><span class="o">!</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<p>如果协议已经标记为<code>@objc</code>就没必要再声明class，<code>@objc</code>也暗示这是个类协议。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">SecondViewController</span><span class="p">:</span> <span class="bp">UIViewController</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">weak</span> <span class="k">var</span> <span class="nl">delegate</span> <span class="p">:</span> <span class="n">SecondViewControllerDelegate</span><span class="o">?</span>
+<a name="True-3"></a>    <span class="p">...</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>只有类实例才会有特殊的内存管理。</p>
+
+<h3 id="implicitly-required-initializer">Implicitly Required Initializer</h3>
+
+<blockquote>
+  <p>An initializer declared in a protocol is implicitly required, and the class is forced to make that requirement explicit.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">}</span>
+<a name="True-2"></a>    <span class="k">init</span><span class="p">()</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">class</span> <span class="nl">Bird</span> <span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-5"></a>    <span class="n">required</span> <span class="k">init</span><span class="p">()</span> <span class="p">{}</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<p>如果Bird标记为<code>final</code>就没有必要把<code>init</code>标记为<code>required</code></p>
+
+<h2 id="generics">Generics</h2>
+
+<p>在编译时确定真正的类型。</p>
+
+<h3 id="generic-declaration">Generic declaration</h3>
+
+<ul>
+  <li>Generic protocol with Self.在协议中，用<code>Self</code>把协议变成一个generic.<code>Self</code>是实现协议的类型。如下面的协议，如果是<code>Bird</code>实现了该协议，在实现<code>flockTogetherWith</code>方法时需要声明参数类型为<code>Bird</code>。</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="kt">Self</span><span class="p">)</span>
+<a name="True-3"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li>Generic protocol with empty type alias.协议可以声明一个type alias但不指定代表什么类型，也就是没有包含赋值符号，这样就把协议变成了generic。实现协议的要声明一个具体的类型</li>
+  <li>Generic functions.</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">func</span> <span class="n">take</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nl">t</span><span class="p">:</span><span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span>
+<a name="True-2"></a><span class="p">{</span>
+<a name="True-3"></a>    <span class="k">return</span> <span class="n">t</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<ul>
+  <li>Generic object types</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">struct</span> <span class="n">Something</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">first</span><span class="p">:</span> <span class="n">T</span>
+<a name="True-3"></a>    <span class="k">var</span> <span class="nl">second</span><span class="p">:</span> <span class="n">T</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<h3 id="type-constraints">Type Constraints</h3>
+
+<blockquote>
+  <p>You can limit the types that eligible to be used for resolving a particular placeholder. 
+The simplest form of type constraint is to <strong>put a colon and type name after the placeholder’s name</strong> when it first appears.</p>
+</blockquote>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">typealias</span> <span class="nl">Other</span> <span class="p">:</span> <span class="n">Flier</span>
+<a name="True-3"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="n">Other</span><span class="p">)</span>
+<a name="True-4"></a><span class="p">}</span></code></pre></div>
+<p>上面的代码是不合法的，protocol不能用自己作为类型限制。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Superfiler</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">protocol</span> <span class="nl">Flier</span> <span class="p">:</span> <span class="n">Superflier</span> <span class="p">{</span>
+<a name="True-3"></a>    <span class="k">typealias</span> <span class="nl">Other</span> <span class="p">:</span> <span class="n">Superflier</span>
+<a name="True-4"></a>    <span class="k">func</span> <span class="n">flockTogetherWith</span><span class="p">(</span><span class="nl">f</span><span class="p">:</span><span class="n">Other</span><span class="p">)</span>
+<a name="True-5"></a><span class="p">}</span></code></pre></div>
+<p>上面通过声明另一个protocol，让Flier adopt,并且限制Other为该Protocol。</p>
+
+<h3 id="explicit-specialization">Explicit Specialization</h3>
+
+<h4 id="generic-protocol-with-associated-type">Generic protocol with associated type</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">typealias</span> <span class="n">Other</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">struct</span> <span class="nl">Bird</span><span class="p">:</span> <span class="n">Flier</span> <span class="p">{</span>
+<a name="True-5"></a>    <span class="k">typealias</span> <span class="n">Other</span> <span class="o">=</span> <span class="n">String</span>
+<a name="True-6"></a><span class="p">}</span></code></pre></div>
+<h4 id="generic-object-type">Generic object type</h4>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">name</span> <span class="p">:</span> <span class="n">T</span><span class="o">?</span>
+<a name="True-3"></a><span class="p">}</span>
+<a name="True-4"></a><span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">()</span>
+<a name="True-5"></a>
+<a name="True-6"></a><span class="k">class</span> <span class="n">NoisyDog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{}</span>
+<a name="True-7"></a>
+<a name="True-8"></a><span class="k">class</span> <span class="nl">NoisyDog</span> <span class="p">:</span> <span class="n">Dog</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="p">{}</span></code></pre></div>
+<h2 id="associated-type-chain">Associated Type Chain</h2>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">protocol</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-2"></a><span class="k">struct</span> <span class="nl">Sword</span> <span class="p">:</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-3"></a><span class="k">struct</span> <span class="nl">Bow</span> <span class="p">:</span> <span class="n">Wieldable</span> <span class="p">{}</span>
+<a name="True-4"></a>
+<a name="True-5"></a><span class="k">protocol</span> <span class="n">Superfighter</span> <span class="p">{</span>
+<a name="True-6"></a>    <span class="k">typealias</span> <span class="nl">Weapon</span> <span class="p">:</span> <span class="n">Wieldable</span>
+<a name="True-7"></a><span class="p">}</span>
+<a name="True-8"></a><span class="k">protocol</span> <span class="nl">Fighter</span> <span class="p">:</span> <span class="n">Superfighter</span> <span class="p">{</span>
+<a name="True-9"></a>    <span class="k">typealias</span> <span class="nl">Enemy</span> <span class="p">:</span> <span class="n">Superfighter</span>
+<a name="True-10"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span><span class="kt">Self</span><span class="p">.</span><span class="n">Enemy</span><span class="p">.</span><span class="n">Weapon</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="kt">Self</span><span class="p">.</span><span class="n">Enemy</span><span class="p">)</span>
+<a name="True-11"></a><span class="p">}</span>
+<a name="True-12"></a><span class="k">struct</span> <span class="nl">Soldier</span> <span class="p">:</span> <span class="n">Fighter</span> <span class="p">{</span>
+<a name="True-13"></a>    <span class="k">typealias</span> <span class="n">Weapon</span> <span class="o">=</span> <span class="n">Sword</span>
+<a name="True-14"></a>    <span class="k">typealias</span> <span class="n">Enemy</span> <span class="o">=</span> <span class="n">Archer</span>
+<a name="True-15"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span><span class="n">Bow</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="n">Archer</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>    <span class="p">}</span>
+<a name="True-17"></a><span class="p">}</span>
+<a name="True-18"></a><span class="k">struct</span> <span class="nl">Archer</span> <span class="p">:</span> <span class="n">Fighter</span> <span class="p">{</span>
+<a name="True-19"></a>    <span class="k">typealias</span> <span class="n">Weapon</span> <span class="o">=</span> <span class="n">Bow</span>
+<a name="True-20"></a>    <span class="k">typealias</span> <span class="n">Enemy</span> <span class="o">=</span> <span class="n">Soldier</span>
+<a name="True-21"></a>    <span class="k">func</span> <span class="n">steal</span><span class="p">(</span><span class="nl">weapon</span><span class="p">:</span> <span class="n">Sword</span><span class="p">,</span> <span class="nl">from</span><span class="p">:</span><span class="n">Soldier</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-22"></a>    <span class="p">}</span>
+<a name="True-23"></a><span class="p">}</span></code></pre></div>
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/12/07/swift-xue-xi-bi-ji-2/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a   class="pageNavInvalid"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
