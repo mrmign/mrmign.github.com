@@ -346,11 +346,11 @@ var now: String {
 * setter函数不是必需的，如果省略setter，变量就变成只读的，如果尝试赋值会报编译错误。**在swift中，一个没有setter的计算变量是创建一个只读变量的主要方式**
 * **一定要有getter!!**,如果没有setter, get及后面的{}可以省略。这也是只读变量的合法声明。
 
-	~~~swift
-	var now: String {
-		return NSDate().description
-	}
-	~~~
+~~~swift
+var now: String {
+	return NSDate().description
+}
+~~~
 	
 #### Setter Observer
 
