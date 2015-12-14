@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Swift学习笔记5</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Swift学习笔记5</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-12-14">2015-12-14</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#ios" title="ios">ios</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#[swift]" title="[swift]">[swift]</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2 id="memory-management">Memory Management</h2>
+
+<h3 id="weak-reference">Weak Reference</h3>
+
+<ul>
+  <li>only an <code>Optional</code> reference can be marked as weak.</li>
+  <li>the reference must be a <code>var</code> reference.</li>
+</ul>
+
+<p>对于循环引用的情况，只需要其中一者是weak的就可以，规则</p>
+
+<blockquote>
+  <p>The one that is not the “owner” will have a weak reference to its “owner”.</p>
+</blockquote>
+
+<h3 id="unowned-reference">Unowned Reference</h3>
+
+<p>该引用在下面的例子中特别有用，如果一个对象没有对其他对象的引用就不能存在，但是这个引用又不需要一直存在。 就像人与小狗，小狗必须有主人，但是人不一定有小狗。
+可以把小狗的主人声明为<code>unowned</code>.</p>
+
+<p>Unowned reference可以是Optional也可以是let的。但是用unowned是有风险的，有可能后面访问对象时为空。</p>
+
+<p>只有对类类型的引用才能声明为<code>weak</code>或<code>unowned</code>。</p>
+
+<h3 id="weakunowned">匿名函数中的weak与unowned引用</h3>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">FunctionHolder</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">function</span> <span class="p">:</span> <span class="p">(</span><span class="n">Void</span> <span class="o">-&gt;</span> <span class="n">Void</span><span class="p">)</span><span class="o">?</span>
+<a name="True-3"></a>    <span class="k">deinit</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="n">print</span><span class="p">(</span><span class="s">&quot;deinit&quot;</span><span class="p">)</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">func</span> <span class="n">testFunctionHolder</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-8"></a>    <span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="n">FunctionHolder</span><span class="p">()</span>
+<a name="True-9"></a>    <span class="n">f</span><span class="p">.</span><span class="n">function</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-10"></a>        <span class="p">[</span><span class="k">weak</span> <span class="n">f</span><span class="p">]</span> <span class="k">in</span>
+<a name="True-11"></a>        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<a name="True-12"></a>    <span class="p">}</span>
+<a name="True-13"></a><span class="p">}</span></code></pre></div>
+<p>传入匿名函数的引用是Optional的，通常是进行一个weak-strong转换</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="n">FunctionHolder</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">var</span> <span class="nl">function</span> <span class="p">:</span> <span class="p">(</span><span class="n">Void</span> <span class="o">-&gt;</span> <span class="n">Void</span><span class="p">)</span><span class="o">?</span>
+<a name="True-3"></a>    <span class="k">deinit</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="n">print</span><span class="p">(</span><span class="s">&quot;deinit&quot;</span><span class="p">)</span>
+<a name="True-5"></a>    <span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="k">func</span> <span class="n">testFunctionHolder</span><span class="p">()</span> <span class="p">{</span>
+<a name="True-8"></a>    <span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="n">FunctionHolder</span><span class="p">()</span>
+<a name="True-9"></a>    <span class="n">f</span><span class="p">.</span><span class="n">function</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-10"></a>        <span class="p">[</span><span class="k">weak</span> <span class="n">f</span><span class="p">]</span> <span class="k">in</span> <span class="c1">//weak</span>
+<a name="True-11"></a>        <span class="n">guard</span> <span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="n">f</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+<a name="True-12"></a>        <span class="n">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="c1">//strong</span>
+<a name="True-13"></a>    <span class="p">}</span>
+<a name="True-14"></a><span class="p">}</span></code></pre></div>
+<p><code>unowned</code>用的最多的场景还是针对<code>self</code>引用的情况。</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><a name="True-1"></a><span class="k">class</span> <span class="nl">MyDropBounceAndRollBehavior</span> <span class="p">:</span> <span class="bp">UIDynamicBehavior</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="k">let</span> <span class="nl">v</span> <span class="p">:</span> <span class="bp">UIView</span>
+<a name="True-3"></a>    <span class="k">init</span><span class="p">(</span><span class="n">view</span> <span class="nl">v</span><span class="p">:</span><span class="bp">UIView</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">v</span>
+<a name="True-5"></a>        <span class="nb">super</span><span class="p">.</span><span class="k">init</span><span class="p">()</span>
+<a name="True-6"></a>    <span class="p">}</span>
+<a name="True-7"></a>    <span class="kr">override</span> <span class="k">func</span> <span class="n">willMoveToAnimator</span><span class="p">(</span><span class="nl">dynamicAnimator</span><span class="p">:</span> <span class="bp">UIDynamicAnimator</span><span class="o">?</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-8"></a>        <span class="k">if</span> <span class="n">dynamicAnimator</span> <span class="o">==</span> <span class="nb">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+<a name="True-9"></a>        <span class="k">let</span> <span class="n">sup</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">v</span><span class="p">.</span><span class="n">superview</span><span class="o">!</span>
+<a name="True-10"></a>        <span class="k">let</span> <span class="n">grav</span> <span class="o">=</span> <span class="bp">UIGravityBehavior</span><span class="p">()</span>
+<a name="True-11"></a>        <span class="n">grav</span><span class="p">.</span><span class="n">action</span> <span class="o">=</span> <span class="p">{</span>
+<a name="True-12"></a>            <span class="p">[</span><span class="kr">unowned</span> <span class="nb">self</span><span class="p">]</span> <span class="k">in</span>
+<a name="True-13"></a>            <span class="k">let</span> <span class="n">items</span> <span class="o">=</span> <span class="n">dynamicAnimator</span><span class="o">?</span><span class="p">.</span><span class="n">itemsInRect</span><span class="p">(</span><span class="n">sup</span><span class="p">.</span><span class="n">bounds</span><span class="p">)</span> <span class="kt">as</span><span class="o">!</span> <span class="p">[</span><span class="bp">UIView</span><span class="p">]</span>
+<a name="True-14"></a>            <span class="k">if</span> <span class="n">items</span><span class="p">.</span><span class="n">indexOf</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">nil</span> <span class="p">{</span>
+<a name="True-15"></a>                <span class="n">dynamicAnimator</span><span class="o">?</span><span class="p">.</span><span class="n">removeBehavior</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+<a name="True-16"></a>                <span class="nb">self</span><span class="p">.</span><span class="n">v</span><span class="p">.</span><span class="n">removeFromSuperview</span><span class="p">()</span>
+<a name="True-17"></a>            <span class="p">}</span>
+<a name="True-18"></a>        <span class="p">}</span>
+<a name="True-19"></a>        <span class="nb">self</span><span class="p">.</span><span class="n">addChildBehavior</span><span class="p">(</span><span class="n">grav</span><span class="p">)</span>
+<a name="True-20"></a>        <span class="n">grav</span><span class="p">.</span><span class="n">addItem</span><span class="p">(</span><span class="nb">self</span><span class="p">.</span><span class="n">v</span><span class="p">)</span>
+<a name="True-21"></a>    <span class="p">}</span>
+<a name="True-22"></a><span class="p">}</span></code></pre></div>
+<p>对于协议类型的引用只有当它是类协议(<strong>标记为@objc或class</strong>)的时候才可以声明<code>weak</code>或<code>unowned</code></p>
+
+<p>Obejctive-C中声明的协议已经隐式标记为@objc，因此是类协议。</p>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/12/14/swift-xue-xi-bi-ji-4/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a   class="pageNavInvalid"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2015 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
