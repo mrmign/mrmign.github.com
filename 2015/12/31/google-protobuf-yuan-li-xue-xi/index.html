@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Arming" />
+    <title>Google Protobuf原理学习</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link href="/feed/" rel="alternate" title="Arming" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+    <!-- mathjax -->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script>
+         MathJax.Hub.Config({
+            config: ["MMLorHTML.js"],
+            extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
+            jax: ["input/TeX"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: false
+            },
+            TeX: {
+                TagSide: "right",
+                TagIndent: ".8em",
+                MultLineWidth: "85%",
+                equationNumbers: {
+                   autoNumber: "AMS",
+                },
+                unicode: {
+                   fonts: "STIXGeneral,'Arial Unicode MS'" 
+                }
+            },
+            showProcessingMessages: false
+        });
+    </script> 
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+        <h1>Google Protobuf原理学习</h1>
+        </header>
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2015-12-31">2015-12-31</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#opensource" title="opensource">opensource</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#[protobuf,开源]" title="[protobuf,开源]">[protobuf,开源]</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h1 id="pb">Pb组包解包实现</h1>
+
+<p>Protobuf是Google开源的一套跨平台、跨语言的序列化协议。基于Protocbuf的数据组包方式有效减了网络数据传输的大小，减少流量消耗。</p>
+
+<p>pb协议都是通过*.proto的文件进行描述的，该描述文件是非常通用，不限制针对哪种语言，通过Google提供的compiler可以选择编译的目标编程语言，如java,C++,Python等。这里以C++为例。通过<code>protoc *.proto --cpp_out=dir</code>命令就可以根据proto描述文件生成对应的C++文件<code>*.pb.h</code>和<code>*.pb.cc</code>，然后引用相应的头文件就可以进行组包、解包了。</p>
+
+<p>上面的做法是最基本最常用的，而且我们在使用pb协议的时候也都是这么做的。因为PbCodec不再需要生成C++的头文件了。通过描述文件生成的pb头文件给我们提供的主要方法就是一堆<code>getter</code>、<code>setter</code>、<code>serialize</code>、<code>parse</code>方法，这些方法确实方便了我们组包、解包。</p>
+
+<p>Pb使用<code>((T)([L]V))</code>类似的格式，即Tag-Length-Value。每一个字段值都使用TLV的格式，最后将所有字段的TLV序列拼接为一个二进制字节流进行传输，收到字节流按TLV一个一个字段的解析出来。这里的Tag也可以叫做<code>key</code>，pb使用的格式抽象一下也可以看成是一个个的Key-Value对。</p>
+
+<p>这里的Key也叫Tag是由什么组成的？我们知道在proto描述文件里message下的每个字段值都有一个field数字，表示它在message里是第几个值，我们称它为<code>field_num</code>；声明一个字段的时候还要指定该字段用来放什么类型的值，是可变长度还是固定长度等，这里的字段类型称为<code>wire_type</code>。好了，有了<code>field_num</code>和<code>wire_type</code>我们就可以得到我们的key了，<code>key = field_num &lt;&lt; 3 | wire_type</code>。</p>
+
+<p>Protobuf里对wireType声明下面几种类型:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a>  <span class="k">enum</span> <span class="n">WireType</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="n">WIRETYPE_VARINT</span>           <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<a name="True-3"></a>    <span class="n">WIRETYPE_FIXED64</span>          <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<a name="True-4"></a>    <span class="n">WIRETYPE_LENGTH_DELIMITED</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<a name="True-5"></a>    <span class="n">WIRETYPE_START_GROUP</span>      <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<a name="True-6"></a>    <span class="n">WIRETYPE_END_GROUP</span>        <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<a name="True-7"></a>    <span class="n">WIRETYPE_FIXED32</span>          <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<a name="True-8"></a>  <span class="p">};</span></code></pre></div>
+<p><img src="/images/20151231/pb-wiretype.png" alt="wireType说明" /></p>
+
+<p><code>Varint</code>是一种比较特殊的编码方式，后面有详细介绍。<code>FixedXX</code>就是固定长度的。<code>Length_Delimited</code>是针对那些变长数据的如bytes,String,subMessage等。</p>
+
+<p>Value的组成就是由数据长度和数据组成，但是长度可能没有，像对于数字类型的不需要长度，只有那些长度不确定的类型(bytes,string等)需要数据的真实长度才能正确解析。Protobuf的数组格式就是这样的。下面要简单分析下Protobuf的工作原理。</p>
+
+<p>这里我们从具体的pb协议出发，逆向学习pb的原理，下面的图是来电协议<code>oidb_65f</code>和<code>oidb_931</code>里的几个message与Protobuf的类继承关系。</p>
+
+<p><img src="/images/20151231/pb-class-relationship.png" alt="message继承图" /></p>
+
+<p>每一条协议都在自己的命名空间中，pb的描述文件中定义的每一个message都会生成一个对应的类，从上面的类关系图中可以看到生成的类中65f协议中类的父类是<code>MessageLite</code>，而931协议中的类的父类是<code>Message</code>,<code>Message</code>又继承自<code>MessageLite</code>，<code>Message</code>类扩充了什么功能呢？我们后面再说。这里最重要是搞明白协议描述文件里的每个message最后生成的类中都有序列化，反序列码的方法了。</p>
+
+<p>看看下面协议中的序列化方法是如何实现的:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">void</span> <span class="n">ReqBody</span><span class="o">::</span><span class="n">SerializeWithCachedSizes</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+<a name="True-2"></a><span class="c1">//optional cmd0x65f.SetMsgValidTimeReq msg_set_req = 1;</span>
+<a name="True-3"></a>  <span class="k">if</span> <span class="p">(</span><span class="n">has_msg_set_req</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteMessage</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">msg_set_req</span><span class="p">(),</span><span class="n">output</span><span class="p">);</span>
+<a name="True-5"></a>	<span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="c1">// optional cmd0x65f.SetMsgValidTimeReq msg_set_req = 1;</span>
+<a name="True-8"></a><span class="kr">inline</span> <span class="kt">bool</span> <span class="n">ReqBody</span><span class="o">::</span><span class="n">has_msg_set_req</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+<a name="True-9"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">_has_bits_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x00000001u</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<p>从上面代码中可以看出，当要将message进行序列化时，会向<code>CodedOutputStream</code>流中填写，大家自己看一个更复杂点的pb协议的message时，当进行序列化时，会逐一对message下的每个field进行判断，也就是类似上面中的<code>has_msg_set_req()</code>，如果有设置值就会进行写操作，每当对一个字段进行设置值时都会设置对应的标志位。<code>::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];</code>对于每一个message都会根据field的个数来生成一个这样的数组，用来标志每个字段的是否有值，同样在解包的时候也会有对应设置。假设message下有40个字段，则会有<code>::google::protobuf::uint32 _has_bits_[(40 + 31) / 32];</code>这样的数组。若对应字段有值，就调用<code>WriteXXXX</code>方法写入流中。这里会根据字段声明时的值类型调用不同的Write方法，因为在此处的field是另一个message，因此会调用<code>WriteMessage</code>方法，如果是uint32类型，刚会调用<code>WriteUInt32</code>方法，这些Write方法都是相似的。下面看<code>WriteMessage</code>实现:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">void</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteMessage</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span>
+<a name="True-2"></a>                                  <span class="k">const</span> <span class="n">MessageLite</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span>
+<a name="True-3"></a>                                  <span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>  <span class="n">WriteTag</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">WIRETYPE_LENGTH_DELIMITED</span><span class="p">,</span> <span class="n">output</span><span class="p">);</span>
+<a name="True-5"></a>  <span class="k">const</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">value</span><span class="p">.</span><span class="n">GetCachedSize</span><span class="p">();</span>
+<a name="True-6"></a>  <span class="n">output</span><span class="o">-&gt;</span><span class="n">WriteVarint32</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<a name="True-7"></a>  <span class="n">value</span><span class="p">.</span><span class="n">SerializeWithCachedSizes</span><span class="p">(</span><span class="n">output</span><span class="p">);</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="kr">inline</span> <span class="kt">void</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteTag</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span> <span class="n">WireType</span> <span class="n">type</span><span class="p">,</span>
+<a name="True-11"></a>                                     <span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-12"></a>  <span class="n">output</span><span class="o">-&gt;</span><span class="n">WriteTag</span><span class="p">(</span><span class="n">MakeTag</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">type</span><span class="p">));</span>
+<a name="True-13"></a><span class="p">}</span>
+<a name="True-14"></a>
+<a name="True-15"></a><span class="kr">inline</span> <span class="n">uint32</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">MakeTag</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span> <span class="n">WireType</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>  <span class="k">return</span> <span class="n">GOOGLE_PROTOBUF_WIRE_FORMAT_MAKE_TAG</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+<a name="True-17"></a><span class="p">}</span>
+<a name="True-18"></a>
+<a name="True-19"></a><span class="cp">#define GOOGLE_PROTOBUF_WIRE_FORMAT_MAKE_TAG(FIELD_NUMBER, TYPE)                  \</span>
+<a name="True-20"></a><span class="cp">  static_cast&lt;uint32&gt;(                                                   \</span>
+<a name="True-21"></a><span class="cp">    ((FIELD_NUMBER) &lt;&lt; ::google::protobuf::internal::WireFormatLite::kTagTypeBits) \</span>
+<a name="True-22"></a><span class="cp">      | (TYPE))</span></code></pre></div>
+<p><code>WriteMessage</code>的第一个参数是field_number也就是message中字段的序号，从前面也看到在调用的时候传的第一个参数的值是<code>1</code>，也就是field的序号。方法中首先调用<code>WriteTag</code>方法，从代码中可以看出Tag就是按照之前说的方法<code>field_num &lt;&lt; 3 | wire_type</code>生成的。写完tag,因为WireType是变长的，因此要告诉数据长度，接着写数据长度<code>output-&gt;WriteVarint32(size);</code>,后面再写入数据。 这样message的序列化的核心工作就完成了，当然我们不会直接调用这里的<code>ReqBody::SerializeWithCachedSizes</code>方法来生成组包的数据buffer。我们调用的序列化方法是<code>MessageLite::SerializeAsString()</code>或是<code>MessageLite::SerializeToString(string* output)</code>，然后这两个方法再经过层层调用到达我们的message的<code>SerializeWithCachedSizes</code>方法，最终得到序列化后的结果。</p>
+
+<p>现在pb如何进行序列化我们已经知道了，现在看pb怎么进行反序列化。先上代码了解下：</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">bool</span> <span class="n">RspBody</span><span class="o">::</span><span class="n">MergePartialFromCodedStream</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">CodedInputStream</span><span class="o">*</span> <span class="n">input</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-2"></a><span class="cp">#define DO_(EXPRESSION) if (!(EXPRESSION)) return false</span>
+<a name="True-3"></a>    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">uint32</span> <span class="n">tag</span><span class="p">;</span>
+<a name="True-4"></a>    <span class="k">while</span> <span class="p">((</span><span class="n">tag</span> <span class="o">=</span> <span class="n">input</span><span class="o">-&gt;</span><span class="n">ReadTag</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>        <span class="k">switch</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagFieldNumber</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span> <span class="p">{</span>
+<a name="True-6"></a>                <span class="c1">// optional cmd0x65f.SetMsgValidTimeRsp msg_set_rsp = 1;</span>
+<a name="True-7"></a>            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span> <span class="p">{</span>
+<a name="True-8"></a>                <span class="k">if</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagWireType</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">==</span>
+<a name="True-9"></a>                    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WIRETYPE_LENGTH_DELIMITED</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-10"></a>                    <span class="n">DO_</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">ReadMessageNoVirtual</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">mutable_msg_set_rsp</span><span class="p">()));</span>
+<a name="True-11"></a>                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<a name="True-12"></a>                    <span class="k">goto</span> <span class="n">handle_uninterpreted</span><span class="p">;</span>
+<a name="True-13"></a>                <span class="p">}</span>
+<a name="True-14"></a>                <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="o">-&gt;</span><span class="n">ExpectAtEnd</span><span class="p">())</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-15"></a>                <span class="k">break</span><span class="p">;</span>
+<a name="True-16"></a>            <span class="p">}</span>
+<a name="True-17"></a>                
+<a name="True-18"></a>            <span class="k">default</span><span class="o">:</span> <span class="p">{</span>
+<a name="True-19"></a>            <span class="nl">handle_uninterpreted</span><span class="p">:</span>
+<a name="True-20"></a>                <span class="k">if</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagWireType</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">==</span>
+<a name="True-21"></a>                    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WIRETYPE_END_GROUP</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-22"></a>                    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-23"></a>                <span class="p">}</span>
+<a name="True-24"></a>                <span class="n">DO_</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">SkipField</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">tag</span><span class="p">));</span>
+<a name="True-25"></a>                <span class="k">break</span><span class="p">;</span>
+<a name="True-26"></a>            <span class="p">}</span>
+<a name="True-27"></a>        <span class="p">}</span>
+<a name="True-28"></a>    <span class="p">}</span>
+<a name="True-29"></a>    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-30"></a><span class="cp">#undef DO_</span>
+<a name="True-31"></a><span class="p">}</span></code></pre></div>
+<p>上面的反序列化代码是针对特定message的，因此每个message都会有自己的反序列化实现。上面反序列化方法的参数是一个输入流，不用想也知道是一串二进制流，通过循环不停的读取tag，然后根据tag得到field_num，然后就是读值了。首先有没有这样的疑问，pb怎么知道读出来的WireType是对的呢，跟哪种类型进行比较呢？因为在根据描述文件生成这些方法的时候都知道每个字段的数据类型，也就知道在序列化时用的是哪个WireType了，同样也知道该调用哪个方法来读取值，并写入哪个字段。在搞明白了序列化操作后，反序列化就没有那么神秘了。</p>
+
+<p>反序列化首先要读取Tag，但是这里我们看到的是一串二进制数据，在读取Tag时如何判断结束条件呢？有了这个疑问，我们就需要了解Protobuf的<code>Varint</code>编码，这是一种比较特殊的编码方式。</p>
+
+<p>对于int32类型的数字，一般需要4个byte 来表示。但是采用 Varint，对于很小的int32 类型的数字，则可以用 1个byte来表示。当然凡事都有好的也有不好的一面，采用 Varint 表示法，大的数字则需要 5 个 byte 来表示。从统计的角度来说，一般不会所有的消息中的数字都是大数，因此大多数情况下，采用 Varint 后，可以用更少的字节数来表示数字信息。下面就详细介绍一下 Varint。
+Varint 中的每个 byte 的最高位 bit 有特殊的含义，如果该位为 1，表示后续的 byte 也是该数字的一部分，如果该位为 0，则结束。其他的 7 个 bit 都用来表示数字。因此小于 128 的数字都可以用一个 byte 表示。大于 128 的数字，比如 300，会用两个字节来表示：<code>1010 1100 0000 0010</code>
+下图演示了 Google Protocol Buffer 如何解析两个 bytes。注意到最终计算前将两个 byte 的位置相互交换过一次，这是因为 Google Protocol Buffer 字节序采用 little-endian 的方式。</p>
+
+<p><img src="/images/20151231/pb-varint.png" alt="Varint编码图" /></p>
+
+<p>对Varint编码了解后，前面<code>ReadTag</code>时就是这样来判断结束条件的。但是大家有没有疑问，就是前面说的Tag(也叫Key)是按<code>field_num &lt;&lt; 3 | Wire_type</code>生成的，这里field_num左移3位会不会导致数据丢失呢？这里就假设field_num是uint32类型的，左移3位依然能表示2^28个，相信在一个message里不会达到这么多字段吧，因此完全够用。而且对Tag进行Varint编码的是<code>field_num &lt;&lt; 3 | Wire_type</code>这个结果。</p>
+
+<h2 id="section">题外篇</h2>
+
+<p>对于在proto描述文件中添加<code>option optimize_for = LITE_RUNTIM</code>到底有什么用呢？</p>
+
+<p>当添加后在编译proto文件时编译器会使用<code>libprotobuf-lite</code>库而不是<code>libprotobuf</code>库，使用<code>libprotobuf-lite</code>我们的message生成的类会继承自<code>MessageLite</code>，如果使用<code>libprotobuf</code>，生成的类则继承自<code>Message</code>。然后<code>Message</code>又继承自<code>MessageLite</code>，并且添加了descriptor和reflection特性，这会导致生成的头文件中有支持这两个特性的相关代码，然后我们日常使用pb时根本用不到这两个特性，因此完全没有必要保留着他们。这也是为什么添加这个优化选项的原因了。对于这两个特性有什么功能大家可以自己去探索下。</p>
+
+<p>这个原来是内部分享时写的，去除了部分内容，希望对于想要学习Pb的同学有所帮助。Pb的确是很优秀的序列化方法，值得深入研究学习。基于Pb也可以创造其他的一些工具，数据存储等方案。</p>
+
+<blockquote>
+  <p>本文是删减版本，如果有什么不清楚的地方，请留言进一步沟通。</p>
+</blockquote>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/2015/12/31/2015-zong-jie/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/2016/01/01/2016-ji-hua/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"mrmign"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+        </article>
+      </div>
+
+    <footer>
+        <p><small>
+Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a> @ GitHub
+             | <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2012 - 2016 <a href="/about/">Arming</a>
+
+
+             | <script src="http://s85.cnzz.com/stat.php?id=1000366411"></script>
+
+         </small></p>
+    </footer>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49976813-1', 'mrmign.github.io');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

@@ -7,8 +7,186 @@
     <title>Arming</title>
     <link href="http://mrmign.github.io/feed/" rel="self" />
     <link href="http://mrmign.github.io" />
-    <lastBuildDate>2015-12-15T00:27:14+08:00</lastBuildDate>
+    <lastBuildDate>2016-01-05T00:02:42+08:00</lastBuildDate>
     <webMaster>cloudniw1@126.com</webMaster>
+    
+    <item>
+      <title>2016计划</title>
+      <link href="http://mrmign.github.io/2016/01/01/2016-ji-hua/"/>
+      <pubDate>2016-01-01T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2016/01/01/2016-ji-hua</guid>
+      <content:encoded><![CDATA[<p>2015已经过去，心里想要干的事情没能如数完成，藏在心里就会老是给自己找借口开脱，这里要把2016要做的事情写下来，也算有个凭据，不能再容忍自己给自己找借口了。到了2016年末写总结时，再来看这篇Todo计划，会很自豪的。</p>
+
+<h2 id="section">读书</h2>
+
+<h3 id="section-1">技术书</h3>
+
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Google Protobuf原理学习</title>
+      <link href="http://mrmign.github.io/2015/12/31/google-protobuf-yuan-li-xue-xi/"/>
+      <pubDate>2015-12-31T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/12/31/google-protobuf-yuan-li-xue-xi</guid>
+      <content:encoded><![CDATA[<h1 id="pb">Pb组包解包实现</h1>
+
+<p>Protobuf是Google开源的一套跨平台、跨语言的序列化协议。基于Protocbuf的数据组包方式有效减了网络数据传输的大小，减少流量消耗。</p>
+
+<p>pb协议都是通过*.proto的文件进行描述的，该描述文件是非常通用，不限制针对哪种语言，通过Google提供的compiler可以选择编译的目标编程语言，如java,C++,Python等。这里以C++为例。通过<code>protoc *.proto --cpp_out=dir</code>命令就可以根据proto描述文件生成对应的C++文件<code>*.pb.h</code>和<code>*.pb.cc</code>，然后引用相应的头文件就可以进行组包、解包了。</p>
+
+<p>上面的做法是最基本最常用的，而且我们在使用pb协议的时候也都是这么做的。因为PbCodec不再需要生成C++的头文件了。通过描述文件生成的pb头文件给我们提供的主要方法就是一堆<code>getter</code>、<code>setter</code>、<code>serialize</code>、<code>parse</code>方法，这些方法确实方便了我们组包、解包。</p>
+
+<p>Pb使用<code>((T)([L]V))</code>类似的格式，即Tag-Length-Value。每一个字段值都使用TLV的格式，最后将所有字段的TLV序列拼接为一个二进制字节流进行传输，收到字节流按TLV一个一个字段的解析出来。这里的Tag也可以叫做<code>key</code>，pb使用的格式抽象一下也可以看成是一个个的Key-Value对。</p>
+
+<p>这里的Key也叫Tag是由什么组成的？我们知道在proto描述文件里message下的每个字段值都有一个field数字，表示它在message里是第几个值，我们称它为<code>field_num</code>；声明一个字段的时候还要指定该字段用来放什么类型的值，是可变长度还是固定长度等，这里的字段类型称为<code>wire_type</code>。好了，有了<code>field_num</code>和<code>wire_type</code>我们就可以得到我们的key了，<code>key = field_num &lt;&lt; 3 | wire_type</code>。</p>
+
+<p>Protobuf里对wireType声明下面几种类型:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a>  <span class="k">enum</span> <span class="n">WireType</span> <span class="p">{</span>
+<a name="True-2"></a>    <span class="n">WIRETYPE_VARINT</span>           <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<a name="True-3"></a>    <span class="n">WIRETYPE_FIXED64</span>          <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<a name="True-4"></a>    <span class="n">WIRETYPE_LENGTH_DELIMITED</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<a name="True-5"></a>    <span class="n">WIRETYPE_START_GROUP</span>      <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<a name="True-6"></a>    <span class="n">WIRETYPE_END_GROUP</span>        <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<a name="True-7"></a>    <span class="n">WIRETYPE_FIXED32</span>          <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<a name="True-8"></a>  <span class="p">};</span></code></pre></div>
+<p><img src="/images/20151231/pb-wiretype.png" alt="wireType说明" /></p>
+
+<p><code>Varint</code>是一种比较特殊的编码方式，后面有详细介绍。<code>FixedXX</code>就是固定长度的。<code>Length_Delimited</code>是针对那些变长数据的如bytes,String,subMessage等。</p>
+
+<p>Value的组成就是由数据长度和数据组成，但是长度可能没有，像对于数字类型的不需要长度，只有那些长度不确定的类型(bytes,string等)需要数据的真实长度才能正确解析。Protobuf的数组格式就是这样的。下面要简单分析下Protobuf的工作原理。</p>
+
+<p>这里我们从具体的pb协议出发，逆向学习pb的原理，下面的图是来电协议<code>oidb_65f</code>和<code>oidb_931</code>里的几个message与Protobuf的类继承关系。</p>
+
+<p><img src="/images/20151231/pb-class-relationship.png" alt="message继承图" /></p>
+
+<p>每一条协议都在自己的命名空间中，pb的描述文件中定义的每一个message都会生成一个对应的类，从上面的类关系图中可以看到生成的类中65f协议中类的父类是<code>MessageLite</code>，而931协议中的类的父类是<code>Message</code>,<code>Message</code>又继承自<code>MessageLite</code>，<code>Message</code>类扩充了什么功能呢？我们后面再说。这里最重要是搞明白协议描述文件里的每个message最后生成的类中都有序列化，反序列码的方法了。</p>
+
+<p>看看下面协议中的序列化方法是如何实现的:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">void</span> <span class="n">ReqBody</span><span class="o">::</span><span class="n">SerializeWithCachedSizes</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+<a name="True-2"></a><span class="c1">//optional cmd0x65f.SetMsgValidTimeReq msg_set_req = 1;</span>
+<a name="True-3"></a>  <span class="k">if</span> <span class="p">(</span><span class="n">has_msg_set_req</span><span class="p">())</span> <span class="p">{</span>
+<a name="True-4"></a>		<span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteMessage</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">msg_set_req</span><span class="p">(),</span><span class="n">output</span><span class="p">);</span>
+<a name="True-5"></a>	<span class="p">}</span>
+<a name="True-6"></a><span class="p">}</span>
+<a name="True-7"></a><span class="c1">// optional cmd0x65f.SetMsgValidTimeReq msg_set_req = 1;</span>
+<a name="True-8"></a><span class="kr">inline</span> <span class="kt">bool</span> <span class="n">ReqBody</span><span class="o">::</span><span class="n">has_msg_set_req</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+<a name="True-9"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">_has_bits_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x00000001u</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+<a name="True-10"></a><span class="p">}</span></code></pre></div>
+<p>从上面代码中可以看出，当要将message进行序列化时，会向<code>CodedOutputStream</code>流中填写，大家自己看一个更复杂点的pb协议的message时，当进行序列化时，会逐一对message下的每个field进行判断，也就是类似上面中的<code>has_msg_set_req()</code>，如果有设置值就会进行写操作，每当对一个字段进行设置值时都会设置对应的标志位。<code>::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];</code>对于每一个message都会根据field的个数来生成一个这样的数组，用来标志每个字段的是否有值，同样在解包的时候也会有对应设置。假设message下有40个字段，则会有<code>::google::protobuf::uint32 _has_bits_[(40 + 31) / 32];</code>这样的数组。若对应字段有值，就调用<code>WriteXXXX</code>方法写入流中。这里会根据字段声明时的值类型调用不同的Write方法，因为在此处的field是另一个message，因此会调用<code>WriteMessage</code>方法，如果是uint32类型，刚会调用<code>WriteUInt32</code>方法，这些Write方法都是相似的。下面看<code>WriteMessage</code>实现:</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">void</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteMessage</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span>
+<a name="True-2"></a>                                  <span class="k">const</span> <span class="n">MessageLite</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span>
+<a name="True-3"></a>                                  <span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-4"></a>  <span class="n">WriteTag</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">WIRETYPE_LENGTH_DELIMITED</span><span class="p">,</span> <span class="n">output</span><span class="p">);</span>
+<a name="True-5"></a>  <span class="k">const</span> <span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">value</span><span class="p">.</span><span class="n">GetCachedSize</span><span class="p">();</span>
+<a name="True-6"></a>  <span class="n">output</span><span class="o">-&gt;</span><span class="n">WriteVarint32</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<a name="True-7"></a>  <span class="n">value</span><span class="p">.</span><span class="n">SerializeWithCachedSizes</span><span class="p">(</span><span class="n">output</span><span class="p">);</span>
+<a name="True-8"></a><span class="p">}</span>
+<a name="True-9"></a>
+<a name="True-10"></a><span class="kr">inline</span> <span class="kt">void</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WriteTag</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span> <span class="n">WireType</span> <span class="n">type</span><span class="p">,</span>
+<a name="True-11"></a>                                     <span class="n">io</span><span class="o">::</span><span class="n">CodedOutputStream</span><span class="o">*</span> <span class="n">output</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-12"></a>  <span class="n">output</span><span class="o">-&gt;</span><span class="n">WriteTag</span><span class="p">(</span><span class="n">MakeTag</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">type</span><span class="p">));</span>
+<a name="True-13"></a><span class="p">}</span>
+<a name="True-14"></a>
+<a name="True-15"></a><span class="kr">inline</span> <span class="n">uint32</span> <span class="n">WireFormatLite</span><span class="o">::</span><span class="n">MakeTag</span><span class="p">(</span><span class="kt">int</span> <span class="n">field_number</span><span class="p">,</span> <span class="n">WireType</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-16"></a>  <span class="k">return</span> <span class="n">GOOGLE_PROTOBUF_WIRE_FORMAT_MAKE_TAG</span><span class="p">(</span><span class="n">field_number</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+<a name="True-17"></a><span class="p">}</span>
+<a name="True-18"></a>
+<a name="True-19"></a><span class="cp">#define GOOGLE_PROTOBUF_WIRE_FORMAT_MAKE_TAG(FIELD_NUMBER, TYPE)                  \</span>
+<a name="True-20"></a><span class="cp">  static_cast&lt;uint32&gt;(                                                   \</span>
+<a name="True-21"></a><span class="cp">    ((FIELD_NUMBER) &lt;&lt; ::google::protobuf::internal::WireFormatLite::kTagTypeBits) \</span>
+<a name="True-22"></a><span class="cp">      | (TYPE))</span></code></pre></div>
+<p><code>WriteMessage</code>的第一个参数是field_number也就是message中字段的序号，从前面也看到在调用的时候传的第一个参数的值是<code>1</code>，也就是field的序号。方法中首先调用<code>WriteTag</code>方法，从代码中可以看出Tag就是按照之前说的方法<code>field_num &lt;&lt; 3 | wire_type</code>生成的。写完tag,因为WireType是变长的，因此要告诉数据长度，接着写数据长度<code>output-&gt;WriteVarint32(size);</code>,后面再写入数据。 这样message的序列化的核心工作就完成了，当然我们不会直接调用这里的<code>ReqBody::SerializeWithCachedSizes</code>方法来生成组包的数据buffer。我们调用的序列化方法是<code>MessageLite::SerializeAsString()</code>或是<code>MessageLite::SerializeToString(string* output)</code>，然后这两个方法再经过层层调用到达我们的message的<code>SerializeWithCachedSizes</code>方法，最终得到序列化后的结果。</p>
+
+<p>现在pb如何进行序列化我们已经知道了，现在看pb怎么进行反序列化。先上代码了解下：</p>
+
+<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><a name="True-1"></a><span class="kt">bool</span> <span class="n">RspBody</span><span class="o">::</span><span class="n">MergePartialFromCodedStream</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">CodedInputStream</span><span class="o">*</span> <span class="n">input</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-2"></a><span class="cp">#define DO_(EXPRESSION) if (!(EXPRESSION)) return false</span>
+<a name="True-3"></a>    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">uint32</span> <span class="n">tag</span><span class="p">;</span>
+<a name="True-4"></a>    <span class="k">while</span> <span class="p">((</span><span class="n">tag</span> <span class="o">=</span> <span class="n">input</span><span class="o">-&gt;</span><span class="n">ReadTag</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-5"></a>        <span class="k">switch</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagFieldNumber</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span> <span class="p">{</span>
+<a name="True-6"></a>                <span class="c1">// optional cmd0x65f.SetMsgValidTimeRsp msg_set_rsp = 1;</span>
+<a name="True-7"></a>            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span> <span class="p">{</span>
+<a name="True-8"></a>                <span class="k">if</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagWireType</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">==</span>
+<a name="True-9"></a>                    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WIRETYPE_LENGTH_DELIMITED</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-10"></a>                    <span class="n">DO_</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">ReadMessageNoVirtual</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">mutable_msg_set_rsp</span><span class="p">()));</span>
+<a name="True-11"></a>                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<a name="True-12"></a>                    <span class="k">goto</span> <span class="n">handle_uninterpreted</span><span class="p">;</span>
+<a name="True-13"></a>                <span class="p">}</span>
+<a name="True-14"></a>                <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="o">-&gt;</span><span class="n">ExpectAtEnd</span><span class="p">())</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-15"></a>                <span class="k">break</span><span class="p">;</span>
+<a name="True-16"></a>            <span class="p">}</span>
+<a name="True-17"></a>                
+<a name="True-18"></a>            <span class="k">default</span><span class="o">:</span> <span class="p">{</span>
+<a name="True-19"></a>            <span class="nl">handle_uninterpreted</span><span class="p">:</span>
+<a name="True-20"></a>                <span class="k">if</span> <span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">GetTagWireType</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">==</span>
+<a name="True-21"></a>                    <span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">WIRETYPE_END_GROUP</span><span class="p">)</span> <span class="p">{</span>
+<a name="True-22"></a>                    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-23"></a>                <span class="p">}</span>
+<a name="True-24"></a>                <span class="n">DO_</span><span class="p">(</span><span class="o">::</span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">internal</span><span class="o">::</span><span class="n">WireFormatLite</span><span class="o">::</span><span class="n">SkipField</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">tag</span><span class="p">));</span>
+<a name="True-25"></a>                <span class="k">break</span><span class="p">;</span>
+<a name="True-26"></a>            <span class="p">}</span>
+<a name="True-27"></a>        <span class="p">}</span>
+<a name="True-28"></a>    <span class="p">}</span>
+<a name="True-29"></a>    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<a name="True-30"></a><span class="cp">#undef DO_</span>
+<a name="True-31"></a><span class="p">}</span></code></pre></div>
+<p>上面的反序列化代码是针对特定message的，因此每个message都会有自己的反序列化实现。上面反序列化方法的参数是一个输入流，不用想也知道是一串二进制流，通过循环不停的读取tag，然后根据tag得到field_num，然后就是读值了。首先有没有这样的疑问，pb怎么知道读出来的WireType是对的呢，跟哪种类型进行比较呢？因为在根据描述文件生成这些方法的时候都知道每个字段的数据类型，也就知道在序列化时用的是哪个WireType了，同样也知道该调用哪个方法来读取值，并写入哪个字段。在搞明白了序列化操作后，反序列化就没有那么神秘了。</p>
+
+<p>反序列化首先要读取Tag，但是这里我们看到的是一串二进制数据，在读取Tag时如何判断结束条件呢？有了这个疑问，我们就需要了解Protobuf的<code>Varint</code>编码，这是一种比较特殊的编码方式。</p>
+
+<p>对于int32类型的数字，一般需要4个byte 来表示。但是采用 Varint，对于很小的int32 类型的数字，则可以用 1个byte来表示。当然凡事都有好的也有不好的一面，采用 Varint 表示法，大的数字则需要 5 个 byte 来表示。从统计的角度来说，一般不会所有的消息中的数字都是大数，因此大多数情况下，采用 Varint 后，可以用更少的字节数来表示数字信息。下面就详细介绍一下 Varint。
+Varint 中的每个 byte 的最高位 bit 有特殊的含义，如果该位为 1，表示后续的 byte 也是该数字的一部分，如果该位为 0，则结束。其他的 7 个 bit 都用来表示数字。因此小于 128 的数字都可以用一个 byte 表示。大于 128 的数字，比如 300，会用两个字节来表示：<code>1010 1100 0000 0010</code>
+下图演示了 Google Protocol Buffer 如何解析两个 bytes。注意到最终计算前将两个 byte 的位置相互交换过一次，这是因为 Google Protocol Buffer 字节序采用 little-endian 的方式。</p>
+
+<p><img src="/images/20151231/pb-varint.png" alt="Varint编码图" /></p>
+
+<p>对Varint编码了解后，前面<code>ReadTag</code>时就是这样来判断结束条件的。但是大家有没有疑问，就是前面说的Tag(也叫Key)是按<code>field_num &lt;&lt; 3 | Wire_type</code>生成的，这里field_num左移3位会不会导致数据丢失呢？这里就假设field_num是uint32类型的，左移3位依然能表示2^28个，相信在一个message里不会达到这么多字段吧，因此完全够用。而且对Tag进行Varint编码的是<code>field_num &lt;&lt; 3 | Wire_type</code>这个结果。</p>
+
+<h2 id="section">题外篇</h2>
+
+<p>对于在proto描述文件中添加<code>option optimize_for = LITE_RUNTIM</code>到底有什么用呢？</p>
+
+<p>当添加后在编译proto文件时编译器会使用<code>libprotobuf-lite</code>库而不是<code>libprotobuf</code>库，使用<code>libprotobuf-lite</code>我们的message生成的类会继承自<code>MessageLite</code>，如果使用<code>libprotobuf</code>，生成的类则继承自<code>Message</code>。然后<code>Message</code>又继承自<code>MessageLite</code>，并且添加了descriptor和reflection特性，这会导致生成的头文件中有支持这两个特性的相关代码，然后我们日常使用pb时根本用不到这两个特性，因此完全没有必要保留着他们。这也是为什么添加这个优化选项的原因了。对于这两个特性有什么功能大家可以自己去探索下。</p>
+
+<p>这个原来是内部分享时写的，去除了部分内容，希望对于想要学习Pb的同学有所帮助。Pb的确是很优秀的序列化方法，值得深入研究学习。基于Pb也可以创造其他的一些工具，数据存储等方案。</p>
+
+<blockquote>
+  <p>本文是删减版本，如果有什么不清楚的地方，请留言进一步沟通。</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>2015总结</title>
+      <link href="http://mrmign.github.io/2015/12/31/2015-zong-jie/"/>
+      <pubDate>2015-12-31T00:00:00+08:00</pubDate>
+      <author>Arming</author>
+      <guid>http://mrmign.github.io/2015/12/31/2015-zong-jie</guid>
+      <content:encoded><![CDATA[<p>2016年的1月1日马上就要到来了，过去的几年每当到这个时候就会看到各种年底总结新年寄望。看着他们的一篇篇总结与新一年的奋斗目标，心里也说不出什么感觉。写出新的一年奋斗目标的那些同学现在已经当上CEO，迎娶了白富美，走上人生巅峰了吧。鉴于此，我也要为了同样的目标对今年做个总结，为明年树立个目标。</p>
+
+<p>2015.4拿到毕业证正式入职鹅厂，这不知不觉就过完了9个月，到了年末。入职后在原来团队待了2个来月就到了新的团队，不过在新团队氛围还是挺不错的。在今年主要是熟悉业务逻辑，了解老的代码，然后做新需求，小组内做了3次分享，但是都是kpi之外的，根据当时的需要自愿分享的。</p>
+
+<p>一个是关于iOS的私有API的分享，关于私有API在去年的时候就开始研究了，不过当时由于对一些底层知识如<code>Mach-O</code>了解不多，没能深入的把工具做好，只是当时就针对特定APP进行了扫描，而且结果也不是很理想，现在也底层知识有了相对比较全面的了解了，又没有时间去搞这一块了，这次分享也基本是把之前做的一些研究给小组同学普及了一下，进行过越狱开发的基本也都有所涉及。说到私有API，就得提下越狱开发，今年7月左右买了逆向开发的第二版书，计算全面地学习下逆向工程的，可是今年过完了书也没有完全看完，逆向过的应用也只有几款，而且都是简单的功能（去广告）逆向，再复杂点的就没有搞了，这些没有完成的目标都是由于自己的拖延导致的，<strong>2016年克服的第一大问题就是拖延</strong>。逆向的知识还是要继续学习的，尝试逆向更复杂的功能。刚开始学习的时候就想着最后能否自己写个抢红包插件，看来今年要呵呵了。。。虽然网上有人写了Android版本的，但是iOS的木有啊，自己动手，丰衣足食。还是要学习。关于逆向，今年下半年了解了很多逆向相关的工具，有些开源的也要去研究学习下，如<code>MobileSubstrate</code>这个最基本的，<code>Cycript</code>。代码还是要多看，多写。</p>
+
+<p>第二个就是学习了下<code>JSPatch</code>的实现，然后与小组成员一起分享学习了下。<code>JSPatch</code>是一个动态替换应用内方法的框架。代码1400多行，不多，从最初的方案到现在的方案，作者也是花了很多功夫，踩了不少坑的。实现原理充分利用了Objective-C的<code>Runtime</code>特性，对于学习理解Runtime也是很有帮助的。JSPatch实现的出发点很好，利用<code>JavaScriptCore.framework</code>这个iOS系统本身提供的库，不像那些使用Wax框架的还是自己添加解析器，管理运行环境等。<code>JSPatch</code>让我有了一个想法，就是在越狱开发上基于<code>JSPatch</code>可以搭建一个工具平台，因为它本身就是用来动态替换App内的方法的，越狱写的<code>Tweak</code>也是同样的来替换原来的方法，但是需要编译安装，如果通过JavaScript来实现就不需要提前编译，这样的工具与越狱平台上的<code>Flex</code>非常像，但是对于Flex的实现原理还没有研究，也不太清楚它下载的那些插件是什么格式的。但是如果基于JSPatch，插件必定是用JS写的。该想法目前还没有付诸实施。希望2016能够实现此想法。</p>
+
+<p>鉴于上面说的两点，私有API和越狱开发是分不开的，越狱开发特别是针对系统应用来开发Tweak，肯定要搞清楚系统的API，这里就不泛大量私有API。而对于第三方应用进行越狱开发，也要对于应用的类有所了解才行，但是随着iOS系统的升级，苹果也一直在修复系统漏洞，加强系统安全，有时dump应用的头文件已经不那么好使了。但是，应用要运行起来必须要加载到内存中必须要解密后才可以正常运行，因此通过动态方法可以比较容易得到应用内的类，就像<code>RuntimeBrowser</code>提供的功能一样，我们可以对它进行改造，做成一个动态库，每当应用运行起来后就可以dump内部的类，根据<code>RuntimeBroser</code>的做法，可进一步做出类的关系图，将继承关系，协议的Confirm关系通过图的形式表现出来，就可以清晰的表示出来了。更完美的是可以进行模糊查找某些类的关系图。</p>
+
+<p>第三个就是关于Protobuf的分享，虽然之前一直在用，但是一直没有研究它的工作原理，为什么会这么优秀。通过本次分享对它的格式及原理都有了了解。而且在查资料的过程中也发现了很多基于pb的其他的优秀工具，可见pb的工作原理是非常优秀的。下一步还要更多研究下相关内容，希望能把代码完整的看一遍。</p>
+
+<p>上面三点是主要做的一些事情，其他的时间就要还是在做需求相关的工作，接触消息相关逻辑，期间也做了第一款动画效果，也花费了些时间去学习了解，说到这里还有两个话题需要分享，一个是消息逻辑，另一个是动画相关知识分享。</p>
+
+<p>走入社会也要不断学习呀，今年买了几本书，但是都还没有看完，其中有几本是非技术相关的，《沟通的艺术》、《学会提问》、《人性的弱点》都只是翻了一部分，技术书倒是读了一些，主要是iOS相关的，因为苹果去年也发布了新的编程语言Swift，虽然去年抽空学习了下，由于工作中主要还是Objective-C，长时间不用也就淡忘了，今年都发布2.0了，又重新学习了下，对比起来代码真的少好多，希望在新的一年里也能用Swift来写款小软件吧。技术书方面希望接下来能把那几本经典的都再读一遍，《iOS X Pushing The Limit6，7》,iOS的设计模式，官方文档多读，非技术书方面希望把今年没读完的先读完，然后再读些心理学方面的东西。</p>
+
+<p>本来写这篇年末总结的时候是想着一气呵成的，竟然又拖拖拉拉的3天假期才写完，而且前后衔接不连贯，先这样吧，第一次写这样的总结，越写越流利的（自我安慰下~）。</p>
+]]></content:encoded>
+    </item>
     
     <item>
       <title>Swift学习笔记5</title>
@@ -1412,374 +1590,6 @@ The simplest form of type constraint is to <strong>put a colon and type name aft
   <li><a href="http://sharkfood.com/content/Developers/content/Sound%20Switch/">http://sharkfood.com/content/Developers/content/Sound%20Switch/</a></li>
   <li><a href="http://blog.csdn.net/slinloss/article/details/7870559">http://blog.csdn.net/slinloss/article/details/7870559</a></li>
 </ul>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>jekyll个性化配置</title>
-      <link href="http://mrmign.github.io/2015/09/18/config-code-highlight-for-jekyll-with-kramdown-and-pygments/"/>
-      <pubDate>2015-09-18T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/09/18/config-code-highlight-for-jekyll-with-kramdown-and-pygments</guid>
-      <content:encoded><![CDATA[<h2 id="section">软件版本</h2>
-
-<div class="highlight"><pre><code class="language-text" data-lang="text"><a name="True-1"></a>jekyll 2.5.3
-<a name="True-2"></a>Liquid 3.0.6
-<a name="True-3"></a>kramdown-1.8.0
-<a name="True-4"></a>pygments.rb-0.6.3
-<a name="True-5"></a>rake-10.4.2
-<a name="True-6"></a>hz2py-1.0.0  # 将中文转化为拼音</code></pre></div>
-<h2 id="section-1">代码高亮问题</h2>
-
-<p>在使用jekyll的时候模板一直使用的Liquid，像下面这样的</p>
-
-<div class="highlight"><pre><code class="language-text" data-lang="text"><a name="True-1"></a>{ % highlight lang linenos%}
-<a name="True-2"></a>code
-<a name="True-3"></a>{ % endhighlight %}</code></pre></div>
-<p>关于Liquid对于其他标签的解析这里不做深入探讨，只对使用<code>pygements</code>对代码高亮处理进行说明。如果要使用上述的代码高亮方式，就得每次都要填写同样的代码块，如果要显示行号也要添加对应的linenos标志，否则最终生成的代码块是不带行号的。这里对jekyll自带的代码高亮相关代码(<code>highlight.rb</code>, 在<code>jekyll-2.5.3/lib/jekyll/tags</code>目录下)进行分析，：</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">module</span> <span class="nn">Jekyll</span>
-<a name="True-2"></a>  <span class="k">module</span> <span class="nn">Tags</span>
-<a name="True-3"></a>    <span class="k">class</span> <span class="nc">HighlightBlock</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
-<a name="True-4"></a>      <span class="kp">include</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">StandardFilters</span>
-<a name="True-5"></a>
-<a name="True-6"></a>      <span class="c1"># The regular expression syntax checker. Start with the language specifier.</span>
-<a name="True-7"></a>      <span class="c1"># Follow that by zero or more space separated options that take one of three</span>
-<a name="True-8"></a>      <span class="c1"># forms: name, name=value, or name=&quot;&lt;quoted list&gt;&quot;</span>
-<a name="True-9"></a>      <span class="c1">#</span>
-<a name="True-10"></a>      <span class="c1"># &lt;quoted list&gt; is a space-separated list of numbers</span>
-<a name="True-11"></a>      <span class="no">SYNTAX</span> <span class="o">=</span> <span class="sr">/^([a-zA-Z0-9.+#-]+)((\s+\w+(=(\w+|&quot;([0-9]+\s)*[0-9]+&quot;))?)*)$/</span>
-<a name="True-12"></a>
-<a name="True-13"></a>      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">markup</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
-<a name="True-14"></a>        <span class="k">super</span>
-<a name="True-15"></a>        <span class="k">if</span> <span class="n">markup</span><span class="o">.</span><span class="n">strip</span> <span class="o">=~</span> <span class="no">SYNTAX</span>
-<a name="True-16"></a>          <span class="vi">@lang</span> <span class="o">=</span> <span class="vg">$1</span><span class="o">.</span><span class="n">downcase</span>
-<a name="True-17"></a>          <span class="vi">@options</span> <span class="o">=</span> <span class="p">{}</span>
-<a name="True-18"></a>          <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="vg">$2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="vg">$2</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
-<a name="True-19"></a>            <span class="c1"># Split along 3 possible forms -- key=&quot;&lt;quoted list&gt;&quot;, key=value, or key</span>
-<a name="True-20"></a>            <span class="vg">$2</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/(?:\w=&quot;[^&quot;]*&quot;|\w=\w|\w)+/</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">opt</span><span class="o">|</span>
-<a name="True-21"></a>              <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
-<a name="True-22"></a>              <span class="c1"># If a quoted list, convert to array</span>
-<a name="True-23"></a>              <span class="k">if</span> <span class="n">value</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-<a name="True-24"></a>                  <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/&quot;/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-<a name="True-25"></a>                  <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span>
-<a name="True-26"></a>              <span class="k">end</span>
-<a name="True-27"></a>              <span class="vi">@options</span><span class="o">[</span><span class="n">key</span><span class="o">.</span><span class="n">to_sym</span><span class="o">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">||</span> <span class="kp">true</span>
-<a name="True-28"></a>            <span class="k">end</span>
-<a name="True-29"></a>          <span class="k">end</span>
-<a name="True-30"></a>          <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;inline&quot;</span> <span class="k">if</span> <span class="vi">@options</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="ss">:linenos</span><span class="p">)</span> <span class="ow">and</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span> <span class="o">==</span> <span class="kp">true</span>
-<a name="True-31"></a>          <span class="c1">#@options[:linenos] = &quot;inline&quot; </span>
-<a name="True-32"></a>          <span class="c1">#@options[:lineanchors] = true</span>
-<a name="True-33"></a>        <span class="k">else</span>
-<a name="True-34"></a>          <span class="k">raise</span> <span class="no">SyntaxError</span><span class="o">.</span><span class="n">new</span> <span class="o">&lt;&lt;-</span><span class="no">eos</span>
-<a name="True-35"></a><span class="sh">Syntax Error in tag &#39;highlight&#39; while parsing the following markup:</span>
-<a name="True-36"></a>
-<a name="True-37"></a><span class="sh">  #{markup}</span>
-<a name="True-38"></a>
-<a name="True-39"></a><span class="sh">Valid syntax: highlight &lt;lang&gt; [linenos]</span>
-<a name="True-40"></a><span class="no">eos</span>
-<a name="True-41"></a>        <span class="k">end</span>
-<a name="True-42"></a>      <span class="k">end</span>
-<a name="True-43"></a>
-<a name="True-44"></a>      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-<a name="True-45"></a>        <span class="n">prefix</span> <span class="o">=</span> <span class="n">context</span><span class="o">[</span><span class="s2">&quot;highlighter_prefix&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
-<a name="True-46"></a>        <span class="n">suffix</span> <span class="o">=</span> <span class="n">context</span><span class="o">[</span><span class="s2">&quot;highlighter_suffix&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
-<a name="True-47"></a>        <span class="n">code</span> <span class="o">=</span> <span class="k">super</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">strip</span>
-<a name="True-48"></a>
-<a name="True-49"></a>        <span class="n">is_safe</span> <span class="o">=</span> <span class="o">!!</span><span class="n">context</span><span class="o">.</span><span class="n">registers</span><span class="o">[</span><span class="ss">:site</span><span class="o">].</span><span class="n">safe</span>
-<a name="True-50"></a>
-<a name="True-51"></a>        <span class="n">output</span> <span class="o">=</span>
-<a name="True-52"></a>          <span class="k">case</span> <span class="n">context</span><span class="o">.</span><span class="n">registers</span><span class="o">[</span><span class="ss">:site</span><span class="o">].</span><span class="n">highlighter</span>
-<a name="True-53"></a>            <span class="k">when</span> <span class="s1">&#39;pygments&#39;</span>
-<a name="True-54"></a>              <span class="n">render_pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
-<a name="True-55"></a>            <span class="k">when</span> <span class="s1">&#39;rouge&#39;</span>
-<a name="True-56"></a>              <span class="n">render_rouge</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-<a name="True-57"></a>            <span class="k">else</span>
-<a name="True-58"></a>              <span class="n">render_codehighlighter</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-<a name="True-59"></a>            <span class="k">end</span>
-<a name="True-60"></a>
-<a name="True-61"></a>        <span class="n">rendered_output</span> <span class="o">=</span> <span class="n">add_code_tag</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-<a name="True-62"></a>        <span class="n">prefix</span> <span class="o">+</span> <span class="n">rendered_output</span> <span class="o">+</span> <span class="n">suffix</span>
-<a name="True-63"></a>      <span class="k">end</span>
-<a name="True-64"></a>
-<a name="True-65"></a>      <span class="k">def</span> <span class="nf">sanitized_opts</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
-<a name="True-66"></a>        <span class="k">if</span> <span class="n">is_safe</span>
-<a name="True-67"></a>          <span class="no">Hash</span><span class="o">[[</span>
-<a name="True-68"></a>            <span class="o">[</span><span class="ss">:startinline</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:startinline</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
-<a name="True-69"></a>            <span class="o">[</span><span class="ss">:hl_linenos</span><span class="p">,</span>  <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:hl_linenos</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
-<a name="True-70"></a>            <span class="o">[</span><span class="ss">:linenos</span><span class="p">,</span>     <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:linenos</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
-<a name="True-71"></a>            <span class="o">[</span><span class="ss">:encoding</span><span class="p">,</span>    <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:encoding</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">]</span><span class="p">,</span>
-<a name="True-72"></a>            <span class="o">[</span><span class="ss">:cssclass</span><span class="p">,</span>    <span class="n">opts</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:cssclass</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span><span class="o">]</span>
-<a name="True-73"></a>          <span class="o">].</span><span class="n">reject</span> <span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">nil?</span> <span class="p">}</span><span class="o">]</span>
-<a name="True-74"></a>        <span class="k">else</span>
-<a name="True-75"></a>          <span class="n">opts</span>
-<a name="True-76"></a>        <span class="k">end</span>
-<a name="True-77"></a>      <span class="k">end</span>
-<a name="True-78"></a>
-<a name="True-79"></a>      <span class="k">def</span> <span class="nf">render_pygments</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
-<a name="True-80"></a>        <span class="nb">require</span> <span class="s1">&#39;pygments&#39;</span>
-<a name="True-81"></a>
-<a name="True-82"></a>        <span class="vi">@options</span><span class="o">[</span><span class="ss">:encoding</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
-<a name="True-83"></a>
-<a name="True-84"></a>        <span class="n">highlighted_code</span> <span class="o">=</span> <span class="no">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span>
-<a name="True-85"></a>          <span class="n">code</span><span class="p">,</span>
-<a name="True-86"></a>          <span class="ss">:lexer</span>   <span class="o">=&gt;</span> <span class="vi">@lang</span><span class="p">,</span>
-<a name="True-87"></a>          <span class="ss">:options</span> <span class="o">=&gt;</span> <span class="n">sanitized_opts</span><span class="p">(</span><span class="vi">@options</span><span class="p">,</span> <span class="n">is_safe</span><span class="p">)</span>
-<a name="True-88"></a>        <span class="p">)</span>
-<a name="True-89"></a>
-<a name="True-90"></a>        <span class="k">if</span> <span class="n">highlighted_code</span><span class="o">.</span><span class="n">nil?</span>
-<a name="True-91"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;There was an error highlighting your code:&quot;</span>
-<a name="True-92"></a>          <span class="nb">puts</span>
-<a name="True-93"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="n">code</span>
-<a name="True-94"></a>          <span class="nb">puts</span>
-<a name="True-95"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;While attempting to convert the above code, Pygments.rb&quot;</span> <span class="o">+</span>
-<a name="True-96"></a>            <span class="s2">&quot; returned an unacceptable value.&quot;</span>
-<a name="True-97"></a>          <span class="no">Jekyll</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span> <span class="s2">&quot;This is usually a timeout problem solved by running `jekyll build` again.&quot;</span>
-<a name="True-98"></a>          <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Pygments.rb returned an unacceptable value when attempting to highlight some code.&quot;</span><span class="p">)</span>
-<a name="True-99"></a>        <span class="k">end</span>
-<a name="True-100"></a>
-<a name="True-101"></a>        <span class="n">highlighted_code</span>
-<a name="True-102"></a>      <span class="k">end</span>
-<a name="True-103"></a>
-<a name="True-104"></a>      <span class="k">def</span> <span class="nf">render_rouge</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-<a name="True-105"></a>        <span class="nb">require</span> <span class="s1">&#39;rouge&#39;</span>
-<a name="True-106"></a>        <span class="n">formatter</span> <span class="o">=</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Formatters</span><span class="o">::</span><span class="no">HTML</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">line_numbers</span><span class="p">:</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:linenos</span><span class="o">]</span><span class="p">,</span> <span class="ss">wrap</span><span class="p">:</span> <span class="kp">false</span><span class="p">)</span>
-<a name="True-107"></a>        <span class="n">lexer</span> <span class="o">=</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Lexer</span><span class="o">.</span><span class="n">find_fancy</span><span class="p">(</span><span class="vi">@lang</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span> <span class="o">||</span> <span class="no">Rouge</span><span class="o">::</span><span class="no">Lexers</span><span class="o">::</span><span class="no">PlainText</span>
-<a name="True-108"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lexer</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
-<a name="True-109"></a>        <span class="s2">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s2">highlight</span><span class="se">\&quot;</span><span class="s2">&gt;&lt;pre&gt;</span><span class="si">#{</span><span class="n">code</span><span class="si">}</span><span class="s2">&lt;/pre&gt;&lt;/div&gt;&quot;</span>
-<a name="True-110"></a>      <span class="k">end</span>
-<a name="True-111"></a>
-<a name="True-112"></a>      <span class="k">def</span> <span class="nf">render_codehighlighter</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-<a name="True-113"></a>        <span class="s2">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s2">highlight</span><span class="se">\&quot;</span><span class="s2">&gt;&lt;pre&gt;</span><span class="si">#{</span><span class="n">h</span><span class="p">(</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">&lt;/pre&gt;&lt;/div&gt;&quot;</span>
-<a name="True-114"></a>      <span class="k">end</span>
-<a name="True-115"></a>
-<a name="True-116"></a>      <span class="k">def</span> <span class="nf">add_code_tag</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-<a name="True-117"></a>        <span class="c1"># Add nested &lt;code&gt; tags to code blocks</span>
-<a name="True-118"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/&lt;pre&gt;\n*/</span><span class="p">,</span><span class="s1">&#39;&lt;pre&gt;&lt;code class=&quot;language-&#39;</span> <span class="o">+</span> <span class="vi">@lang</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; data-lang=&quot;&#39;</span> <span class="o">+</span> <span class="vi">@lang</span><span class="o">.</span><span class="n">to_s</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)</span>
-<a name="True-119"></a>        <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\n*&lt;\/pre&gt;/</span><span class="p">,</span><span class="s2">&quot;&lt;/code&gt;&lt;/pre&gt;&quot;</span><span class="p">)</span>
-<a name="True-120"></a>        <span class="n">code</span><span class="o">.</span><span class="n">strip</span>
-<a name="True-121"></a>      <span class="k">end</span>
-<a name="True-122"></a>
-<a name="True-123"></a>    <span class="k">end</span>
-<a name="True-124"></a>  <span class="k">end</span>
-<a name="True-125"></a><span class="k">end</span>
-<a name="True-126"></a>
-<a name="True-127"></a><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Tags</span><span class="o">::</span><span class="no">HighlightBlock</span><span class="p">)</span></code></pre></div>
-<p>在解析md时对于代码段会进行是否显示行号的判断<code>@options[:linenos] = "inline" if @options.key?(:linenos) and @options[:linenos] == true</code> 并且默认使用inline的格式，就是行号与代码在一起，如果要复制代码，行号也会一起被选中复制。我们可以根据这个判断条件，直接自动添加显示行号的标记，我们这里不使用inline，使用lineanchors，让行号与代码分开。</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="c1">#@options[:linenos] = &quot;inline&quot; if @options.key?(:linenos) and @options[:linenos] == true</span>
-<a name="True-2"></a><span class="vi">@options</span><span class="o">[</span><span class="ss">:lineanchors</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span></code></pre></div>
-<p>直接注释掉原来判断行号显示的代码，添加上面的代码，我们就会让jekyll在解析代码块的时候自动添加显示行号。如果要使用上面的方法，需要个性jekyll的lib，这样不是很通用。可以复制上面的<code>highlight.rb</code>到博客的<code>_plugins</code>目录下，修改<code>highlight.rb</code> 如下所示：</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">module</span> <span class="nn">Jekyll</span>
-<a name="True-2"></a>  <span class="k">module</span> <span class="nn">Tags</span>
-<a name="True-3"></a>    <span class="k">class</span> <span class="nc">CustomeHighlightBlock</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span> <span class="c1">#因为jekyll的lib里有相同类的定义，这里修改为其他类名</span>
-<a name="True-4"></a>      <span class="kp">include</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">StandardFilters</span>
-<a name="True-5"></a>
-<a name="True-6"></a>      <span class="c1"># The regular expression syntax checker. Start with the language specifier.</span>
-<a name="True-7"></a>      <span class="c1"># Follow that by zero or more space separated options that take one of three</span>
-<a name="True-8"></a>      <span class="c1"># forms: name, name=value, or name=&quot;&lt;quoted list&gt;&quot;</span>
-<a name="True-9"></a>      <span class="c1">#</span>
-<a name="True-10"></a>      <span class="c1"># &lt;quoted list&gt; is a space-separated list of numbers</span>
-<a name="True-11"></a>      <span class="no">SYNTAX</span> <span class="o">=</span> <span class="sr">/^([a-zA-Z0-9.+#-]+)((\s+\w+(=(\w+|&quot;([0-9]+\s)*[0-9]+&quot;))?)*)$/</span>
-<a name="True-12"></a>
-<a name="True-13"></a>      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">markup</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
-<a name="True-14"></a>        <span class="k">super</span>
-<a name="True-15"></a>        <span class="k">if</span> <span class="n">markup</span><span class="o">.</span><span class="n">strip</span> <span class="o">=~</span> <span class="no">SYNTAX</span>
-<a name="True-16"></a>          <span class="vi">@lang</span> <span class="o">=</span> <span class="vg">$1</span><span class="o">.</span><span class="n">downcase</span>
-<a name="True-17"></a>          <span class="vi">@options</span> <span class="o">=</span> <span class="p">{}</span>
-<a name="True-18"></a>          <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="vg">$2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="vg">$2</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
-<a name="True-19"></a>            <span class="c1"># Split along 3 possible forms -- key=&quot;&lt;quoted list&gt;&quot;, key=value, or key</span>
-<a name="True-20"></a>            <span class="vg">$2</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/(?:\w=&quot;[^&quot;]*&quot;|\w=\w|\w)+/</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">opt</span><span class="o">|</span>
-<a name="True-21"></a>              <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
-<a name="True-22"></a>              <span class="c1"># If a quoted list, convert to array</span>
-<a name="True-23"></a>              <span class="k">if</span> <span class="n">value</span> <span class="o">&amp;&amp;</span> <span class="n">value</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
-<a name="True-24"></a>                  <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/&quot;/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-<a name="True-25"></a>                  <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span>
-<a name="True-26"></a>              <span class="k">end</span>
-<a name="True-27"></a>              <span class="vi">@options</span><span class="o">[</span><span class="n">key</span><span class="o">.</span><span class="n">to_sym</span><span class="o">]</span> <span class="o">=</span> <span class="n">value</span> <span class="o">||</span> <span class="kp">true</span>
-<a name="True-28"></a>            <span class="k">end</span>
-<a name="True-29"></a>          <span class="k">end</span>
-<a name="True-30"></a>          <span class="vi">@options</span><span class="o">[</span><span class="ss">:lineanchors</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>  <span class="c1"># 要修改的地方</span>
-<a name="True-31"></a>        <span class="k">else</span>
-<a name="True-32"></a>          <span class="k">raise</span> <span class="no">SyntaxError</span><span class="o">.</span><span class="n">new</span> <span class="o">&lt;&lt;-</span><span class="no">eos</span>
-<a name="True-33"></a><span class="sh">Syntax Error in tag &#39;highlight&#39; while parsing the following markup:</span>
-<a name="True-34"></a>
-<a name="True-35"></a><span class="sh">  #{markup}</span>
-<a name="True-36"></a>
-<a name="True-37"></a><span class="sh">Valid syntax: highlight &lt;lang&gt; [linenos]</span>
-<a name="True-38"></a><span class="no">eos</span>
-<a name="True-39"></a>        <span class="k">end</span>
-<a name="True-40"></a>      <span class="k">end</span>
-<a name="True-41"></a>
-<a name="True-42"></a>      
-<a name="True-43"></a>    <span class="k">end</span>
-<a name="True-44"></a>  <span class="k">end</span>
-<a name="True-45"></a><span class="k">end</span>
-<a name="True-46"></a>
-<a name="True-47"></a><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Tags</span><span class="o">::</span><span class="no">CustomeHighlightBlock</span><span class="p">)</span> <span class="c1">#因为jekyll的lib里有相同类的定义，这里修改为其他类名</span></code></pre></div>
-<p>根据上面的代码进行相应修改即可。剩下的就是要个性CSS样式了，可以根据<a href="http://drewsilcock.co.uk/proper-linenumbers/">这个</a>来修改，本文中的代码样式就是根据该链接进行修改的。</p>
-
-<p>我在配置的时候使用的是<code>kramdown</code>来解析markdown文件的，就是像github那样的使用<code>~~~ lang  ~~~</code>的代码块格式，这里可以通过使用一个开源的插件<a href="https://github.com/mvdbos/kramdown-with-pygments">kramdown-with-pygments</a>来支持代码高亮，添加了该插件后还要进行一定的修改，因为该插件里有自己对代码块的解析及输出最终的html，这个与前面我们自己修改的highlight.rb有些许冲突。因为<code>highlight.rb</code>是针对Liquid里的标签tag进行识别处理的，这里的是直接进行converter处理，修改如下：</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="k">def</span> <span class="nf">convert_codeblock</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
-<a name="True-2"></a>    <span class="kp">attr</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">dup</span>
-<a name="True-3"></a>    <span class="n">lang</span> <span class="o">=</span> <span class="n">extract_code_language!</span><span class="p">(</span><span class="kp">attr</span><span class="p">)</span> <span class="o">||</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:kramdown_default_lang</span><span class="o">]</span>
-<a name="True-4"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">pygmentize</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
-<a name="True-5"></a>    <span class="c1"># code_attr = {}</span>
-<a name="True-6"></a>    <span class="c1"># code_attr[&#39;class&#39;] = &quot;language-#{lang}&quot; if lang</span>
-<a name="True-7"></a>    <span class="c1"># &quot;#{&#39; &#39;*indent}&lt;div class=\&quot;highlight\&quot;&gt;&lt;pre#{html_attributes(attr)}&gt;&lt;code#{html_attributes(code_attr)}&gt;#{code}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;\n&quot;</span>
-<a name="True-8"></a>
-<a name="True-9"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/&lt;pre&gt;\n*/</span><span class="p">,</span><span class="s1">&#39;&lt;pre&gt;&lt;code class=&quot;language-&#39;</span> <span class="o">+</span> <span class="n">lang</span> <span class="o">+</span> <span class="s1">&#39;&quot; data-lang=&quot;&#39;</span> <span class="o">+</span> <span class="n">lang</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)</span>
-<a name="True-10"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\n*&lt;\/pre&gt;/</span><span class="p">,</span><span class="s2">&quot;&lt;/code&gt;&lt;/pre&gt;&quot;</span><span class="p">)</span>
-<a name="True-11"></a>    <span class="n">code</span><span class="o">.</span><span class="n">strip</span>
-<a name="True-12"></a>  <span class="k">end</span>
-<a name="True-13"></a>
-<a name="True-14"></a><span class="k">def</span> <span class="nf">convert_codespan</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
-<a name="True-15"></a>    <span class="kp">attr</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attr</span><span class="o">.</span><span class="n">dup</span>
-<a name="True-16"></a>    <span class="n">lang</span> <span class="o">=</span> <span class="n">extract_code_language!</span><span class="p">(</span><span class="kp">attr</span><span class="p">)</span> <span class="o">||</span> <span class="vi">@options</span><span class="o">[</span><span class="ss">:kramdown_default_lang</span><span class="o">]</span>
-<a name="True-17"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">pygmentize</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
-<a name="True-18"></a>    <span class="c1"># if lang</span>
-<a name="True-19"></a>    <span class="c1">#   attr[&#39;class&#39;] = &quot;highlight&quot;</span>
-<a name="True-20"></a>    <span class="c1">#   if attr.has_key?(&#39;class&#39;)</span>
-<a name="True-21"></a>    <span class="c1">#     attr[&#39;class&#39;] += &quot; language-#{lang}&quot;</span>
-<a name="True-22"></a>    <span class="c1">#   else</span>
-<a name="True-23"></a>    <span class="c1">#     attr[&#39;class&#39;] = &quot;language-#{lang}&quot;</span>
-<a name="True-24"></a>    <span class="c1">#   end</span>
-<a name="True-25"></a>    <span class="c1"># end</span>
-<a name="True-26"></a>    <span class="c1"># &quot;&lt;code#{html_attributes(attr)}&gt;#{code}&lt;/code&gt;&quot;</span>
-<a name="True-27"></a>    <span class="s2">&quot;&lt;code&gt;</span><span class="si">#{</span><span class="n">code</span><span class="si">}</span><span class="s2">&lt;/code&gt;&quot;</span>
-<a name="True-28"></a>  <span class="k">end</span></code></pre></div>
-<p>经过上面的处理，两种代码高亮方式就都支持了。说了这么多，要解决的问题就是如何使用<code>pygments</code>对代码进行高亮显示，并默认添加行号。通过这次的修改过程，对jekyll的一些代码高亮处理的逻辑有所了解了，但是jekyll依赖的其他的库还不了解。同时也勾起了对ruby的学习兴趣，如今使用ruby开发的各种便利工具有很多，如<code>cocoapods</code>，<code>jekyll</code>等，学习下ruby还是有很多好处的。</p>
-
-<h2 id="title">在创建新的文章时title是中文时自动转拼音问题</h2>
-
-<p>在创建新的文章时，要填写title，这个title也会在文章内填写好，jekyll默认不支持非ascii码的title，这里使用了<code>hz2py</code> 这个gem， 在<code>Rakefile</code>里对 post task进行相应修改。 这样就可以直接在title里填写中文了。</p>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><a name="True-1"></a><span class="n">task</span> <span class="ss">:post</span> <span class="k">do</span>
-<a name="True-2"></a>  <span class="nb">abort</span><span class="p">(</span><span class="s2">&quot;rake aborted: &#39;</span><span class="si">#{</span><span class="no">CONFIG</span><span class="o">[</span><span class="s1">&#39;posts&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&#39; directory not found.&quot;</span><span class="p">)</span> <span class="k">unless</span> <span class="no">FileTest</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="no">CONFIG</span><span class="o">[</span><span class="s1">&#39;posts&#39;</span><span class="o">]</span><span class="p">)</span>
-<a name="True-3"></a>  <span class="n">title</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;title&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;new－post&quot;</span>
-<a name="True-4"></a>  <span class="c1"># 新增用来接收category和description参数</span>
-<a name="True-5"></a>  <span class="n">category</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;category&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
-<a name="True-6"></a>  <span class="n">description</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;description&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span>
-<a name="True-7"></a>  <span class="n">tags</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;tags&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;[]&quot;</span>
-<a name="True-8"></a>  <span class="c1"># 新增用来将汉字转换成拼音，因为url好像不支持中文。当然在文件顶部require了Hz2py</span>
-<a name="True-9"></a>  <span class="n">slug</span> <span class="o">=</span> <span class="no">Hz2py</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="ss">:join_with</span> <span class="o">=&gt;</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="ss">:to_simplified</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
-<a name="True-10"></a>  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
-<a name="True-11"></a><span class="k">end</span> <span class="c1"># task :post</span></code></pre></div>
-<p>附上解决问题过程中遇到的关于jekyll的好资源供大家学习：</p>
-
-<ul>
-  <li><a href="https://jekyllrb.com">jekyll官网</a>, <a href="http://jekyllcn.com/">jekyll官网中文</a></li>
-  <li><a href="http://jekyllbootstrap.com/usage/jekyll-quick-start.html">Jekyll QuickStart</a></li>
-  <li><a href="http://www.soooldier.com/blog/2013/04/27/gai-jin-jekyll-bootstrapde-rakefile/">中文title转拼音</a></li>
-  <li><a href="https://github.com/mvdbos/kramdown-with-pygments">kramdown-with-pygments</a></li>
-  <li><a href="http://jekyllthemes.org/themes/uno-dbyll/">jekyll主题</a> 这里有很多，可以自己选择中意的</li>
-</ul>
-
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>Motion Design for iOS(part 4)</title>
-      <link href="http://mrmign.github.io/2015/08/09/motion-design-for-iospart-4/"/>
-      <pubDate>2015-08-09T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/08/09/motion-design-for-iospart-4</guid>
-      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-4">Motion Design for iOS(part 4)</h1>
-
-<h3 id="pop-animation-framework">Pop animation Framework</h3>
-
-<p>在Core Animation中一旦动画结束，presentation layer就被移除，如果不想让层突然回到起始位置，需要设置model layer的属性与动画的最后状态相符(UIView的动画方法不用，它自动帮设置了最终的属性值)。像JNWSpringAnimation这种动画，依然使用了CA中的对象<code>CAKeyframeAnimation</code>，我们需要设置Model layer的最终值。</p>
-
-<p>Pop完全不同。Pop不用CA来执行它所提供的动画功能。它所做的是建立一个定时器对象每1/60秒就执行一次，定时器一秒执行60次的代码会直接更新你定义的弹性动画中的下一位置所依赖的所有属性。没有特殊的，额外的层添加到你的元素上，Pop直接修改UIView或CAlayer上的属性，甚至是其他任意你想要的类型。也就是说，你可以在动画过程中直接获得正在改变的属性的当前值，而不需要通过Presentation Layer.更棒的是，你不需要单独设置最终的值来保持状态，因为动画一直在修改真正的值。</p>
-
-<p>Pop所使用的定时器对象是<code>CADisplayLink</code>，是<code>NSTimer</code>更高级的版本，<code>CADisplayLink</code>不设置时间间隔来调用代码，它调用方法的速度完全取决于屏幕的刷新速率。</p>
-]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>Motion Design for iOS(part 3)</title>
-      <link href="http://mrmign.github.io/2015/08/04/motion-design-for-iospart-3/"/>
-      <pubDate>2015-08-04T00:00:00+08:00</pubDate>
-      <author>Arming</author>
-      <guid>http://mrmign.github.io/2015/08/04/motion-design-for-iospart-3</guid>
-      <content:encoded><![CDATA[<h1 id="motion-design-for-iospart-3">Motion Design for iOS(part 3)</h1>
-
-<p><a href="https://en.wikipedia.org/wiki/Transformation_matrix">math around matrix transformations</a></p>
-
-<p>Core Animation</p>
-
-<ul>
-  <li><code>CGAffineTransformMakeScale</code></li>
-</ul>
-
-<h3 id="two-animation-frameworks">Two Animation Frameworks</h3>
-
-<ul>
-  <li><a href="https://github.com/jwilling/JNWSpringAnimation">JNWSpringAnimation</a></li>
-  <li><a href="https://github.com/facebook/pop">Pop by Facebook</a></li>
-</ul>
-
-<p><code>CAKeyframeAnimation</code></p>
-
-<h3 id="spring-animation-properties">Spring animation Properties</h3>
-
-<ul>
-  <li>Damping</li>
-  <li>stiffness</li>
-  <li>mass</li>
-</ul>
-
-<h3 id="core-animation">Core Animation维护了三个层树</h3>
-
-<ol>
-  <li>Model layer tree. 当层静止没有动的时候它显示层的所有属性。如设置<code>view.layer.cornerRadius=50</code>的时候我们是在model layer上设置的属性。model layer上的属性是接触最多的，任何时候改变layer的属性都是在model layer上改的。在动画过程中model layer上值不会改变。</li>
-  <li>Presentation layer tree.该层呈现动画过程中层上的属性，并且属性值都是实时的。不要在该层设置任何值，相反你可以通过该层读取当前动画的相关值。</li>
-  <li>Render tree.渲染树是苹果私有的值，用来做真正的图像渲染，不需要知道这些值。</li>
-</ol>
-
-<p>当我们给层添加动画时候，是在presentation tree上计算动画的值，当动画结束后，动画自动从presentation层上移除，并且presentation tree的值马上变回model layer的值(因为这些值才真正反应了层的静态属性)。如果我们想让层的属性变为动画最后的值，我们需要显示的指定。</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
-<a name="True-2"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
-<a name="True-3"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
-<a name="True-4"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-<a name="True-5"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">1.0</span><span class="l">)</span><span class="p">;</span>
-<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">2.0</span><span class="l">)</span><span class="p">;</span>
-<a name="True-8"></a>
-<a name="True-9"></a><span class="p">[</span><span class="n">redBall</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
-<a name="True-10"></a><span class="n">redBall</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">CGAffineTransformMakeScale</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span></code></pre></div>
-<p>上面的动画在执行完成后就被移除了，layer的实际变换值会与动画的最终值相符，ball保持2倍大小。</p>
-
-<p>在使用UIView基于block的动画方法的时候我们不需要这样做，是因为 这些方法自动地维持了最终的值不需要特意去设置。使用UIView基于block的动画方法的缺点就是只能使用默认的简单动画，如果想使用复杂的动画效果还是要使用<code>CAAnimation</code>对象，像<code>JNWSpringAnimation</code>。</p>
-
-<h3 id="uiview-animation-options">UIView animation options</h3>
-
-<p><code>UIViewAnimationOptionBeginFromCurrentState</code></p>
-
-<h3 id="jnwspringanimation">JNWSpringAnimation</h3>
-
-<p>相同的<code>damping</code>和<code>stiffness</code>可以缓慢的拖没有反弹效果，只是平滑渐近地变换。</p>
-
-<div class="highlight"><pre><code class="language-objc" data-lang="objc"><a name="True-1"></a><span class="n">CGFloat</span> <span class="n">dampingStiffness</span> <span class="o">=</span> <span class="mf">16.0f</span><span class="p">;</span>
-<a name="True-2"></a>
-<a name="True-3"></a><span class="c1">// Scale animation for the main app background</span>
-<a name="True-4"></a><span class="n">JNWSpringAnimation</span> <span class="o">*</span><span class="n">scale</span> <span class="o">=</span>
-<a name="True-5"></a>    <span class="p">[</span><span class="n">JNWSpringAnimation</span> <span class="nl">animationWithKeyPath</span><span class="p">:</span><span class="s">@&quot;transform.scale&quot;</span><span class="p">];</span>
-<a name="True-6"></a><span class="n">scale</span><span class="p">.</span><span class="n">damping</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
-<a name="True-7"></a><span class="n">scale</span><span class="p">.</span><span class="n">stiffness</span> <span class="o">=</span> <span class="n">dampingStiffness</span><span class="p">;</span>
-<a name="True-8"></a><span class="n">scale</span><span class="p">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<a name="True-9"></a><span class="n">scale</span><span class="p">.</span><span class="n">fromValue</span> <span class="o">=</span> <span class="l">@(</span><span class="p">[[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span><span class="p">.</span><span class="n">presentationLayer</span>
-<a name="True-10"></a>    <span class="nl">valueForKeyPath</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">]</span> <span class="n">floatValue</span><span class="p">]</span><span class="l">)</span><span class="p">;</span>
-<a name="True-11"></a><span class="n">scale</span><span class="p">.</span><span class="n">toValue</span> <span class="o">=</span> <span class="l">@(</span><span class="mf">0.9</span><span class="l">)</span><span class="p">;</span>
-<a name="True-12"></a>
-<a name="True-13"></a><span class="p">[</span><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">layer</span> <span class="nl">addAnimation</span><span class="p">:</span><span class="n">scale</span> <span class="nl">forKey</span><span class="p">:</span><span class="n">scale</span><span class="p">.</span><span class="n">keyPath</span><span class="p">];</span>
-<a name="True-14"></a><span class="nb">self</span><span class="p">.</span><span class="n">appBackground</span><span class="p">.</span><span class="n">transform</span> <span class="o">=</span>
-<a name="True-15"></a>    <span class="n">CGAffineTransformScale</span><span class="p">(</span><span class="n">CGAffineTransformIdentity</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.9</span><span class="p">);</span></code></pre></div>
-<p>上面代码中的fromValue不再是固定值了，因为presentationLayer知道动画过程中的各个属性值，防止动画还没线束又发生改变，这样就可以从当前的值执行了。不会有跳变的现象。</p>
 
 ]]></content:encoded>
     </item>
