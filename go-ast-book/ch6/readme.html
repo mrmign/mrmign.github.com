@@ -1,0 +1,418 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>第6章 函数声明 · Go语法树入门——开启自制编程语言和编译器之旅！</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../ch7/readme.html" />
+    
+    
+    <link rel="prev" href="../ch5/readme.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../ch1/readme.html">
+            
+                <a href="../ch1/readme.html">
+            
+                    
+                    第1章 记号
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../ch2/readme.html">
+            
+                <a href="../ch2/readme.html">
+            
+                    
+                    第2章 基础面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../ch3/readme.html">
+            
+                <a href="../ch3/readme.html">
+            
+                    
+                    第3章 基础表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../ch4/readme.html">
+            
+                <a href="../ch4/readme.html">
+            
+                    
+                    第4章 代码结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../ch5/readme.html">
+            
+                <a href="../ch5/readme.html">
+            
+                    
+                    第5章 通用声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.7" data-path="readme.html">
+            
+                <a href="readme.html">
+            
+                    
+                    第6章 函数声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../ch7/readme.html">
+            
+                <a href="../ch7/readme.html">
+            
+                    
+                    第7章 复合类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../ch8/readme.html">
+            
+                <a href="../ch8/readme.html">
+            
+                    
+                    第8章 复合面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="../ch9/readme.html">
+            
+                <a href="../ch9/readme.html">
+            
+                    
+                    第9章 复合表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../ch10/readme.html">
+            
+                <a href="../ch10/readme.html">
+            
+                    
+                    第10章 语句块和语句
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../ch11/readme.html">
+            
+                <a href="../ch11/readme.html">
+            
+                    
+                    第11章 类型检查
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="../appendix/a-goyacc/readme.html">
+            
+                <a href="../appendix/a-goyacc/readme.html">
+            
+                    
+                    附录A goyacc
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >第6章 函数声明</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x7B2C;6&#x7AE0;-&#x51FD;&#x6570;&#x58F0;&#x660E;">&#x7B2C;6&#x7AE0; &#x51FD;&#x6570;&#x58F0;&#x660E;</h1>
+<p>&#x51FD;&#x6570;&#x662F;&#x6240;&#x6709;&#x7F16;&#x7A0B;&#x8BED;&#x8A00;&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#xFF0C;&#x56E0;&#x4E3A;&#x53EA;&#x6709;&#x51FD;&#x6570;&#x7684;&#x8BED;&#x53E5;&#x624D;&#x6709;&#x4E86;&#x8BA1;&#x7B97;&#x7684;&#x529F;&#x80FD;&#x3002;Go&#x8BED;&#x8A00;&#x7684;&#x51FD;&#x6570;&#x4E5F;&#x662F;&#x4E00;&#x79CD;&#x503C;&#x6570;&#x636E;&#xFF0C;&#x53EF;&#x4EE5;&#x5B9A;&#x4E49;&#x5305;&#x7EA7;&#x522B;&#x7684;&#x51FD;&#x6570;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x4E3A;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;&#x65B9;&#x6CD5;&#xFF0C;&#x540C;&#x65F6;&#x8FD8;&#x53EF;&#x4EE5;&#x5728;&#x5C40;&#x90E8;&#x4F5C;&#x7528;&#x57DF;&#x5185;&#x5B9A;&#x4E49;&#x95ED;&#x5305;&#x51FD;&#x6570;&#x3002;&#x672C;&#x8282;&#x5C06;&#x8BA8;&#x8BBA;&#x51FD;&#x6570;&#x7684;&#x6570;&#x636E;&#x7C7B;&#x578B;&#x3002;</p>
+<h2 id="61-&#x51FD;&#x6570;&#x7684;&#x8BED;&#x6CD5;">6.1 &#x51FD;&#x6570;&#x7684;&#x8BED;&#x6CD5;</h2>
+<p>&#x5728;&#x9876;&#x7EA7;&#x58F0;&#x660E;&#x4E2D;&#x5305;&#x542B;&#x51FD;&#x6570;&#x548C;&#x65B9;&#x6CD5;&#x7684;&#x58F0;&#x660E;&#xFF0C;&#x4ECE;&#x8BED;&#x6CD5;&#x89D2;&#x5EA6;&#x770B;&#x51FD;&#x6570;&#x662F;&#x6CA1;&#x6709;&#x63A5;&#x6536;&#x8005;&#x53C2;&#x6570;&#x7684;&#x65B9;&#x6CD5;&#x7279;&#x4F8B;&#x3002;&#x51FD;&#x6570;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x5219;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>FunctionDecl = &quot;func&quot; MethodName Signature [ FunctionBody ] .
+MethodDecl   = &quot;func&quot; Receiver MethodName Signature [ FunctionBody ] .
+
+MethodName     = identifier .
+Receiver       = Parameters .
+Signature      = Parameters [ Result ] .
+Result         = Parameters | Type .
+Parameters     = &quot;(&quot; [ ParameterList [ &quot;,&quot; ] ] &quot;)&quot; .
+ParameterList  = ParameterDecl { &quot;,&quot; ParameterDecl } .
+ParameterDecl  = [ IdentifierList ] [ &quot;...&quot; ] Type .
+</code></pre><p>&#x5176;&#x4E2D;FunctionDecl&#x8868;&#x793A;&#x51FD;&#x6570;&#xFF0C;&#x800C;MethodDecl&#x8868;&#x793A;&#x65B9;&#x6CD5;&#x3002;MethodDecl&#x8868;&#x793A;&#x7684;&#x65B9;&#x6CD5;&#x89C4;&#x8303;&#x6BD4;&#x51FD;&#x6570;&#x591A;&#x4E86;Receiver&#x8BED;&#x6CD5;&#x7ED3;&#x6784;&#xFF0C;Receiver&#x8868;&#x793A;&#x65B9;&#x6CD5;&#x7684;&#x63A5;&#x6536;&#x8005;&#x53C2;&#x6570;&#x3002;&#x7136;&#x540E;&#x662F;MethodName&#x8868;&#x793A;&#x7684;&#x51FD;&#x6570;&#x6216;&#x65B9;&#x6CD5;&#x540D;&#xFF0C;Signature&#x8868;&#x793A;&#x51FD;&#x6570;&#x7684;&#x7B7E;&#x540D;&#xFF08;&#x6216;&#x8005;&#x53EB;&#x7C7B;&#x578B;&#xFF09;&#xFF0C;&#x6700;&#x540E;&#x662F;&#x51FD;&#x6570;&#x7684;&#x4E3B;&#x4F53;&#x3002;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x51FD;&#x6570;&#x7684;&#x7B7E;&#x540D;&#x53EA;&#x6709;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x90E8;&#x5206;&#xFF0C;&#x56E0;&#x6B64;&#x51FD;&#x6570;&#x6216;&#x65B9;&#x6CD5;&#x7684;&#x540D;&#x5B57;&#x3001;&#x4EE5;&#x53CA;&#x65B9;&#x6CD5;&#x7684;&#x63A5;&#x6536;&#x8005;&#x7C7B;&#x578B;&#x90FD;&#x4E0D;&#x662F;&#x51FD;&#x6570;&#x7B7E;&#x540D;&#x7684;&#x7EC4;&#x6210;&#x90E8;&#x5206;&#x3002;&#x4ECE;&#x4EE5;&#x4E0A;&#x5B9A;&#x4E49;&#x8FD8;&#x53EF;&#x4EE5;&#x53D1;&#x73B0;&#xFF0C;Receiver&#x3001;Parameters&#x548C;Result&#x90FD;&#x662F;ParameterList&#x5B9A;&#x4E49;&#xFF0C;&#x56E0;&#x6B64;&#x6709;&#x7740;&#x76F8;&#x540C;&#x7684;&#x8BED;&#x6CD5;&#x7ED3;&#x6784;&#xFF08;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x4E2D;&#x4E5F;&#x662F;&#x6709;&#x7740;&#x76F8;&#x540C;&#x7684;&#x7ED3;&#x6784;&#xFF09;&#x3002;</p>
+<h2 id="62-&#x5B9A;&#x4E49;&#x51FD;&#x6570;">6.2 &#x5B9A;&#x4E49;&#x51FD;&#x6570;</h2>
+<p>&#x5305;&#x4E00;&#x7EA7;&#x7684;&#x51FD;&#x6570;&#x53EA;&#x6709;&#x5305;&#x51FD;&#x6570;&#x548C;&#x65B9;&#x6CD5;&#x4E24;&#x79CD;&#x7C7B;&#x578B;&#xFF08;&#x95ED;&#x5305;&#x51FD;&#x6570;&#x53EA;&#x80FD;&#x5728;&#x51FD;&#x6570;&#x4F53;&#x5185;&#x90E8;&#x521B;&#x5EFA;&#xFF09;&#xFF0C;&#x800C;&#x5305;&#x51FD;&#x6570;&#x53EF;&#x4EE5;&#x770B;&#x4F5C;&#x662F;&#x6CA1;&#x6709;&#x63A5;&#x6536;&#x8005;&#x7684;&#x65B9;&#x6CD5;&#x51FD;&#x6570;&#x3002;&#x56E0;&#x6B64;&#x53EA;&#x6709;&#x641E;&#x660E;&#x767D;&#x65B9;&#x6CD5;&#x51FD;&#x6570;&#x7684;&#x7C7B;&#x578B;&#xFF0C;&#x5168;&#x5C40;&#x7684;&#x5305;&#x51FD;&#x6570;&#x81EA;&#x7136;&#x5C31;&#x6E05;&#x695A;&#x4E86;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#x51FD;&#x6570;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> (p *xType) Hello(arg1, arg2 <span class="hljs-keyword">int</span>) (<span class="hljs-keyword">bool</span>, error) { ... }
+</code></pre>
+<p>&#x901A;&#x8FC7;<code>parser.ParseFile</code>&#x89E3;&#x6790;&#x5F97;&#x5230;<code>*ast.File</code>&#x7C7B;&#x578B;&#x7684;f&#x8FD4;&#x56DE;&#x503C;&#x4E4B;&#x540E;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4EE5;&#x4E0B;&#x7684;&#x4EE3;&#x7801;&#x6253;&#x5370;&#x65B9;&#x6CD5;&#x7684;&#x58F0;&#x660E;&#xFF1A;</p>
+<pre><code class="lang-go">    <span class="hljs-keyword">for</span> _, decl := <span class="hljs-keyword">range</span> f.Decls {
+        <span class="hljs-keyword">if</span> fn, ok := decl.(*ast.FuncDecl); ok {
+            ast.Print(<span class="hljs-literal">nil</span>, fn)
+        }
+    }
+</code></pre>
+<p>&#x51FD;&#x6570;&#x7684;&#x58F0;&#x660E;&#x5BF9;&#x5E94;<code>*ast.FuncDecl</code>&#x7C7B;&#x578B;&#xFF0C;&#x5B83;&#x7684;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> FuncDecl <span class="hljs-keyword">struct</span> {
+    Doc  *CommentGroup <span class="hljs-comment">// associated documentation; or nil</span>
+    Recv *FieldList    <span class="hljs-comment">// receiver (methods); or nil (functions)</span>
+    Name *Ident        <span class="hljs-comment">// function/method name</span>
+    Type *FuncType     <span class="hljs-comment">// function signature: parameters, results, and position of &quot;func&quot; keyword</span>
+    Body *BlockStmt    <span class="hljs-comment">// function body; or nil for external (non-Go) function</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;Recv&#x5BF9;&#x5E94;&#x63A5;&#x6536;&#x8005;&#x5217;&#x8868;&#xFF0C;&#x5728;&#x8FD9;&#x91CC;&#x662F;&#x6307;<code>(p *xType)</code>&#x90E8;&#x5206;&#x3002;Name&#x662F;&#x51FD;&#x6570;&#x7684;&#x540D;&#x5B57;&#xFF0C;&#x8FD9;&#x91CC;&#x7684;&#x540D;&#x5B57;&#x662F;Hello&#x3002;&#x800C;Type&#x8868;&#x793A;&#x65B9;&#x6CD5;&#x6216;&#x51FD;&#x6570;&#x7684;&#x7C7B;&#x578B;&#xFF08;&#x51FD;&#x6570;&#x7684;&#x7C7B;&#x578B;&#x548C;&#x63A5;&#x53E3;&#x7684;&#x5B9A;&#x4E49;&#x4E00;&#x81F4;&#xFF0C;&#x56E0;&#x4E3A;&#x63A5;&#x53E3;&#x5E76;&#x4E0D;&#x5305;&#x542B;&#x63A5;&#x6536;&#x8005;&#x4FE1;&#x606F;&#xFF09;&#xFF0C;&#x5176;&#x4E2D;&#x5305;&#x542B;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x4FE1;&#x606F;&#x3002;&#x6700;&#x540E;&#x7684;Body&#x8868;&#x793A;&#x51FD;&#x6570;&#x4F53;&#x4E2D;&#x7684;&#x8BED;&#x53E5;&#x90E8;&#x5206;&#xFF0C;&#x6211;&#x4EEC;&#x6682;&#x65F6;&#x5FFD;&#x7565;&#x51FD;&#x6570;&#x4F53;&#x90E8;&#x5206;&#x3002;</p>
+<p>&#x51FD;&#x6570;&#x58F0;&#x660E;&#x6700;&#x91CD;&#x8981;&#x7684;&#x662F;&#x540D;&#x5B57;&#x3001;&#x63A5;&#x6536;&#x8005;&#x3001;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#xFF0C;&#x5176;&#x4E2D;&#x9664;&#x540D;&#x5B57;&#x4E4B;&#x5916;&#x7684;&#x4E09;&#x8005;&#x90FD;&#x662F;<code>ast.FieldList</code>&#x7C7B;&#x578B;&#xFF0C;&#x800C;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x53C8;&#x88AB;&#x5C01;&#x88C5;&#x4E3A;<code>ast.FuncType</code>&#x7C7B;&#x578B;&#x3002;&#x8868;&#x793A;&#x51FD;&#x6570;&#x7C7B;&#x578B;&#x7684;<code>ast.FuncType</code>&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> FuncType <span class="hljs-keyword">struct</span> {
+    Func    token.Pos  <span class="hljs-comment">// position of &quot;func&quot; keyword (token.NoPos if there is no &quot;func&quot;)</span>
+    Params  *FieldList <span class="hljs-comment">// (incoming) parameters; non-nil</span>
+    Results *FieldList <span class="hljs-comment">// (outgoing) results; or nil</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;Params&#x548C;Results&#x5206;&#x522B;&#x8868;&#x793A;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x5217;&#x8868;&#xFF0C;&#x5B83;&#x4EEC;&#x548C;&#x51FD;&#x6570;&#x7684;&#x63A5;&#x6536;&#x8005;&#x53C2;&#x6570;&#x5217;&#x8868;&#x662F;&#x76F8;&#x540C;&#x7684;&#x7C7B;&#x578B;&#x3002;&#x56E0;&#x6B64;&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x5B9A;&#x4E49;&#x53EF;&#x4EE5;&#x7528;&#x4E0B;&#x56FE;&#x8868;&#x793A;&#xFF1A;</p>
+<p><img src="../images/ch6-func-decl-01.png" alt=""></p>
+<p>&#x5BF9;&#x4E8E;&#x6CA1;&#x6709;&#x63A5;&#x53D7;&#x8005;&#x7684;&#x5305;&#x51FD;&#x6570;&#xFF0C;<code>ast.FuncDecl.Recv</code>&#x90E8;&#x5206;&#x4E3A;nil&#x3002;&#x800C;&#x5BF9;&#x4E8E;&#x65B9;&#x6CD5;&#x51FD;&#x6570;&#xFF0C;&#x5373;&#x4F7F;&#x5B9A;&#x4E49;&#x591A;&#x4E2A;&#x63A5;&#x6536;&#x8005;&#x53C2;&#x6570;&#x4F9D;&#x7136;&#x662F;&#x53EF;&#x4EE5;&#x6B63;&#x786E;&#x89E3;&#x6790;&#x7684;&#x3002;&#x56E0;&#x6B64;&#x5408;&#x6CD5;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x4E0D;&#x4E00;&#x5B9A;&#x5B8C;&#x5168;&#x6EE1;&#x8DB3;Go&#x8BED;&#x8A00;&#x7684;&#x89C4;&#x8303;&#xFF0C;&#x4E00;&#x822C;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x6784;&#x5EFA;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#x8FD8;&#x9700;&#x8981;&#x4E13;&#x95E8;&#x8FDB;&#x884C;&#x8BED;&#x4E49;&#x5206;&#x6790;&#x3002;</p>
+<h2 id="63-&#x53C2;&#x6570;&#x5206;&#x7EC4;">6.3 &#x53C2;&#x6570;&#x5206;&#x7EC4;</h2>
+<p>&#x63A5;&#x6536;&#x8005;&#x3001;&#x8F93;&#x5165;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x53C2;&#x6570;&#x5747;&#x7531;<code>ast.FieldList</code>&#x5B9A;&#x4E49;&#xFF0C;&#x8BE5;&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> FieldList <span class="hljs-keyword">struct</span> {
+    Opening token.Pos <span class="hljs-comment">// position of opening parenthesis/brace, if any</span>
+    List    []*Field  <span class="hljs-comment">// field list; or nil</span>
+    Closing token.Pos <span class="hljs-comment">// position of closing parenthesis/brace, if any</span>
+}
+<span class="hljs-keyword">type</span> Field <span class="hljs-keyword">struct</span> {
+    Doc     *CommentGroup <span class="hljs-comment">// associated documentation; or nil</span>
+    Names   []*Ident      <span class="hljs-comment">// field/method/parameter names; or nil</span>
+    Type    Expr          <span class="hljs-comment">// field/method/parameter type</span>
+    Tag     *BasicLit     <span class="hljs-comment">// field tag; or nil</span>
+    Comment *CommentGroup <span class="hljs-comment">// line comments; or nil</span>
+}
+</code></pre>
+<p><code>ast.FieldList</code>&#x5176;&#x5B9E;&#x662F;<code>[]*ast.Field</code>&#x5207;&#x7247;&#x7C7B;&#x578B;&#x7684;&#x518D;&#x6B21;&#x5305;&#x88C5;&#xFF0C;&#x6CE8;&#x610F;&#x662F;&#x589E;&#x52A0;&#x4E86;&#x5F00;&#x59CB;&#x548C;&#x7ED3;&#x675F;&#x7684;&#x4F4D;&#x7F6E;&#x4FE1;&#x606F;&#x3002;&#x6BCF;&#x4E00;&#x4E2A;<code>ast.Field</code>&#x8868;&#x793A;&#x4E00;&#x7EC4;&#x53C2;&#x6570;&#xFF0C;&#x6240;&#x6709;&#x53C2;&#x6570;&#x7684;&#x540D;&#x5B57;&#x7531;<code>[]*ast.Ident</code>&#x5207;&#x7247;&#x8868;&#x793A;&#xFF0C;&#x800C;&#x901A;&#x4E00;&#x7EC4;&#x53C2;&#x6570;&#x6709;&#x7740;&#x76F8;&#x540C;&#x7684;&#x7C7B;&#x578B;&#x3002;Type&#x8868;&#x793A;&#x4E00;&#x7EC4;&#x53C2;&#x6570;&#x7684;&#x7C7B;&#x578B;&#xFF0C;&#x662F;&#x4E00;&#x4E2A;&#x7C7B;&#x578B;&#x8868;&#x8FBE;&#x5F0F;&#x3002;</p>
+<p>&#x67E5;&#x770B;&#x4E0B;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> Hello1(s0, s1 <span class="hljs-keyword">string</span>, s2 <span class="hljs-keyword">string</span>)
+</code></pre>
+<p>&#x5176;&#x4E2D;s0&#x7701;&#x7565;&#x4E86;&#x7C7B;&#x578B;&#xFF0C;&#x548C;s1&#x5171;&#x4EAB;string&#x7C7B;&#x578B;&#xFF0C;&#x56E0;&#x6B64;s0&#x548C;s1&#x662F;&#x4E00;&#x7EC4;&#x53C2;&#x6570;&#xFF0C;&#x5BF9;&#x5E94;&#x4E00;&#x4E2A;<code>ast.Field</code>&#x3002;&#x800C;s2&#x662F;&#x53E6;&#x4E00;&#x4E2A;&#x72EC;&#x7ACB;&#x7684;<code>ast.Field</code>&#x3002;</p>
+<p>&#x51FD;&#x6570;&#x7684;&#x63A5;&#x6536;&#x8005;&#x3001;&#x8F93;&#x5165;&#x548C;&#x8FD4;&#x56DE;&#x503C;&#x53C2;&#x6570;&#x5747;&#x53EF;&#x4EE5;&#x7701;&#x7565;&#x540D;&#x5B57;&#xFF0C;&#x5982;&#x679C;&#x7701;&#x7565;&#x4E86;&#x540D;&#x5B57;&#x5219;&#x4F7F;&#x7528;&#x540E;&#x9762;&#x7B2C;&#x4E00;&#x6B21;&#x51FA;&#x73B0;&#x7684;&#x7C7B;&#x578B;&#x3002;&#x5982;&#x679C;&#x5168;&#x90E8;&#x53C2;&#x6570;&#x90FD;&#x7701;&#x7565;&#x4E86;&#x540D;&#x5B57;&#xFF0C;&#x90A3;&#x4E48;&#x6BCF;&#x4E2A;&#x53C2;&#x6570;&#x5C31;&#x53EA;&#x6709;&#x7C7B;&#x578B;&#x4FE1;&#x606F;&#xFF0C;&#x51FD;&#x6570;&#x4F53;&#x5185;&#x90E8;&#x65E0;&#x6CD5;&#x518D;&#x901A;&#x8FC7;&#x53C2;&#x6570;&#x540D;&#x5B57;&#x8BBF;&#x95EE;&#x53C2;&#x6570;&#x3002;</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../ch5/readme.html" class="navigation navigation-prev " aria-label="Previous page: 第5章 通用声明">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../ch7/readme.html" class="navigation navigation-next " aria-label="Next page: 第7章 复合类型">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"第6章 函数声明","level":"1.7","depth":1,"next":{"title":"第7章 复合类型","level":"1.8","depth":1,"path":"ch7/readme.md","ref":"ch7/readme.md","articles":[]},"previous":{"title":"第5章 通用声明","level":"1.6","depth":1,"path":"ch5/readme.md","ref":"ch5/readme.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"preface.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Go语法树入门——开启自制编程语言和编译器之旅！","language":"zh-hans","gitbook":"3.x","description":"Go语法树入门——开启自制编程语言和编译器之旅！"},"file":{"path":"ch6/readme.md","mtime":"2021-08-30T04:46:44.152Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-08-30T11:01:23.791Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

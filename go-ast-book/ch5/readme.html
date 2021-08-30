@@ -1,0 +1,599 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>第5章 通用声明 · Go语法树入门——开启自制编程语言和编译器之旅！</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../ch6/readme.html" />
+    
+    
+    <link rel="prev" href="../ch4/readme.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../ch1/readme.html">
+            
+                <a href="../ch1/readme.html">
+            
+                    
+                    第1章 记号
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../ch2/readme.html">
+            
+                <a href="../ch2/readme.html">
+            
+                    
+                    第2章 基础面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../ch3/readme.html">
+            
+                <a href="../ch3/readme.html">
+            
+                    
+                    第3章 基础表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../ch4/readme.html">
+            
+                <a href="../ch4/readme.html">
+            
+                    
+                    第4章 代码结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.6" data-path="readme.html">
+            
+                <a href="readme.html">
+            
+                    
+                    第5章 通用声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../ch6/readme.html">
+            
+                <a href="../ch6/readme.html">
+            
+                    
+                    第6章 函数声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../ch7/readme.html">
+            
+                <a href="../ch7/readme.html">
+            
+                    
+                    第7章 复合类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../ch8/readme.html">
+            
+                <a href="../ch8/readme.html">
+            
+                    
+                    第8章 复合面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="../ch9/readme.html">
+            
+                <a href="../ch9/readme.html">
+            
+                    
+                    第9章 复合表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../ch10/readme.html">
+            
+                <a href="../ch10/readme.html">
+            
+                    
+                    第10章 语句块和语句
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../ch11/readme.html">
+            
+                <a href="../ch11/readme.html">
+            
+                    
+                    第11章 类型检查
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="../appendix/a-goyacc/readme.html">
+            
+                <a href="../appendix/a-goyacc/readme.html">
+            
+                    
+                    附录A goyacc
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >第5章 通用声明</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x7B2C;5&#x7AE0;-&#x901A;&#x7528;&#x58F0;&#x660E;">&#x7B2C;5&#x7AE0; &#x901A;&#x7528;&#x58F0;&#x660E;</h1>
+<p>&#x901A;&#x7528;&#x58F0;&#x660E;&#x662F;&#x4E0D;&#x542B;&#x51FD;&#x6570;&#x58F0;&#x660E;&#x7684;&#x5305;&#x7EA7;&#x522B;&#x58F0;&#x660E;&#xFF1A;&#x5305;&#x542B;&#x5BFC;&#x5165;&#x5305;&#x3001;&#x7C7B;&#x578B;&#x3001;&#x5E38;&#x91CF;&#x548C;&#x53D8;&#x91CF;&#x56DB;&#x79CD;&#x58F0;&#x660E;&#x3002;&#x672C;&#x7AE0;&#x6211;&#x4EEC;&#x5C06;&#x8BA8;&#x8BBA;&#x901A;&#x7528;&#x58F0;&#x660E;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x4E2D;&#x7684;&#x8868;&#x793A;&#x5F62;&#x5F0F;&#x3002;</p>
+<h2 id="51-&#x5BFC;&#x5165;&#x58F0;&#x660E;">5.1 &#x5BFC;&#x5165;&#x58F0;&#x660E;</h2>
+<p>Go&#x8BED;&#x8A00;&#x4E2D;&#xFF0C;&#x5F53;package&#x5173;&#x952E;&#x5B57;&#x6210;&#x529F;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x5305;&#x4E4B;&#x540E;&#xFF0C;&#x5BFC;&#x5165;&#x8BED;&#x53E5;&#x5FC5;&#x987B;&#x5728;&#x7B2C;&#x4E00;&#x65F6;&#x95F4;&#x51FA;&#x73B0;&#xFF0C;&#x7136;&#x540E;&#x624D;&#x80FD;&#x662F;&#x7C7B;&#x578B;&#x3001;&#x5E38;&#x91CF;&#x3001;&#x53D8;&#x91CF;&#x548C;&#x51FD;&#x6570;&#x7B49;&#x5176;&#x5B83;&#x58F0;&#x660E;&#x3002;&#x5BFC;&#x5165;&#x5305;&#x7684;&#x8BED;&#x6CD5;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>ImportDecl  = &quot;import&quot; ( ImportSpec | &quot;(&quot; { ImportSpec &quot;;&quot; } &quot;)&quot; ) .
+ImportSpec  = [ &quot;.&quot; | PackageName ] ImportPath .
+ImportPath  = string_lit .
+
+PackageName = identifier .
+</code></pre><p>ImportDecl&#x5B9A;&#x4E49;&#x4E86;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x7684;&#x5B8C;&#x6574;&#x8BED;&#x6CD5;&#xFF0C;&#x7B2C;&#x4E00;&#x4E2A;&#x51FA;&#x73B0;&#x7684;&#x5FC5;&#x987B;&#x662F;import&#x5173;&#x952E;&#x5B57;&#x3002;&#x7136;&#x540E;&#x5C0F;&#x62EC;&#x5F27;&#x4E2D;&#x662F;import&#x8BED;&#x53E5;&#x4E4B;&#x540E;&#x7684;&#x90E8;&#x5206;&#xFF0C;&#x5C0F;&#x62EC;&#x5F27;&#x4E2D;&#x7684;&#x7AD6;&#x7EBF;&#x5206;&#x9694;&#x7B26;&#x8868;&#x793A;&#x53EA;&#x9009;&#x62E9;&#x5176;&#x4E2D;&#x4E00;&#x4E2A;&#xFF08;&#x548C;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#x7684;&#x8BED;&#x6CD5;&#x7C7B;&#x4F3C;&#xFF09;&#xFF0C;&#x8FD9;&#x91CC;&#x662F;<code>ImportSpec</code>&#xFF08;&#x5355;&#x72EC;&#x5BFC;&#x5165;&#x4E00;&#x4E2A;&#x5305;&#xFF09;&#x6216;&#x8005;&#x662F;<code>&quot;(&quot; { ImportSpec &quot;;&quot; } &quot;)&quot;</code>&#xFF08;&#x6309;&#x7EC4;&#x5BFC;&#x5165;&#x5305;&#xFF09;&#x4E24;&#x79CD;&#x5F62;&#x5F0F;&#x4E4B;&#x4E00;&#x3002;ImportSpec&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x5305;&#x7684;&#x5BFC;&#x5165;&#x65B9;&#x5F0F;&#xFF0C;&#x4E2D;&#x62EC;&#x5F27;&#x4E2D;&#x7684;&#x5BFC;&#x5165;&#x540D;&#x5B57;&#x662F;&#x53EF;&#x9009;&#x62E9;&#x7684;&#x90E8;&#x5206;&#xFF0C;ImportPath&#x662F;&#x7531;&#x5B57;&#x7B26;&#x4E32;&#x9762;&#x503C;&#x7EC4;&#x6210;&#x7684;&#x5BFC;&#x5165;&#x5305;&#x8DEF;&#x5F84;&#x3002;</p>
+<p>&#x6839;&#x636E;&#x5BFC;&#x5165;&#x8BED;&#x6CD5;&#x5B9A;&#x4E49;&#xFF0C;&#x521B;&#x5EFA;&#x7684;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x6709;&#x4EE5;&#x4E0B;&#x51E0;&#x79CD;&#x5F62;&#x5F0F;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;pkg-a&quot;</span>
+<span class="hljs-keyword">import</span> pkg_b_v2 <span class="hljs-string">&quot;pkg-b&quot;</span>
+<span class="hljs-keyword">import</span> . <span class="hljs-string">&quot;pkg-c&quot;</span>
+<span class="hljs-keyword">import</span> _ <span class="hljs-string">&quot;pkg-d&quot;</span>
+</code></pre>
+<p>&#x5176;&#x4E2D;&#x7B2C;&#x4E00;&#x79CD;&#x662F;&#x9ED8;&#x8BA4;&#x7684;&#x5BFC;&#x5165;&#x65B9;&#x5F0F;&#xFF0C;&#x5BFC;&#x5165;&#x540E;&#x7684;&#x540D;&#x5B57;&#x91C7;&#x7528;&#x7684;&#x662F;&quot;pkg-a&quot;&#x5305;&#x5B9A;&#x4E49;&#x7684;&#x540D;&#x5B57;&#xFF08;&#x5177;&#x4F53;&#x7684;&#x540D;&#x5B57;&#x7531;&#x4F9D;&#x8D56;&#x5305;&#x51B3;&#x5B9A;&#xFF09;&#x3002;&#x7B2C;&#x4E8C;&#x79CD;&#x662F;&#x5C06;&#x5BFC;&#x5165;&#x7684;&quot;pkg-b&quot;&#x91CD;&#x65B0;&#x547D;&#x540D;&#x4E3A;pkg_b_v2&#x3002;&#x7B2C;&#x4E09;&#x79CD;&#x662F;&#x5C06;&#x4F9D;&#x8D56;&#x5305;&#x7684;&#x516C;&#x5F00;&#x7B26;&#x53F7;&#x76F4;&#x63A5;&#x5BFC;&#x5165;&#x5230;&#x5F53;&#x524D;&#x6587;&#x4EF6;&#x7684;&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x3002;&#x7B2C;&#x56DB;&#x79CD;&#x53EA;&#x662F;&#x5BFC;&#x5165;&#x4F9D;&#x8D56;&#x5305;&#x89E6;&#x53D1;&#x5176;&#x5305;&#x7684;&#x521D;&#x59CB;&#x5316;&#x52A8;&#x4F5C;&#xFF0C;&#x4F46;&#x662F;&#x4E0D;&#x5BFC;&#x5165;&#x4EFB;&#x4F55;&#x7B26;&#x53F7;&#x5230;&#x5F53;&#x524D;&#x6587;&#x4EF6;&#x540D;&#x5B57;&#x7A7A;&#x95F4;&#x3002;&#x5BFC;&#x5165;&#x5305;&#x7684;&#x540D;&#x5B57;&#x53EA;&#x5728;&#x5F53;&#x524D;&#x6587;&#x4EF6;&#x7A7A;&#x95F4;&#x6709;&#x6548;&#xFF0C;&#x56E0;&#x6B64;pkg_b_v2&#x8FD9;&#x4E2A;&#x540D;&#x5B57;&#x4E0D;&#x4F1A;&#x6269;&#x6563;&#x5230;&#x5F53;&#x524D;&#x5305;&#x7684;&#x5176;&#x5B83;&#x6E90;&#x6587;&#x4EF6;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;&#x662F;&#x5BF9;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x7684;&#x89E3;&#x6790;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> main() {
+    fset := token.NewFileSet()
+    f, err := parser.ParseFile(fset, <span class="hljs-string">&quot;hello.go&quot;</span>, src, parser.ImportsOnly)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Fatal(err)
+    }
+
+    <span class="hljs-keyword">for</span> _, s := <span class="hljs-keyword">range</span> f.Imports {
+        fmt.Printf(<span class="hljs-string">&quot;import: name = %v, path = %#v\n&quot;</span>, s.Name, s.Path)
+    }
+}
+
+<span class="hljs-keyword">const</span> src = <span class="hljs-string">`package foo
+import &quot;pkg-a&quot;
+import pkg_b_v2 &quot;pkg-b&quot;
+import . &quot;pkg-c&quot;
+import _ &quot;pkg-d&quot;
+`</span>
+</code></pre>
+<p>&#x5728;&#x4F7F;&#x7528;<code>parser.ParseFile</code>&#x5206;&#x6790;&#x6587;&#x4EF6;&#x65F6;&#xFF0C;&#x91C7;&#x7528;&#x7684;&#x662F;<code>parser.ImportsOnly</code>&#x6A21;&#x5F0F;&#xFF0C;&#x8FD9;&#x6837;&#x8BED;&#x6CD5;&#x5206;&#x6790;&#x53EA;&#x4F1A;&#x89E3;&#x6790;&#x5305;&#x58F0;&#x660E;&#x548C;&#x5BFC;&#x5165;&#x5305;&#x7684;&#x90E8;&#x5206;&#xFF0C;&#x5176;&#x540E;&#x7684;&#x7C7B;&#x578B;&#x3001;&#x5E38;&#x91CF;&#x3001;&#x53D8;&#x91CF;&#x548C;&#x51FD;&#x6570;&#x7684;&#x58F0;&#x660E;&#x5219;&#x4E0D;&#x4F1A;&#x89E3;&#x6790;&#x3002;&#x7136;&#x540E;&#x901A;&#x8FC7;<code>ast.File</code>&#x7684;Imports&#x6210;&#x5458;&#x83B7;&#x53D6;&#x8BE6;&#x7EC6;&#x7684;&#x5BFC;&#x5165;&#x4FE1;&#x606F;&#xFF08;Imports&#x6210;&#x5458;&#x662F;&#x6839;&#x636E;Decls&#x58F0;&#x660E;&#x5217;&#x8868;&#x4E2D;&#x7684;&#x4FE1;&#x606F;&#x751F;&#x6210;&#xFF09;&#x3002;</p>
+<p>&#x4EE5;&#x4E0A;&#x7A0B;&#x5E8F;&#x7684;&#x8F93;&#x51FA;&#x7ED3;&#x679C;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>import: name = &lt;nil&gt;, path = &amp;ast.BasicLit{ValuePos:20, Kind:9, Value:&quot;\&quot;pkg-a\&quot;&quot;}
+import: name = pkg_b_v2, path = &amp;ast.BasicLit{ValuePos:44, Kind:9, Value:&quot;\&quot;pkg-b\&quot;&quot;}
+import: name = ., path = &amp;ast.BasicLit{ValuePos:61, Kind:9, Value:&quot;\&quot;pkg-c\&quot;&quot;}
+import: name = _, path = &amp;ast.BasicLit{ValuePos:78, Kind:9, Value:&quot;\&quot;pkg-d\&quot;&quot;}
+</code></pre><p>&#x5176;&#x4E2D;&#x7B2C;&#x4E00;&#x4E2A;&#x5BFC;&#x5165;&#x8BED;&#x53E5;&#x7684;Name&#x662F;<code>&lt;nil&gt;</code>&#xFF0C;&#x8868;&#x793A;&#x91C7;&#x7528;&#x7684;&#x662F;&#x4F9D;&#x8D56;&#x5305;&#x7684;&#x540D;&#x5B57;&#x3002;&#x5176;&#x540E;&#x7684;&#x4E09;&#x4E2A;&#x5BFC;&#x5165;&#x8BED;&#x53E5;&#x7684;Name&#x90FD;&#x548C;&#x6211;&#x4EEC;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x6307;&#x5B9A;&#x7684;&#x540D;&#x5B57;&#x4E00;&#x81F4;&#x3002;&#x5173;&#x4E8E;&#x5BFC;&#x5165;&#x5305;&#x5185;&#x90E8;&#x5404;&#x79CD;&#x5BF9;&#x8C61;&#x8BE6;&#x7EC6;&#x7684;&#x5B9A;&#x4E49;&#x5219;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x52A0;&#x8F7D;&#x4F9D;&#x8D56;&#x7684;&#x5305;&#x624D;&#x80FD;&#x83B7;&#x53D6;&#xFF0C;&#x800C;&#x5185;&#x7F6E;&#x7684;&#x4E00;&#x4E9B;&#x51FD;&#x6570;&#x5219;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x624B;&#x5DE5;&#x65B9;&#x5F0F;&#x548C;&#x7F16;&#x8BD1;&#x5DE5;&#x5177;&#x914D;&#x5408;&#x3002;</p>
+<p>&#x5BFC;&#x5165;&#x8BED;&#x53E5;&#x89E3;&#x6790;&#x4E4B;&#x540E;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x7ED3;&#x6784;&#x5982;&#x56FE;&#x6240;&#x793A;&#xFF1A;</p>
+<p><img src="../images/ch5-import-01.png" alt=""></p>
+<p>&#x5728;&#x7F16;&#x8BD1;&#x5B8C;&#x6574;&#x7684;&#x7A0B;&#x5E8F;&#x65F6;&#xFF0C;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x6839;&#x636E;&#x5BFC;&#x5165;&#x5305;&#x7684;&#x8DEF;&#x5F84;&#x52A0;&#x8F7D;&#x5176;&#x4FE1;&#x606F;&#xFF0C;&#x901A;&#x8FC7;&#x5BFC;&#x5165;&#x540E;&#x7684;Name&#x8BBF;&#x95EE;&#x4F9D;&#x8D56;&#x5305;&#x4E2D;&#x5BFC;&#x51FA;&#x7684;&#x7B26;&#x53F7;&#x3002;</p>
+<h2 id="52-&#x57FA;&#x7840;&#x7C7B;&#x578B;&#x58F0;&#x660E;">5.2 &#x57FA;&#x7840;&#x7C7B;&#x578B;&#x58F0;&#x660E;</h2>
+<p>Go&#x8BED;&#x8A00;&#x4E2D;&#x901A;&#x8FC7;type&#x5173;&#x952E;&#x5B57;&#x58F0;&#x660E;&#x7C7B;&#x578B;&#xFF1A;&#x4E00;&#x79CD;&#x662F;&#x58F0;&#x660E;&#x65B0;&#x7684;&#x7C7B;&#x578B;&#xFF0C;&#x53E6;&#x4E00;&#x79CD;&#x662F;&#x4E3A;&#x5DF2;&#x6709;&#x7684;&#x7C7B;&#x578B;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x522B;&#x540D;&#x3002;&#x4EE5;&#x4E0B;&#x662F;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#xFF1A;</p>
+<pre><code>TypeDecl = &quot;type&quot; ( TypeSpec | &quot;(&quot; { TypeSpec &quot;;&quot; } &quot;)&quot; ) .
+TypeSpec = AliasDecl | TypeDef .
+
+AliasDecl = identifier &quot;=&quot; Type .
+TypeDef   = identifier Type .
+Type      = identifier | &quot;(&quot; Type &quot;)&quot; .
+</code></pre><p>&#x5176;&#x4E2D;TypeDecl&#x5B9A;&#x4E49;&#x4E86;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#xFF0C;&#x53EF;&#x4EE5;&#x662F;&#x6BCF;&#x4E2A;&#x7C7B;&#x578B;&#x72EC;&#x7ACB;&#x5B9A;&#x4E49;&#x6216;&#x901A;&#x8FC7;&#x5C0F;&#x62EC;&#x5F27;&#x5305;&#x542B;&#x6309;&#x7EC4;&#x5B9A;&#x4E49;&#x3002;&#x5176;&#x4E2D;AliasDecl&#x662F;&#x5B9A;&#x4E49;&#x7C7B;&#x578B;&#x7684;&#x522B;&#x540D;&#xFF08;&#x540D;&#x5B57;&#x548C;&#x7C7B;&#x578B;&#x4E2D;&#x95F4;&#x6709;&#x4E2A;&#x8D4B;&#x503C;&#x7B26;&#x53F7;&#xFF09;&#xFF0C;&#x800C;TypeDef&#x5219;&#x662F;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x7C7B;&#x578B;&#x3002;&#x800C;&#x57FA;&#x7840;&#x7684;Type&#x5C31;&#x662F;&#x7531;&#x6807;&#x8BC6;&#x7B26;&#x6216;&#x8005;&#x662F;&#x5C0F;&#x62EC;&#x5F27;&#x5305;&#x542B;&#x7684;&#x5176;&#x5B83;&#x7C7B;&#x578B;&#x8868;&#x793A;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x65B0;&#x7684;MyInt1&#x7C7B;&#x578B;&#xFF0C;&#x540C;&#x65F6;&#x4E3A;int&#x521B;&#x5EFA;&#x4E00;&#x4E2A;MyInt2&#x7684;&#x522B;&#x540D;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> MyInt1 <span class="hljs-keyword">int</span>
+<span class="hljs-keyword">type</span> MyInt2 = <span class="hljs-keyword">int</span>
+</code></pre>
+<p>&#x7136;&#x540E;&#x901A;&#x8FC7;&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;&#x89E3;&#x6790;&#x4EE5;&#x4E0A;&#x4E24;&#x4E2A;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x8BED;&#x53E5;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> main() {
+    fset := token.NewFileSet()
+    f, err := parser.ParseFile(fset, <span class="hljs-string">&quot;hello.go&quot;</span>, src, parser.AllErrors)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Fatal(err)
+    }
+    ...
+}
+
+<span class="hljs-keyword">const</span> src = <span class="hljs-string">`package foo
+type MyInt1 int
+type MyInt2 = int
+`</span>
+</code></pre>
+<p>&#x8FD4;&#x56DE;&#x7684;&#x6240;&#x6709;&#x58F0;&#x660E;&#x90FD;&#x5728;<code>f.Decls</code>&#x5217;&#x8868;&#x4E2D;&#xFF0C;&#x800C;&#x57FA;&#x7840;&#x58F0;&#x660E;&#x5BF9;&#x5E94;&#x7684;&#x662F;<code>*ast.GenDecl</code>&#x7C7B;&#x578B;&#x3002;&#x7136;&#x540E;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;&#xFF0C;&#x67E5;&#x770B;&#x9488;&#x5BF9;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x7684;<code>*ast.GenDecl.Specs</code>&#x5217;&#x8868;&#x4E2D;&#x6BCF;&#x4E2A;&#x5143;&#x7D20;&#x7684;&#x7C7B;&#x578B;&#xFF1A;</p>
+<pre><code class="lang-go">    <span class="hljs-keyword">for</span> _, decl := <span class="hljs-keyword">range</span> f.Decls {
+        <span class="hljs-keyword">if</span> v, ok := decl.(*ast.GenDecl); ok {
+            <span class="hljs-keyword">for</span> _, spec := <span class="hljs-keyword">range</span> v.Specs {
+                fmt.Printf(<span class="hljs-string">&quot;%T\n&quot;</span>, spec)
+            }
+        }
+    }
+    <span class="hljs-comment">// Output:</span>
+    <span class="hljs-comment">// *ast.TypeSpec</span>
+    <span class="hljs-comment">// *ast.TypeSpec</span>
+</code></pre>
+<p>&#x7ECF;&#x8FC7;&#x8FD0;&#x884C;&#x6D4B;&#x8BD5;&#xFF0C;&#x8F93;&#x51FA;&#x7684;&#x662F;<code>*ast.TypeSpec</code>&#xFF0C;&#x5BF9;&#x4E8E;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x7684;&#x7ED3;&#x70B9;&#x7C7B;&#x578B;&#x3002;<code>*ast.TypeSpec</code>&#x7684;&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> TypeSpec <span class="hljs-keyword">struct</span> {
+    Doc     *CommentGroup <span class="hljs-comment">// associated documentation; or nil</span>
+    Name    *Ident        <span class="hljs-comment">// type name</span>
+    Assign  token.Pos     <span class="hljs-comment">// position of &apos;=&apos;, if any</span>
+    Type    Expr          <span class="hljs-comment">// *Ident, *ParenExpr, *SelectorExpr, *StarExpr, or any of the *XxxTypes</span>
+    Comment *CommentGroup <span class="hljs-comment">// line comments; or nil</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;&#x6700;&#x91CD;&#x8981;&#x7684;&#x662F;<code>TypeSpec.Name</code>&#x6210;&#x5458;&#xFF0C;&#x8868;&#x793A;&#x65B0;&#x58F0;&#x660E;&#x7C7B;&#x578B;&#x7684;&#x540D;&#x5B57;&#x6216;&#x8005;&#x662F;&#x5DF2;&#x6709;&#x7C7B;&#x578B;&#x7684;&#x522B;&#x540D;&#x3002;&#x800C;<code>TypeSpec.Assign</code>&#x6210;&#x5458;&#x5BF9;&#x5E94;<code>=</code>&#x7B26;&#x53F7;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x5982;&#x679C;&#x8BE5;&#x6210;&#x5458;&#x8868;&#x793A;&#x7684;&#x4F4D;&#x7F6E;&#x6709;&#x6548;&#xFF0C;&#x5219;&#x8868;&#x793A;&#x8FD9;&#x662F;&#x4E3A;&#x5DF2;&#x6709;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x522B;&#x540D;&#xFF08;&#x800C;&#x4E0D;&#x662F;&#x5B9A;&#x4E49;&#x65B0;&#x7684;&#x7C7B;&#x578B;&#xFF09;&#x3002;&#x6700;&#x540E;<code>TypeSpec.Type</code>&#x8868;&#x793A;&#x5177;&#x4F53;&#x7684;&#x7C7B;&#x578B;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x6807;&#x8BC6;&#x7B26;&#x8868;&#x8FBE;&#x5F0F;&#x3001;&#x5C0F;&#x62EC;&#x53F7;&#x8868;&#x8FBE;&#x5F0F;&#x3001;&#x70B9;&#x53F7;&#x9009;&#x62E9;&#x8868;&#x8FBE;&#x5F0F;&#x3001;&#x6307;&#x9488;&#x8868;&#x8FBE;&#x5F0F;&#x548C;&#x7C7B;&#x4F3C;<code>*ast.XxxTypes</code>&#x7C7B;&#x578B;&#xFF0C;&#x76EE;&#x524D;&#x6211;&#x4EEC;&#x5C55;&#x793A;&#x7684;&#x662F;&#x6700;&#x7B80;&#x5355;&#x7684;&#x6807;&#x8BC6;&#x7B26;&#x8868;&#x793A;&#x7684;&#x7C7B;&#x578B;&#x3002;</p>
+<h2 id="53-&#x5E38;&#x91CF;&#x58F0;&#x660E;">5.3 &#x5E38;&#x91CF;&#x58F0;&#x660E;</h2>
+<p>Go&#x8BED;&#x8A00;&#x4E2D;&#x5E38;&#x91CF;&#x5C5E;&#x4E8E;&#x7F16;&#x8BD1;&#x65F6;&#x5E38;&#x91CF;&#xFF0C;&#x53EA;&#x6709;&#x5E03;&#x5C14;&#x578B;&#x3001;&#x6570;&#x503C;&#x578B;&#x548C;&#x5B57;&#x7B26;&#x4E32;&#x4E09;&#x79CD;&#x5E38;&#x91CF;&#x7C7B;&#x578B;&#xFF0C;&#x540C;&#x65F6;&#x5E38;&#x91CF;&#x6709;&#x5206;&#x4E3A;&#x5F31;&#x7C7B;&#x578B;&#x548C;&#x5F3A;&#x7C7B;&#x578B;&#x5E38;&#x91CF;&#x3002;&#x5E38;&#x91CF;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>ConstDecl      = &quot;const&quot; ( ConstSpec | &quot;(&quot; { ConstSpec &quot;;&quot; } &quot;)&quot; ) .
+ConstSpec      = IdentifierList [ [ Type ] &quot;=&quot; ExpressionList ] .
+
+IdentifierList = identifier { &quot;,&quot; identifier } .
+ExpressionList = Expression { &quot;,&quot; Expression } .
+</code></pre><p>ConstDecl&#x5B9A;&#x4E49;&#x4E86;&#x5E38;&#x91CF;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#xFF0C;&#x540C;&#x6837;&#x53EF;&#x4EE5;&#x5355;&#x72EC;&#x58F0;&#x660E;&#x6BCF;&#x4E2A;&#x5E38;&#x91CF;&#x4E5F;&#x53EF;&#x4EE5;&#x5C0F;&#x62EC;&#x5F27;&#x5305;&#x542B;&#x6309;&#x7EC4;&#x58F0;&#x660E;&#x5E38;&#x91CF;&#x3002;&#x6BCF;&#x4E2A;&#x5E38;&#x91CF;&#x53EF;&#x4EE5;&#x660E;&#x786E;&#x6307;&#x5B9A;&#x8FD0;&#x884C;&#x65F6;&#x7C7B;&#x578B;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x7531;&#x521D;&#x59CB;&#x5316;&#x8868;&#x8FBE;&#x5F0F;&#x63A8;&#x5BFC;&#x51FA;&#x5E38;&#x91CF;&#x7684;&#x7C7B;&#x578B;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;&#x5C55;&#x793A;&#x4E86;Pi&#x548C;E&#x4E24;&#x4E2A;&#x6570;&#x503C;&#x578B;&#x5E38;&#x91CF;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">const</span> Pi = <span class="hljs-number">3.14</span>
+<span class="hljs-keyword">const</span> E <span class="hljs-keyword">float64</span> = <span class="hljs-number">2.71828</span>
+</code></pre>
+<p>&#x5176;&#x4E2D;Pi&#x88AB;&#x5B9A;&#x4E49;&#x4E3A;&#x5F31;&#x7C7B;&#x578B;&#x7684;&#x6D6E;&#x70B9;&#x6570;&#x5E38;&#x91CF;&#xFF0C;&#x53EF;&#x4EE5;&#x8D4B;&#x503C;&#x7ED9;float32&#x6216;float64&#x4E3A;&#x57FA;&#x7840;&#x5176;&#x5B83;&#x53D8;&#x91CF;&#x3002;&#x800C;E&#x662F;&#x88AB;&#x5B9A;&#x4E49;&#x4E3A;float64&#x7684;&#x5F3A;&#x7C7B;&#x578B;&#x5E38;&#x91CF;&#xFF0C;&#x9ED8;&#x8BA4;&#x53EA;&#x80FD;&#x975E;&#x63A5;&#x53D7;float64&#x7C7B;&#x578B;&#x7684;&#x53D8;&#x91CF;&#x8D4B;&#x503C;&#x3002;</p>
+<p>&#x5E38;&#x91CF;&#x58F0;&#x660E;&#x548C;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x4E00;&#x6837;&#x540C;&#x5C5E;<code>*ast.GenDecl</code>&#x7C7B;&#x578B;&#x7684;&#x901A;&#x7528;&#x58F0;&#x660E;&#xFF0C;&#x5B83;&#x4EEC;&#x7684;&#x533A;&#x522B;&#x4F9D;&#x7136;&#x662F;&#x5728;<code>ast.GenDecl.Specs</code>&#x90E8;&#x5206;&#x3002;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x540C;&#x6837;&#x7684;&#x4EE3;&#x7801;&#x67E5;&#x770B;&#x5E38;&#x91CF;&#x58F0;&#x660E;&#x8BED;&#x53E5;&#x4E2D;Specs&#x4E2D;&#x5143;&#x7D20;&#x7684;&#x7C7B;&#x578B;&#xFF1A;</p>
+<pre><code class="lang-go">    <span class="hljs-keyword">for</span> _, decl := <span class="hljs-keyword">range</span> f.Decls {
+        <span class="hljs-keyword">if</span> v, ok := decl.(*ast.GenDecl); ok {
+            <span class="hljs-keyword">for</span> _, spec := <span class="hljs-keyword">range</span> v.Specs {
+                fmt.Printf(<span class="hljs-string">&quot;%T\n&quot;</span>, spec)
+            }
+        }
+    }
+    <span class="hljs-comment">// Output:</span>
+    <span class="hljs-comment">// *ast.ValueSpec</span>
+    <span class="hljs-comment">// *ast.ValueSpec</span>
+</code></pre>
+<p>&#x8FD9;&#x6B21;&#x8F93;&#x51FA;&#x7684;&#x662F;<code>*ast.ValueSpec</code>&#x7C7B;&#x578B;&#xFF0C;&#x8BE5;&#x7C7B;&#x578B;&#x7684;&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> ValueSpec <span class="hljs-keyword">struct</span> {
+    Doc     *CommentGroup <span class="hljs-comment">// associated documentation; or nil</span>
+    Names   []*Ident      <span class="hljs-comment">// value names (len(Names) &gt; 0)</span>
+    Type    Expr          <span class="hljs-comment">// value type; or nil</span>
+    Values  []Expr        <span class="hljs-comment">// initial values; or nil</span>
+    Comment *CommentGroup <span class="hljs-comment">// line comments; or nil</span>
+}
+</code></pre>
+<p>&#x56E0;&#x4E3A;Go&#x8BED;&#x8A00;&#x652F;&#x6301;&#x591A;&#x8D4B;&#x503C;&#x8BED;&#x6CD5;&#xFF0C;&#x56E0;&#x6B64;&#x5176;&#x4E2D;Names&#x548C;Values&#x5206;&#x522B;&#x8868;&#x793A;&#x5E38;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x548C;&#x503C;&#x5217;&#x8868;&#x3002;&#x800C;Type&#x90E8;&#x5206;&#x5219;&#x7528;&#x4E8E;&#x533A;&#x5206;&#x5E38;&#x91CF;&#x662F;&#x5426;&#x6307;&#x5B9A;&#x4E86;&#x5F3A;&#x7C7B;&#x578B;&#xFF08;&#x6BD4;&#x5982;&#x4F8B;&#x5B50;&#x4E2D;&#x7684;E&#x88AB;&#x5B9A;&#x4E49;&#x4E3A;float64&#x7C7B;&#x578B;&#xFF09;&#x3002;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<code>ast.Print(nil, spec)</code>&#x8F93;&#x51FA;&#x6BCF;&#x4E2A;&#x5E38;&#x91CF;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x7ED3;&#x6784;&#xFF1A;</p>
+<pre><code> 0  *ast.ValueSpec {
+ 1  .  Names: []*ast.Ident (len = 1) {
+ 2  .  .  0: *ast.Ident {
+ 3  .  .  .  NamePos: 19
+ 4  .  .  .  Name: &quot;Pi&quot;
+ 5  .  .  .  Obj: *ast.Object {
+ 6  .  .  .  .  Kind: const
+ 7  .  .  .  .  Name: &quot;Pi&quot;
+ 8  .  .  .  .  Decl: *(obj @ 0)
+ 9  .  .  .  .  Data: 0
+10  .  .  .  }
+11  .  .  }
+12  .  }
+13  .  Values: []ast.Expr (len = 1) {
+14  .  .  0: *ast.BasicLit {
+15  .  .  .  ValuePos: 24
+16  .  .  .  Kind: FLOAT
+17  .  .  .  Value: &quot;3.14&quot;
+18  .  .  }
+19  .  }
+20  }
+ 0  *ast.ValueSpec {
+ 1  .  Names: []*ast.Ident (len = 1) {
+ 2  .  .  0: *ast.Ident {
+ 3  .  .  .  NamePos: 35
+ 4  .  .  .  Name: &quot;E&quot;
+ 5  .  .  .  Obj: *ast.Object {
+ 6  .  .  .  .  Kind: const
+ 7  .  .  .  .  Name: &quot;E&quot;
+ 8  .  .  .  .  Decl: *(obj @ 0)
+ 9  .  .  .  .  Data: 0
+10  .  .  .  }
+11  .  .  }
+12  .  }
+13  .  Type: *ast.Ident {
+14  .  .  NamePos: 37
+15  .  .  Name: &quot;float64&quot;
+16  .  }
+17  .  Values: []ast.Expr (len = 1) {
+18  .  .  0: *ast.BasicLit {
+19  .  .  .  ValuePos: 47
+20  .  .  .  Kind: FLOAT
+21  .  .  .  Value: &quot;2.71828&quot;
+22  .  .  }
+23  .  }
+24  }
+</code></pre><p>&#x53EF;&#x4EE5;&#x53D1;&#x73B0;<code>*ast.ValueSpec</code>&#x4E2D;Names&#x90E8;&#x5206;&#x8F93;&#x51FA;&#x7684;&#x5C31;&#x662F;&#x666E;&#x901A;&#x7684;<code>*ast.Ident</code>&#x6807;&#x8BC6;&#x7B26;&#x7C7B;&#x578B;&#xFF0C;&#x5176;&#x4E2D;&#x5305;&#x542B;&#x5E38;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x3002;&#x800C;Values&#x90E8;&#x5206;&#x8F93;&#x51FA;&#x7684;&#x662F;<code>*ast.BasicLit</code>&#x662F;&#x57FA;&#x7840;&#x7684;&#x9762;&#x503C;&#x5E38;&#x91CF;&#x3002;&#x6BD4;&#x8F83;&#x7279;&#x6B8A;&#x7684;&#x662F;E&#x5E38;&#x91CF;&#x5BF9;&#x5E94;&#x7684;<code>*ast.ValueSpec</code>&#x4E2D;&#x643A;&#x5E26;&#x4E86;Type&#x4FE1;&#x606F;&#xFF0C;&#x8FD9;&#x91CC;&#x662F;&#x901A;&#x8FC7;<code>*ast.Ident</code>&#x7C7B;&#x578B;&#x8868;&#x793A;&#x5E38;&#x91CF;&#x88AB;&#x6307;&#x5B9A;&#x4E3A;<code>float64</code>&#x7C7B;&#x578B;&#x3002;</p>
+<h2 id="54-&#x53D8;&#x91CF;&#x58F0;&#x660E;">5.4 &#x53D8;&#x91CF;&#x58F0;&#x660E;</h2>
+<p>&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x548C;&#x5E38;&#x91CF;&#x58F0;&#x660E;&#x51E0;&#x4E4E;&#x662F;&#x4E00;&#x6837;&#x7684;&#xFF0C;&#x53EA;&#x662F;&#x5F00;&#x59CB;&#x7684;var&#x5173;&#x952E;&#x5B57;&#x4E0D;&#x540C;&#x800C;&#x5DF2;&#x3002;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>VarDecl = &quot;var&quot; ( VarSpec | &quot;(&quot; { VarSpec &quot;;&quot; } &quot;)&quot; ) .
+VarSpec = IdentifierList [ [ Type ] &quot;=&quot; ExpressionList ] .
+
+IdentifierList = identifier { &quot;,&quot; identifier } .
+ExpressionList = Expression { &quot;,&quot; Expression } .
+</code></pre><p>&#x53D8;&#x91CF;&#x7684;&#x58F0;&#x660E;&#x548C;&#x5E38;&#x91CF;&#x7684;&#x58F0;&#x660E;&#x6709;&#x7740;&#x76F8;&#x540C;&#x7684;&#x7ED3;&#x6784;&#xFF0C;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x4E2D;&#x53EF;&#x4EE5;&#x6839;&#x636E;<code>*ast.GenDecl</code>&#x7ED3;&#x6784;&#x4E2D;&#x7684;Tok&#x533A;&#x522B;&#x5B83;&#x4EEC;&#x3002;&#x5176;&#x5B9E;&#x6839;&#x636E;<code>*ast.GenDecl</code>&#x7ED3;&#x6784;&#x4E2D;&#x7684;Tok&#x53EF;&#x4EE5;&#x533A;&#x5206;&#x6240;&#x6709;&#x7684;&#x57FA;&#x672C;&#x58F0;&#x660E;&#xFF0C;&#x5305;&#x542B;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x3001;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x3001;&#x5E38;&#x91CF;&#x548C;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;&#x6784;&#x5EFA;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x8BED;&#x6CD5;&#x6811;&#x7684;&#x4F8B;&#x5B50;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> main() {
+    fset := token.NewFileSet()
+    f, err := parser.ParseFile(fset, <span class="hljs-string">&quot;hello.go&quot;</span>, src, parser.AllErrors)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        log.Fatal(err)
+    }
+    <span class="hljs-keyword">for</span> _, decl := <span class="hljs-keyword">range</span> f.Decls {
+        <span class="hljs-keyword">if</span> v, ok := decl.(*ast.GenDecl); ok {
+            fmt.Printf(<span class="hljs-string">&quot;token: %v\n&quot;</span>, v.Tok)
+            <span class="hljs-keyword">for</span> _, spec := <span class="hljs-keyword">range</span> v.Specs {
+                ast.Print(<span class="hljs-literal">nil</span>, spec)
+            }
+        }
+    }
+}
+
+<span class="hljs-keyword">const</span> src = <span class="hljs-string">`package foo
+var Pi = 3.14
+`</span>
+</code></pre>
+<p>&#x8F93;&#x51FA;&#x7684;&#x7ED3;&#x679C;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>token: var
+ 0  *ast.ValueSpec {
+ 1  .  Names: []*ast.Ident (len = 1) {
+ 2  .  .  0: *ast.Ident {
+ 3  .  .  .  NamePos: 17
+ 4  .  .  .  Name: &quot;Pi&quot;
+ 5  .  .  .  Obj: *ast.Object {
+ 6  .  .  .  .  Kind: var
+ 7  .  .  .  .  Name: &quot;Pi&quot;
+ 8  .  .  .  .  Decl: *(obj @ 0)
+ 9  .  .  .  .  Data: 0
+10  .  .  .  }
+11  .  .  }
+12  .  }
+13  .  Values: []ast.Expr (len = 1) {
+14  .  .  0: *ast.BasicLit {
+15  .  .  .  ValuePos: 22
+16  .  .  .  Kind: FLOAT
+17  .  .  .  Value: &quot;3.14&quot;
+18  .  .  }
+19  .  }
+20  }
+</code></pre><p>&#x9996;&#x5148;&#x8F93;&#x51FA;&#x7684;Tok&#x503C;&#x4E3A;<code>var</code>&#xFF0C;&#x8868;&#x793A;&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x3002;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x548C;&#x7C7B;&#x578B;&#x901A;&#x8FC7;<code>*ast.ValueSpec</code>&#x7ED3;&#x6784;&#x8868;&#x793A;&#x3002;</p>
+<h2 id="55-&#x6309;&#x7EC4;&#x58F0;&#x660E;">5.5 &#x6309;&#x7EC4;&#x58F0;&#x660E;</h2>
+<p>&#x652F;&#x6301;&#x6309;&#x7EC4;&#x58F0;&#x660E;&#x7684;&#x8BED;&#x6CD5;&#x6709;&#x7740;&#x7C7B;&#x4F3C;&#x4EE5;&#x4E0B;&#x7684;&#x8BED;&#x6CD5;&#x7ED3;&#x6784;&#xFF1A;</p>
+<pre><code class="lang-bnf">XxxDecl = &quot;xxx&quot; ( XxxSpec | &quot;(&quot; { XxxSpec &quot;;&quot; } &quot;)&quot; ) .
+XxxSpec = ...
+</code></pre>
+<p>&#x5176;&#x4E2D;xxx&#x8868;&#x793A;&#x58F0;&#x660E;&#x5F00;&#x5934;&#x7684;&#x5173;&#x952E;&#x5B57;&#xFF0C;&#x57FA;&#x7840;&#x58F0;&#x660E;&#x90E8;&#x5206;&#x7684;&#x5BFC;&#x5165;&#x58F0;&#x660E;&#x3001;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x3001;&#x5E38;&#x91CF;&#x548C;&#x53D8;&#x91CF;&#x58F0;&#x660E;&#x90FD;&#x652F;&#x6301;&#x6309;&#x7EC4;&#x58F0;&#x660E;&#x7684;&#x65B9;&#x5F0F;&#x3002;&#x4F46;&#x662F;&#x51FD;&#x6570;&#x7684;&#x58F0;&#x660E;&#x662F;&#x4E0D;&#x652F;&#x6301;&#x6309;&#x7EC4;&#x7684;&#x65B9;&#x5F0F;&#x7684;&#xFF0C;&#x56E0;&#x6B64;&#x58F0;&#x660E;&#x90E8;&#x5206;&#x5C06;&#x51FD;&#x6570;&#x7684;&#x58F0;&#x660E;&#x4ECE;&#x57FA;&#x7840;&#x58F0;&#x660E;&#x72EC;&#x7ACB;&#x51FA;&#x6765;&#x5904;&#x7406;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x662F;&#x4F8B;&#x5B50;&#x5B9A;&#x4E49;&#x4E86;&#x4E00;&#x4E2A;&#x5E38;&#x91CF;&#x548C;&#x4E24;&#x4E2A;&#x53D8;&#x91CF;&#xFF0C;&#x5176;&#x4E2D;&#x5E38;&#x91CF;&#x662F;&#x72EC;&#x7ACB;&#x58F0;&#x660E;&#xFF0C;&#x4E24;&#x4E2A;&#x53D8;&#x91CF;&#x662F;&#x6309;&#x7EC4;&#x58F0;&#x660E;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">const</span> Pi = <span class="hljs-number">3.14</span>
+
+<span class="hljs-keyword">var</span> (
+    a <span class="hljs-keyword">int</span>
+    b <span class="hljs-keyword">bool</span>
+)
+</code></pre>
+<p>&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x5BF9;&#x5E94;&#x8BED;&#x6CD5;&#x6811;&#x7684;&#x903B;&#x8F91;&#x7ED3;&#x6784;&#x5982;&#x56FE;&#x6240;&#x793A;&#xFF1A;</p>
+<p><img src="../images/ch5-decl-group-01.png" alt=""></p>
+<p>&#x56E0;&#x4E3A;&#x7B2C;&#x4E00;&#x4E2A;&#x51FA;&#x73B0;&#x7684;&#x662F;<code>const</code>&#x5173;&#x952E;&#x5B57;&#xFF0C;&#x56E0;&#x6B64;<code>*ast.File.Decls</code>&#x7684;&#x7B2C;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x662F;&#x8868;&#x793A;&#x5E38;&#x91CF;&#x7684;<code>*ast.GenDecl</code>&#x7C7B;&#x578B;&#xFF0C;&#x5176;&#x4E2D;Specs&#x5217;&#x8868;&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x5BF9;&#x5E94;Pi&#x5E38;&#x91CF;&#x3002;&#x7B2C;&#x4E8C;&#x4E2A;&#x51FA;&#x73B0;&#x662F;<code>var</code>&#x5173;&#x952E;&#x5B57;&#xFF0C;&#x56E0;&#x6B64;<code>*ast.File.Decls</code>&#x7684;&#x7B2C;&#x4E8C;&#x4E2A;&#x5143;&#x7D20;&#x662F;&#x8868;&#x793A;&#x53D8;&#x91CF;&#x7684;<code>*ast.GenDecl</code>&#x7C7B;&#x578B;&#xFF0C;&#x5176;&#x4E2D;Specs&#x5217;&#x8868;&#x6709;&#x4E24;&#x4E2A;&#x5143;&#x7D20;&#x5206;&#x522B;&#x5BF9;&#x5E94;a&#x548C;b&#x4E24;&#x4E2A;&#x53D8;&#x91CF;&#xFF0C;Specs&#x5217;&#x8868;&#x7684;&#x957F;&#x5EA6;&#x5BF9;&#x5E94;&#x7EC4;&#x58F0;&#x660E;&#x4E2D;&#x5143;&#x7D20;&#x7684;&#x4E2A;&#x6570;&#x3002;</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../ch4/readme.html" class="navigation navigation-prev " aria-label="Previous page: 第4章 代码结构">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../ch6/readme.html" class="navigation navigation-next " aria-label="Next page: 第6章 函数声明">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"第5章 通用声明","level":"1.6","depth":1,"next":{"title":"第6章 函数声明","level":"1.7","depth":1,"path":"ch6/readme.md","ref":"ch6/readme.md","articles":[]},"previous":{"title":"第4章 代码结构","level":"1.5","depth":1,"path":"ch4/readme.md","ref":"ch4/readme.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"preface.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Go语法树入门——开启自制编程语言和编译器之旅！","language":"zh-hans","gitbook":"3.x","description":"Go语法树入门——开启自制编程语言和编译器之旅！"},"file":{"path":"ch5/readme.md","mtime":"2021-08-30T04:46:44.152Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-08-30T11:01:23.791Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

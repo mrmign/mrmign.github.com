@@ -1,0 +1,555 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>第9章 复合表达式 · Go语法树入门——开启自制编程语言和编译器之旅！</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../ch10/readme.html" />
+    
+    
+    <link rel="prev" href="../ch8/readme.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../ch1/readme.html">
+            
+                <a href="../ch1/readme.html">
+            
+                    
+                    第1章 记号
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../ch2/readme.html">
+            
+                <a href="../ch2/readme.html">
+            
+                    
+                    第2章 基础面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../ch3/readme.html">
+            
+                <a href="../ch3/readme.html">
+            
+                    
+                    第3章 基础表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../ch4/readme.html">
+            
+                <a href="../ch4/readme.html">
+            
+                    
+                    第4章 代码结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../ch5/readme.html">
+            
+                <a href="../ch5/readme.html">
+            
+                    
+                    第5章 通用声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../ch6/readme.html">
+            
+                <a href="../ch6/readme.html">
+            
+                    
+                    第6章 函数声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../ch7/readme.html">
+            
+                <a href="../ch7/readme.html">
+            
+                    
+                    第7章 复合类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../ch8/readme.html">
+            
+                <a href="../ch8/readme.html">
+            
+                    
+                    第8章 复合面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.10" data-path="readme.html">
+            
+                <a href="readme.html">
+            
+                    
+                    第9章 复合表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../ch10/readme.html">
+            
+                <a href="../ch10/readme.html">
+            
+                    
+                    第10章 语句块和语句
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../ch11/readme.html">
+            
+                <a href="../ch11/readme.html">
+            
+                    
+                    第11章 类型检查
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="../appendix/a-goyacc/readme.html">
+            
+                <a href="../appendix/a-goyacc/readme.html">
+            
+                    
+                    附录A goyacc
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >第9章 复合表达式</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x7B2C;9&#x7AE0;-&#x590D;&#x5408;&#x8868;&#x8FBE;&#x5F0F;">&#x7B2C;9&#x7AE0; &#x590D;&#x5408;&#x8868;&#x8FBE;&#x5F0F;</h1>
+<p>&#x5728;&#x57FA;&#x7840;&#x9762;&#x503C;&#x548C;&#x57FA;&#x7840;&#x8868;&#x8FBE;&#x5F0F;&#x7AE0;&#x8282;&#xFF0C;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x89C1;&#x8FC7;&#x4E00;&#x4E9B;&#x7B80;&#x5355;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x3002;&#x672C;&#x7AE0;&#x6211;&#x4EEC;&#x5C06;&#x7EE7;&#x7EED;&#x8BA8;&#x8BBA;&#x590D;&#x6742;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5305;&#x542B;&#x57FA;&#x4E8E;&#x590D;&#x6742;&#x9762;&#x503C;&#x548C;&#x70B9;&#x53F7;&#x9009;&#x62E9;&#x8FD0;&#x7B97;&#x3001;&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x3001;&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x7B49;&#x76F8;&#x4E92;&#x7EC4;&#x5408;&#x800C;&#x6210;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x3002;</p>
+<h2 id="91-&#x8868;&#x8FBE;&#x5F0F;&#x8BED;&#x6CD5;">9.1 &#x8868;&#x8FBE;&#x5F0F;&#x8BED;&#x6CD5;</h2>
+<p>&#x7B80;&#x5355;&#x6765;&#x8BF4;&#xFF0C;&#x8868;&#x8FBE;&#x5F0F;&#x662F;&#x6307;&#x6240;&#x6709;&#x53EF;&#x4EE5;&#x4EA7;&#x751F;&#x4E00;&#x4E2A;&#x503C;&#x7684;&#x8BED;&#x53E5;&#x7684;&#x96C6;&#x5408;&#x3002;&#x8868;&#x8FBE;&#x5F0F;&#x7684;&#x8BED;&#x6CD5;&#x7531;PrimaryExpr&#x5B9A;&#x4E49;&#xFF1A;</p>
+<pre><code>PrimaryExpr = Operand
+            | Conversion
+            | MethodExpr
+            | PrimaryExpr Selector
+            | PrimaryExpr Index
+            | PrimaryExpr Slice
+            | PrimaryExpr TypeAssertion
+            | PrimaryExpr Arguments
+            .
+
+Selector       = &quot;.&quot; identifier .
+Index          = &quot;[&quot; Expression &quot;]&quot; .
+Slice          = &quot;[&quot; [ Expression ] &quot;:&quot; [ Expression ] &quot;]&quot; 
+               | &quot;[&quot; [ Expression ] &quot;:&quot; Expression &quot;:&quot; Expression &quot;]&quot; .
+
+TypeAssertion  = &quot;.&quot; &quot;(&quot; Type &quot;)&quot; .
+Arguments      = &quot;(&quot; [ ( ExpressionList | Type [ &quot;,&quot; ExpressionList ] ) [ &quot;...&quot; ] [ &quot;,&quot; ] ] &quot;)&quot; .
+</code></pre><p>&#x5176;&#x4E2D;Operand&#x662F;&#x7531;&#x4E00;&#x5143;&#x6216;&#x4E8C;&#x5143;&#x7B97;&#x672F;&#x8FD0;&#x7B97;&#x7B26;&#x7EC4;&#x6210;&#x7684;&#x7B97;&#x672F;&#x8FD0;&#x7B97;&#x8868;&#x8FBE;&#x5F0F;&#x3002;Conversion&#x662F;&#x5F3A;&#x5236;&#x7C7B;&#x578B;&#x8F6C;&#x6362;&#xFF0C;&#x5F62;&#x5F0F;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x6709;&#x4E00;&#x5B9A;&#x7684;&#x76F8;&#x4F3C;&#x6027;&#x3002;MethodExpr&#x662F;&#x65B9;&#x6CD5;&#x8868;&#x8FBE;&#x5F0F;&#x3002;&#x7136;&#x540E;&#x662F;&#x70B9;&#x9009;&#x62E9;&#x8FD0;&#x7B97;&#x3001;&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x3001;&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x3001;&#x7C7B;&#x578B;&#x65AD;&#x8A00;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x53C2;&#x6570;&#x7B49;&#x9AD8;&#x9636;&#x8FD0;&#x7B97;&#x7B26;&#x3002;</p>
+<h2 id="92-&#x8F6C;&#x578B;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;">9.2 &#x8F6C;&#x578B;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;</h2>
+<p>&#x4E8C;&#x5143;&#x7B97;&#x672F;&#x8FD0;&#x7B97;&#x7B26;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x8BB2;&#x8FC7;&#xFF0C;&#x56E0;&#x6B64;&#x6211;&#x4EEC;&#x4ECE;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x5F00;&#x59CB;&#x3002;&#x4E0B;&#x9762;&#x662F;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x548C;&#x51FD;&#x6570;&#x53C2;&#x6570;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#xFF1A;</p>
+<pre><code>Conversion = Type &quot;(&quot; Expression [ &quot;,&quot; ] &quot;)&quot; .
+Arguments  = &quot;(&quot; [ ( ExpressionList | Type [ &quot;,&quot; ExpressionList ] ) [ &quot;...&quot; ] [ &quot;,&quot; ] ] &quot;)&quot; .
+</code></pre><p>&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x548C;&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x53C2;&#x6570;&#x7684;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x975E;&#x5E38;&#x76F8;&#x4F3C;&#xFF0C;&#x4F46;&#x662F;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x662F;&#x4EE5;&#x4E00;&#x4E2A;&#x7C7B;&#x578B;&#x5F00;&#x59CB;&#xFF08;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x662F;&#x4EE5;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#x5F00;&#x59CB;&#xFF09;&#xFF0C;&#x7136;&#x540E;&#x5C0F;&#x62EC;&#x53F7;&#x5185;&#x662F;&#x8981;&#x8F6C;&#x578B;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x3002;&#x4E0B;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#x662F;&#x5C06;x&#x53D8;&#x91CF;&#x8F6C;&#x578B;&#x4E3A;int&#x7C7B;&#x578B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">int</span>(x)
+</code></pre>
+<p>&#x5982;&#x679C;int&#x88AB;&#x91CD;&#x65B0;&#x5B9A;&#x4E49;&#x4E3A;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#xFF0C;&#x90A3;&#x4E48;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x5C31;&#x4F1A;&#x53D8;&#x6210;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x3002;&#x6211;&#x4EEC;&#x5148;&#x770B;&#x770B;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x662F;&#x5982;&#x4F55;&#x8868;&#x793A;&#x7684;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> main() {
+    expr, _ := parser.ParseExpr(<span class="hljs-string">`int(x)`</span>)
+    ast.Print(<span class="hljs-literal">nil</span>, expr)
+}
+</code></pre>
+<p>&#x8F93;&#x51FA;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code> 0  *ast.CallExpr {
+ 1  .  Fun: *ast.Ident {
+ 2  .  .  NamePos: 1
+ 3  .  .  Name: &quot;int&quot;
+ 4  .  .  Obj: *ast.Object {
+ 5  .  .  .  Kind: bad
+ 6  .  .  .  Name: &quot;&quot;
+ 7  .  .  }
+ 8  .  }
+ 9  .  Lparen: 4
+10  .  Args: []ast.Expr (len = 1) {
+11  .  .  0: *ast.Ident {
+12  .  .  .  NamePos: 5
+13  .  .  .  Name: &quot;x&quot;
+14  .  .  .  Obj: *(obj @ 4)
+15  .  .  }
+16  .  }
+17  .  Ellipsis: 0
+18  .  Rparen: 6
+19  }
+</code></pre><p>&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x5C45;&#x7136;&#x662F;&#x7528;<code>ast.CallExpr</code>&#x8868;&#x793A;&#xFF0C;&#x8FD9;&#x8BF4;&#x660E;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x4E2D;&#x8F6C;&#x578B;&#x548C;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x7684;&#x7ED3;&#x6784;&#x662F;&#x5B8C;&#x5168;&#x4E00;&#x6837;&#x7684;&#x3002;&#x8FD9;&#x662F;&#x56E0;&#x4E3A;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x89E3;&#x6790;&#x9636;&#x6BB5;&#xFF0C;&#x89E3;&#x6790;&#x5668;&#x5E76;&#x4E0D;&#x77E5;&#x9053;<code>int(x)</code>&#x4E2D;&#x7684;<code>int</code>&#x662F;&#x4E00;&#x4E2A;&#x7C7B;&#x578B;&#x8FD8;&#x662F;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#xFF0C;&#x56E0;&#x6B64;&#x4E5F;&#x65E0;&#x6CD5;&#x77E5;&#x6653;&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x8FD8;&#x662F;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x3002;</p>
+<p><code>ast.CallExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> CallExpr <span class="hljs-keyword">struct</span> {
+    Fun      Expr      <span class="hljs-comment">// function expression</span>
+    Lparen   token.Pos <span class="hljs-comment">// position of &quot;(&quot;</span>
+    Args     []Expr    <span class="hljs-comment">// function arguments; or nil</span>
+    Ellipsis token.Pos <span class="hljs-comment">// position of &quot;...&quot; (token.NoPos if there is no &quot;...&quot;)</span>
+    Rparen   token.Pos <span class="hljs-comment">// position of &quot;)&quot;</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;Fun&#x5982;&#x679C;&#x662F;&#x7C7B;&#x578B;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5219;&#x8868;&#x793A;&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x8F6C;&#x578B;&#x64CD;&#x4F5C;&#x3002;Fun&#x4E4B;&#x6240;&#x4EE5;&#x88AB;&#x5B9A;&#x4E49;&#x4E3A;&#x4E00;&#x4E2A;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x662F;&#x56E0;&#x4E3A;Go&#x8BED;&#x8A00;&#x4E2D;&#x51FD;&#x6570;&#x662F;&#x7B2C;&#x4E00;&#x7C7B;&#x5BF9;&#x8C61;&#xFF0C;&#x53EF;&#x4EE5;&#x50CF;&#x666E;&#x901A;&#x503C;&#x4E00;&#x6837;&#x88AB;&#x4F20;&#x9012;&#xFF0C;&#x901A;&#x8FC7;&#x8868;&#x8FBE;&#x5F0F;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x7ED3;&#x6784;&#x4F53;&#x3001;&#x6570;&#x7EC4;&#x6216;map&#x4E2D;&#x4FDD;&#x5B58;&#x7684;&#x51FD;&#x6570;&#x3002;&#x800C;Args&#x53C2;&#x6570;&#x90E8;&#x5206;&#x8868;&#x793A;&#x8981;&#x8F6C;&#x578B;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x6216;&#x8005;&#x662F;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x7684;&#x53C2;&#x6570;&#x5217;&#x8868;&#x3002;&#x5982;&#x679C;&#x662F;&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x5E76;&#x4E14;&#x662F;&#x53EF;&#x53D8;&#x53C2;&#x6570;&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x90A3;&#x4E48;Ellipsis&#x8868;&#x793A;&#x7701;&#x7565;&#x53F7;&#x4F4D;&#x7F6E;&#xFF08;&#x5426;&#x5219;&#x662F;&#x4E00;&#x4E2A;&#x65E0;&#x6548;&#x7684;&#x4F4D;&#x7F6E;&#xFF09;&#x3002;</p>
+<h2 id="93-&#x70B9;&#x9009;&#x62E9;&#x8FD0;&#x7B97;">9.3 &#x70B9;&#x9009;&#x62E9;&#x8FD0;&#x7B97;</h2>
+<p>&#x70B9;&#x9009;&#x62E9;&#x8FD0;&#x7B97;&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x7ED3;&#x6784;&#x4F53;&#x9009;&#x62E9;&#x5176;&#x6210;&#x5458;&#xFF0C;&#x6216;&#x8005;&#x662F;&#x5BF9;&#x8C61;&#x9009;&#x62E9;&#x5176;&#x65B9;&#x6CD5;&#x3002;&#x70B9;&#x9009;&#x62E9;&#x8FD0;&#x7B97;&#x8BED;&#x6CD5;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>PrimaryExpr = PrimaryExpr Selector .
+Selector    = &quot;.&quot; identifier .
+</code></pre><p>&#x5982;&#x679C;&#x6709;&#x8868;&#x8FBE;&#x5F0F;<code>x</code>&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<code>x.y</code>&#x8BBF;&#x95EE;&#x5176;&#x6210;&#x5458;&#x6216;&#x65B9;&#x6CD5;&#x51FD;&#x6570;&#x3002;&#x5982;&#x679C;&#x662F;<code>x</code>&#x5BFC;&#x5165;&#x5305;&#xFF0C;&#x90A3;&#x4E48;<code>x.y</code>&#x5C06;&#x53D8;&#x6210;&#x6807;&#x8BC6;&#x7B26;&#x542B;&#x4E49;&#x3002;&#x540C;&#x6837;&#xFF0C;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x89E3;&#x6790;&#x9636;&#x6BB5;&#x5E76;&#x65E0;&#x6CD5;&#x533A;&#x5206;&#x4E00;&#x4E2A;&#x9009;&#x62E9;&#x8868;&#x8FBE;&#x5F0F;&#x548C;&#x5BFC;&#x5165;&#x5305;&#x4E2D;&#x7684;&#x6807;&#x8BC6;&#x7B26;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;<code>x.y</code>&#x89E3;&#x6790;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x7ED3;&#x679C;&#xFF1A;</p>
+<pre><code> 0  *ast.SelectorExpr {
+ 1  .  X: *ast.Ident {
+ 2  .  .  NamePos: 1
+ 3  .  .  Name: &quot;x&quot;
+ 4  .  .  Obj: *ast.Object {
+ 5  .  .  .  Kind: bad
+ 6  .  .  .  Name: &quot;&quot;
+ 7  .  .  }
+ 8  .  }
+ 9  .  Sel: *ast.Ident {
+10  .  .  NamePos: 3
+11  .  .  Name: &quot;y&quot;
+12  .  }
+13  }
+</code></pre><p>&#x5176;&#x4E2D;X&#x6210;&#x5458;&#x8868;&#x793A;&#x4E3B;&#x4F53;&#x3001;Sel&#x662F;&#x88AB;&#x9009;&#x62E9;&#x7684;&#x6210;&#x5458;&#xFF08;&#x4E5F;&#x53EF;&#x80FD;&#x662F;&#x5176;&#x5B83;&#x5305;&#x7684;&#x6807;&#x8BC6;&#x7B26;&#xFF09;&#x3002;<code>ast.SelectorExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> SelectorExpr <span class="hljs-keyword">struct</span> {
+    X   Expr   <span class="hljs-comment">// expression</span>
+    Sel *Ident <span class="hljs-comment">// field selector</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;X&#x88AB;&#x5B9A;&#x4E49;&#x4E3A;ast.Expr&#x8868;&#x8FBE;&#x5F0F;&#x7C7B;&#x578B;&#xFF0C;Sel&#x662F;&#x4E00;&#x4E2A;&#x666E;&#x901A;&#x7684;&#x6807;&#x8BC6;&#x7B26;&#x3002;</p>
+<h2 id="94-&#x7D22;&#x5F15;&#x8FD0;&#x7B97;">9.4 &#x7D22;&#x5F15;&#x8FD0;&#x7B97;</h2>
+<p>&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x6570;&#x7EC4;&#x3001;&#x5207;&#x7247;&#x6216;map&#x9009;&#x62E9;&#x5143;&#x7D20;&#xFF0C;&#x5176;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>PrimaryExpr = PrimaryExpr Index .
+Index       = &quot;[&quot; Expression &quot;]&quot; .
+</code></pre><p>&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x901A;&#x8FC7;&#x5728;&#x4E3B;&#x4F53;&#x8868;&#x8FBE;&#x5F0F;&#x540E;&#x9762;&#x7684;&#x4E2D;&#x62EC;&#x5F27;&#x4E2D;&#x5305;&#x542B;&#x7D22;&#x5F15;&#x8868;&#x8FBE;&#x5F0F;&#x3002;&#x540C;&#x6837;&#x5728;&#x8BED;&#x6CD5;&#x6811;&#x89E3;&#x6790;&#x9636;&#x6BB5;&#x65E0;&#x6CD5;&#x533A;&#x522B;&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x4E3B;&#x4F53;&#x7684;&#x5177;&#x4F53;&#x7C7B;&#x578B;&#x3002;&#x4E0B;&#x9762;&#x662F;<code>x[y]</code>&#x7D22;&#x5F15;&#x8FD0;&#x7B97;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#x89E3;&#x6790;&#x7ED3;&#x679C;&#xFF1A;</p>
+<pre><code> 0  *ast.IndexExpr {
+ 1  .  X: *ast.Ident {
+ 2  .  .  NamePos: 1
+ 3  .  .  Name: &quot;x&quot;
+ 4  .  .  Obj: *ast.Object {
+ 5  .  .  .  Kind: bad
+ 6  .  .  .  Name: &quot;&quot;
+ 7  .  .  }
+ 8  .  }
+ 9  .  Lbrack: 2
+10  .  Index: *ast.Ident {
+11  .  .  NamePos: 3
+12  .  .  Name: &quot;y&quot;
+13  .  .  Obj: *(obj @ 4)
+14  .  }
+15  .  Rbrack: 4
+16  }
+</code></pre><p>&#x5176;&#x4E2D;X&#x662F;&#x4E3B;&#x4F53;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5176;&#x4E2D;&#x7684;&#x6807;&#x8BC6;&#x7B26;&#x662F;x&#x3002;&#x800C;Index&#x4E3A;&#x7D22;&#x5F15;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5728;&#x8FD9;&#x4E2A;&#x4F8B;&#x5B50;&#x4E2D;&#x662F;y&#x3002;<code>ast.IndexExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> IndexExpr <span class="hljs-keyword">struct</span> {
+    X      Expr      <span class="hljs-comment">// expression</span>
+    Lbrack token.Pos <span class="hljs-comment">// position of &quot;[&quot;</span>
+    Index  Expr      <span class="hljs-comment">// index expression</span>
+    Rbrack token.Pos <span class="hljs-comment">// position of &quot;]&quot;</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;X&#x548C;Index&#x6210;&#x5458;&#x90FD;&#x662F;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5177;&#x4F53;&#x7684;&#x8BED;&#x4E49;&#x9700;&#x8981;&#x6839;&#x636E;&#x4E0A;&#x4E0B;&#x6587;&#x5224;&#x65AD;X&#x8868;&#x8FBE;&#x5F0F;&#x7684;&#x7C7B;&#x578B;&#x624D;&#x80FD;&#x51B3;&#x5B9A;Index&#x7D22;&#x5F15;&#x8868;&#x8FBE;&#x5F0F;&#x7684;&#x7C7B;&#x578B;&#x3002;</p>
+<h2 id="95-&#x5207;&#x7247;&#x8FD0;&#x7B97;">9.5 &#x5207;&#x7247;&#x8FD0;&#x7B97;</h2>
+<p>&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x662F;&#x5728;&#x6570;&#x7EC4;&#x6216;&#x5207;&#x7247;&#x57FA;&#x7840;&#x4E0A;&#x751F;&#x6210;&#x65B0;&#x7684;&#x5207;&#x7247;&#xFF0C;&#x5176;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>PrimaryExpr =  PrimaryExpr Slice
+Slice       = &quot;[&quot; [ Expression ] &quot;:&quot; [ Expression ] &quot;]&quot; 
+            | &quot;[&quot; [ Expression ] &quot;:&quot; Expression &quot;:&quot; Expression &quot;]&quot;
+            .
+</code></pre><p>&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x4E5F;&#x662F;&#x5728;&#x4E00;&#x4E2A;&#x4E3B;&#x4F53;&#x8868;&#x8FBE;&#x5F0F;&#x4E4B;&#x540E;&#x7684;&#x4E2D;&#x62EC;&#x5F27;&#x4E2D;&#x8868;&#x793A;&#xFF0C;&#x4E0D;&#x8FC7;&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x81F3;&#x5C11;&#x6709;&#x4E00;&#x4E2A;&#x5192;&#x53F7;&#x5206;&#x9694;&#x7B26;&#xFF0C;&#x6216;&#x8005;&#x662F;&#x4E24;&#x4E2A;&#x5192;&#x53F7;&#x5206;&#x9694;&#x7B26;&#x3002;&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x4E3B;&#x8981;&#x5305;&#x542B;&#x5F00;&#x59CB;&#x7D22;&#x5F15;&#x3001;&#x7ED3;&#x675F;&#x7D22;&#x5F15;&#x548C;&#x6700;&#x5927;&#x8303;&#x56F4;&#x4E09;&#x4E2A;&#x90E8;&#x5206;&#x3002;&#x4E0B;&#x9762;&#x662F;<code>x[1:2:3]</code>&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#xFF1A;</p>
+<pre><code> 0  *ast.SliceExpr {
+ 1  .  X: *ast.Ident {
+ 2  .  .  NamePos: 1
+ 3  .  .  Name: &quot;x&quot;
+ 4  .  .  Obj: *ast.Object {
+ 5  .  .  .  Kind: bad
+ 6  .  .  .  Name: &quot;&quot;
+ 7  .  .  }
+ 8  .  }
+ 9  .  Lbrack: 2
+10  .  Low: *ast.BasicLit {
+11  .  .  ValuePos: 3
+12  .  .  Kind: INT
+13  .  .  Value: &quot;1&quot;
+14  .  }
+15  .  High: *ast.BasicLit {
+16  .  .  ValuePos: 5
+17  .  .  Kind: INT
+18  .  .  Value: &quot;2&quot;
+19  .  }
+20  .  Max: *ast.BasicLit {
+21  .  .  ValuePos: 7
+22  .  .  Kind: INT
+23  .  .  Value: &quot;3&quot;
+24  .  }
+25  .  Slice3: true
+26  .  Rbrack: 8
+27  }
+</code></pre><p>&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x901A;&#x8FC7;<code>ast.SliceExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x8868;&#x793A;&#xFF0C;&#x5176;&#x4E2D;X&#x3001;Low&#x3001;High&#x3001;Max&#x5206;&#x522B;&#x8868;&#x793A;&#x5207;&#x7247;&#x8FD0;&#x7B97;&#x7684;&#x4E3B;&#x4F53;&#x3001;&#x5F00;&#x59CB;&#x7D22;&#x5F15;&#x3001;&#x7ED3;&#x675F;&#x7D22;&#x5F15;&#x548C;&#x6700;&#x5927;&#x8303;&#x56F4;&#x3002;<code>ast.SliceExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> SliceExpr <span class="hljs-keyword">struct</span> {
+    X      Expr      <span class="hljs-comment">// expression</span>
+    Lbrack token.Pos <span class="hljs-comment">// position of &quot;[&quot;</span>
+    Low    Expr      <span class="hljs-comment">// begin of slice range; or nil</span>
+    High   Expr      <span class="hljs-comment">// end of slice range; or nil</span>
+    Max    Expr      <span class="hljs-comment">// maximum capacity of slice; or nil</span>
+    Slice3 <span class="hljs-keyword">bool</span>      <span class="hljs-comment">// true if 3-index slice (2 colons present)</span>
+    Rbrack token.Pos <span class="hljs-comment">// position of &quot;]&quot;</span>
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;X&#x3001;Low&#x3001;High&#x3001;Max&#x662F;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x719F;&#x6089;&#x7684;&#x6210;&#x5458;&#xFF0C;&#x90FD;&#x662F;&#x8868;&#x8FBE;&#x5F0F;&#x7C7B;&#x578B;&#x3002;&#x53E6;&#x5916;Slice3&#x6807;&#x6CE8;&#x662F;&#x5426;&#x4E3A;&#x4E09;&#x7D22;&#x5F15;&#x7684;&#x5207;&#x7247;&#x8BED;&#x6CD5;&#xFF08;&#x4E0D;&#x8FC7;&#x8FD9;&#x4E2A;&#x5B57;&#x6BB5;&#x5BF9;&#x8BED;&#x4E49;&#x6CA1;&#x6709;&#x5F71;&#x54CD;&#xFF0C;&#x56E0;&#x4E3A;&#x53EF;&#x4EE5;&#x4ECE;Max&#x7A0B;&#x5E8F;&#x63A8;&#x5BFC;&#x51FA;&#x6700;&#x5927;&#x7684;&#x5BB9;&#x91CF;&#x4FE1;&#x606F;&#xFF09;&#x3002;</p>
+<h2 id="96-&#x7C7B;&#x578B;&#x65AD;&#x8A00;">9.6 &#x7C7B;&#x578B;&#x65AD;&#x8A00;</h2>
+<p>&#x7C7B;&#x578B;&#x65AD;&#x8A00;&#x662F;&#x5224;&#x65AD;&#x4E00;&#x4E2A;&#x63A5;&#x53E3;&#x5BF9;&#x8C61;&#x662F;&#x5426;&#x6EE1;&#x8DB3;&#x53E6;&#x4E00;&#x4E2A;&#x63A5;&#x53E3;&#x3001;&#x6216;&#x8005;&#x63A5;&#x53E3;&#x6301;&#x6709;&#x7684;&#x5BF9;&#x8C61;&#x662F;&#x5426;&#x662F;&#x4E00;&#x4E2A;&#x786E;&#x5B9A;&#x7684;&#x975E;&#x63A5;&#x53E3;&#x7C7B;&#x578B;&#x3002;&#x7C7B;&#x578B;&#x65AD;&#x8A00;&#x7684;&#x8BED;&#x6CD5;&#x89C4;&#x8303;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code>PrimaryExpr    = PrimaryExpr TypeAssertion .
+TypeAssertion  = &quot;.&quot; &quot;(&quot; Type &quot;)&quot; .
+</code></pre><p>&#x5728;&#x4E3B;&#x4F53;&#x8868;&#x8FBE;&#x5F0F;&#x4E4B;&#x540E;&#x901A;&#x8FC7;&#x70B9;&#x9009;&#x62E9;&#x4E00;&#x4E2A;&#x7C7B;&#x578B;&#xFF0C;&#x7C7B;&#x578B;&#x653E;&#x5728;&#x5C0F;&#x62EC;&#x5F27;&#x4E2D;&#x95F4;&#x3002;&#x6BD4;&#x5982;<code>x.(y)</code>&#x5C31;&#x662F;&#x5C06;x&#x63A5;&#x53E3;&#x65AD;&#x8A00;&#x4E3A;y&#x63A5;&#x53E3;&#x6216;y&#x7C7B;&#x578B;&#xFF0C;&#x4E0B;&#x9762;&#x662F;&#x5B83;&#x4EEC;&#x7684;&#x8BED;&#x6CD5;&#x6811;&#xFF1A;</p>
+<pre><code> 0  *ast.TypeAssertExpr {
+ 1  .  X: *ast.Ident {
+ 2  .  .  NamePos: 1
+ 3  .  .  Name: &quot;x&quot;
+ 4  .  .  Obj: *ast.Object {
+ 5  .  .  .  Kind: bad
+ 6  .  .  .  Name: &quot;&quot;
+ 7  .  .  }
+ 8  .  }
+ 9  .  Lparen: 3
+10  .  Type: *ast.Ident {
+11  .  .  NamePos: 4
+12  .  .  Name: &quot;y&quot;
+13  .  .  Obj: *(obj @ 4)
+14  .  }
+15  .  Rparen: 5
+16  }
+</code></pre><p>&#x65AD;&#x8A00;&#x8FD0;&#x7B97;&#x7531;<code>ast.TypeAssertExpr</code>&#x8868;&#x793A;&#xFF0C;&#x5176;&#x4E2D;X&#x662F;&#x63A5;&#x53E3;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;Type&#x662F;&#x8981;&#x65AD;&#x8A00;&#x7684;&#x7C7B;&#x578B;&#x8868;&#x8FBE;&#x5F0F;&#x3002;<code>ast.TypeAssertExpr</code>&#x7ED3;&#x6784;&#x4F53;&#x7684;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> TypeAssertExpr <span class="hljs-keyword">struct</span> {
+    X      Expr      <span class="hljs-comment">// expression</span>
+    Lparen token.Pos <span class="hljs-comment">// position of &quot;(&quot;</span>
+    Type   Expr      <span class="hljs-comment">// asserted type; nil means type switch X.(type)</span>
+    Rparen token.Pos <span class="hljs-comment">// position of &quot;)&quot;</span>
+}
+</code></pre>
+<p>&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;<code>x.(type)</code>&#x4E5F;&#x662F;&#x4E00;&#x79CD;&#x7279;&#x6B8A;&#x7684;&#x7C7B;&#x578B;&#x65AD;&#x8A00;&#xFF0C;&#x8FD9;&#x65F6;&#x5019;<code>ast.TypeAssertExpr.Type</code>&#x6210;&#x5458;&#x503C;&#x4E3A;nil&#xFF0C;&#x5BF9;&#x5E94;&#x7684;&#x662F;&#x7C7B;&#x578B;switch&#x8BED;&#x53E5;&#x7ED3;&#x6784;&#x3002;</p>
+<h2 id="97-&#x5C0F;&#x7ED3;">9.7 &#x5C0F;&#x7ED3;</h2>
+<p>&#x6B64;&#x5904;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x5B66;&#x4E60;&#x4E86;&#x57FA;&#x4E8E;&#x5404;&#x79CD;&#x57FA;&#x7840;&#x7C7B;&#x578B;&#x3001;&#x590D;&#x5408;&#x7C7B;&#x578B;&#x7684;&#x5404;&#x79CD;&#x8868;&#x8FBE;&#x5F0F;&#x57FA;&#x7840;&#x6784;&#x4EF6;&#xFF0C;&#x901A;&#x8FC7;&#x7EC4;&#x5408;&#x8FD9;&#x4E9B;&#x8FD0;&#x7B97;&#x5C31;&#x80FD;&#x4EA7;&#x751F;&#x5404;&#x79CD;&#x590D;&#x6742;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x3002;&#x6700;&#x7EC8;&#x5C06;&#x8868;&#x8FBE;&#x5F0F;&#x7684;&#x7ED3;&#x679C;&#x901A;&#x8FC7;&#x548C;&#x8D4B;&#x503C;&#x8BED;&#x53E5;&#x6216;&#x63A7;&#x5236;&#x6D41;&#x8BED;&#x53E5;&#x76F8;&#x7ED3;&#x5408;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x6539;&#x6210;&#x7A0B;&#x5E8F;&#x7684;&#x73AF;&#x5883;&#x72B6;&#x6001;&#x3002;&#x800C;&#x7F16;&#x7A0B;&#x7684;&#x672C;&#x8D28;&#x5C31;&#x662F;&#x901A;&#x8FC7;&#x8BED;&#x53E5;&#x6539;&#x53D8;&#x6210;&#x5458;&#x7684;&#x72B6;&#x6001;&#xFF0C;&#x7136;&#x540E;&#x5728;&#x6839;&#x636E;&#x4E0D;&#x540C;&#x7684;&#x72B6;&#x6001;&#x9009;&#x62E9;&#x6267;&#x884C;&#x4E0D;&#x540C;&#x7684;&#x8BED;&#x53E5;&#x3002;</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../ch8/readme.html" class="navigation navigation-prev " aria-label="Previous page: 第8章 复合面值">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../ch10/readme.html" class="navigation navigation-next " aria-label="Next page: 第10章 语句块和语句">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"第9章 复合表达式","level":"1.10","depth":1,"next":{"title":"第10章 语句块和语句","level":"1.11","depth":1,"path":"ch10/readme.md","ref":"ch10/readme.md","articles":[]},"previous":{"title":"第8章 复合面值","level":"1.9","depth":1,"path":"ch8/readme.md","ref":"ch8/readme.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"preface.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Go语法树入门——开启自制编程语言和编译器之旅！","language":"zh-hans","gitbook":"3.x","description":"Go语法树入门——开启自制编程语言和编译器之旅！"},"file":{"path":"ch9/readme.md","mtime":"2021-08-30T04:46:44.152Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-08-30T11:01:23.791Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

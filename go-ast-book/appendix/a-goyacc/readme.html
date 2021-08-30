@@ -1,0 +1,562 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>附录A goyacc · Go语法树入门——开启自制编程语言和编译器之旅！</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="../../ch11/readme.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../../ch1/readme.html">
+            
+                <a href="../../ch1/readme.html">
+            
+                    
+                    第1章 记号
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../../ch2/readme.html">
+            
+                <a href="../../ch2/readme.html">
+            
+                    
+                    第2章 基础面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../../ch3/readme.html">
+            
+                <a href="../../ch3/readme.html">
+            
+                    
+                    第3章 基础表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../../ch4/readme.html">
+            
+                <a href="../../ch4/readme.html">
+            
+                    
+                    第4章 代码结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../../ch5/readme.html">
+            
+                <a href="../../ch5/readme.html">
+            
+                    
+                    第5章 通用声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../../ch6/readme.html">
+            
+                <a href="../../ch6/readme.html">
+            
+                    
+                    第6章 函数声明
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../../ch7/readme.html">
+            
+                <a href="../../ch7/readme.html">
+            
+                    
+                    第7章 复合类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../../ch8/readme.html">
+            
+                <a href="../../ch8/readme.html">
+            
+                    
+                    第8章 复合面值
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="../../ch9/readme.html">
+            
+                <a href="../../ch9/readme.html">
+            
+                    
+                    第9章 复合表达式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../../ch10/readme.html">
+            
+                <a href="../../ch10/readme.html">
+            
+                    
+                    第10章 语句块和语句
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="../../ch11/readme.html">
+            
+                <a href="../../ch11/readme.html">
+            
+                    
+                    第11章 类型检查
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.13" data-path="readme.html">
+            
+                <a href="readme.html">
+            
+                    
+                    附录A goyacc
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >附录A goyacc</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x9644;&#x5F55;a-goyacc">&#x9644;&#x5F55;A goyacc</h1>
+<p>yacc&#x662F;&#x7528;&#x4E8E;&#x6784;&#x9020;&#x7F16;&#x8BD1;&#x5668;&#x7684;&#x5DE5;&#x5177;&#xFF0C;&#x800C;goyacc&#x662F;Go&#x8BED;&#x8A00;&#x7248;&#x672C;&#x7684;yacc&#xFF0C;&#x662F;&#x4ECE;&#x65E9;&#x671F;&#x7684;C&#x8BED;&#x8A00;&#x7248;&#x672C;yacc&#x79FB;&#x690D;&#x5230;Go&#x8BED;&#x8A00;&#x7684;&#x3002;&#x65E9;&#x671F;&#x7684;goyacc&#x662F;Go&#x8BED;&#x8A00;&#x6807;&#x51C6;&#x547D;&#x4EE4;&#x4E4B;&#x4E00;&#xFF0C;&#x4E5F;&#x662F;&#x6784;&#x5EFA;Go&#x81EA;&#x8EAB;&#x7F16;&#x8BD1;&#x5668;&#x7684;&#x5FC5;&#x5907;&#x5DE5;&#x5177;&#x94FE;&#x4E4B;&#x4E00;&#xFF0C;&#x540E;&#x6765;&#x88AB;&#x9010;&#x6B65;&#x79FB;&#x51FA;&#x4E86;&#x5185;&#x7F6E;&#x5DE5;&#x5177;&#x3002;&#x4F46;&#x662F;goyacc&#x4F9D;&#x7136;&#x662F;&#x4E00;&#x4E2A;&#x5F00;&#x53D1;&#x8BED;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x7684;&#x5229;&#x5668;&#x3002;&#x672C;&#x7AE0;&#x7B80;&#x5355;&#x5C55;&#x793A;&#x5982;&#x4F55;&#x7528;goyacc&#x6784;&#x5EFA;&#x4E00;&#x4E2A;&#x547D;&#x4EE4;&#x884C;&#x8BA1;&#x7B97;&#x5668;&#x5C0F;&#x7A0B;&#x5E8F;&#x3002;</p>
+<h2 id="a1-&#x8BA1;&#x7B97;&#x5668;&#x7684;&#x7279;&#x6027;">A.1 &#x8BA1;&#x7B97;&#x5668;&#x7684;&#x7279;&#x6027;</h2>
+<p>&#x7279;&#x6027;&#x7B80;&#x4ECB;&#xFF1A;</p>
+<ul>
+<li>&#x652F;&#x6301;&#x6574;&#x6570;&#x56DB;&#x5219;&#x8FD0;&#x7B97;</li>
+<li>&#x652F;&#x6301;&#x5C0F;&#x62EC;&#x5F27;&#x63D0;&#x5347;&#x4F18;&#x5148;&#x7EA7;</li>
+<li>&#x652F;&#x6301;&#x4E34;&#x65F6;&#x53D8;&#x91CF;&#x4FDD;&#x5B58;&#x7ED3;&#x679C;</li>
+</ul>
+<p>&#x5B89;&#x88C5;&#x548C;&#x4F7F;&#x7528;(&#x9700;&#x8981;&#x6709;GCC&#x73AF;&#x5883;)&#xFF1A;</p>
+<pre><code class="lang-shell">$ go get github.com/chai2010/calculator
+$ calculator
+1+2*3
+= 7
+x=3-(2-1)
+= 2
+x*2
+= 4
+</code></pre>
+<h2 id="a2-&#x8BCD;&#x6CD5;&#x7B26;&#x53F7;">A.2 &#x8BCD;&#x6CD5;&#x7B26;&#x53F7;</h2>
+<p>&#x5148;&#x521B;&#x5EFA;<code>tok.h</code>&#x6587;&#x4EF6;&#xFF0C;&#x5305;&#x542B;&#x8BCD;&#x6CD5;&#x7B26;&#x53F7;&#xFF1A;</p>
+<pre><code class="lang-c"><span class="hljs-keyword">enum</span> {
+    ILLEGAL = <span class="hljs-number">10000</span>,
+    EOL = <span class="hljs-number">10001</span>,
+
+    ID = <span class="hljs-number">258</span>,
+    NUMBER = <span class="hljs-number">259</span>,
+
+    ADD = <span class="hljs-number">260</span>, <span class="hljs-comment">// +</span>
+    SUB = <span class="hljs-number">261</span>, <span class="hljs-comment">// -</span>
+    MUL = <span class="hljs-number">262</span>, <span class="hljs-comment">// *</span>
+    DIV = <span class="hljs-number">263</span>, <span class="hljs-comment">// /</span>
+    ABS = <span class="hljs-number">264</span>, <span class="hljs-comment">// |</span>
+
+    LPAREN = <span class="hljs-number">265</span>, <span class="hljs-comment">// (</span>
+    RPAREN = <span class="hljs-number">266</span>, <span class="hljs-comment">// )</span>
+    ASSIGN = <span class="hljs-number">267</span>, <span class="hljs-comment">// =</span>
+};
+</code></pre>
+<p>&#x5176;&#x4E2D;<code>ILLEGAL</code>&#x8868;&#x793A;&#x4E0D;&#x80FD;&#x8BC6;&#x522B;&#x7684;&#x65E0;&#x6548;&#x7684;&#x7B26;&#x53F7;&#xFF0C;<code>EOL</code>&#x8868;&#x793A;&#x884C;&#x7684;&#x7ED3;&#x5C3E;&#xFF0C;&#x5176;&#x5B83;&#x7684;&#x7B26;&#x53F7;&#x4E0E;&#x5B57;&#x9762;&#x542B;&#x4E49;&#x76F8;&#x540C;&#x3002;</p>
+<h2 id="a3-&#x8BCD;&#x6CD5;&#x89E3;&#x6790;">A.3 &#x8BCD;&#x6CD5;&#x89E3;&#x6790;</h2>
+<p>&#x7136;&#x540E;&#x521B;&#x5EFA;<code>calc.l</code>&#x6587;&#x4EF6;&#xFF0C;&#x5B9A;&#x4E49;&#x6BCF;&#x79CD;&#x8BCD;&#x6CD5;&#x7684;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#xFF1A;</p>
+<pre><code class="lang-lex">%option noyywrap
+
+%{
+#include &quot;tok.h&quot;
+%}
+
+%%
+
+[_a-zA-Z]+ { return ID; }
+[0-9]+     { return NUMBER; }
+
+&quot;+&quot;    { return ADD; }
+&quot;-&quot;    { return SUB; }
+&quot;*&quot;    { return MUL; }
+&quot;/&quot;    { return DIV; }
+&quot;|&quot;    { return ABS; }
+
+&quot;(&quot;    { return LPAREN; }
+&quot;)&quot;    { return RPAREN; }
+&quot;=&quot;    { return ASSIGN; }
+
+\n     { return EOL; }
+[ \t]  { /* ignore whitespace */ }
+.      { return ILLEGAL; }
+
+%%
+</code></pre>
+<p>&#x6700;&#x5F00;&#x59CB;&#x7684;<code>noyywrap</code>&#x9009;&#x9879;&#x8868;&#x793A;&#x5173;&#x95ED;<code>yywrap</code>&#x7279;&#x6027;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x53BB;&#x6389;&#x5BF9;flex&#x5E93;&#x7684;&#x4F9D;&#x8D56;&#xFF0C;&#x751F;&#x6210;&#x53EF;&#x79FB;&#x690D;&#x7684;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x4EE3;&#x7801;&#x3002;&#x7136;&#x540E;&#x5728;<code>%{</code>&#x548C;<code>%}</code>&#x4E2D;&#x95F4;&#x662F;&#x539F;&#x751F;&#x7684;C&#x8BED;&#x8A00;&#x4EE3;&#x7801;&#xFF0C;&#x901A;&#x8FC7;&#x5305;&#x542B;<code>tok.h</code>&#x5F15;&#x5165;&#x4E86;&#x6BCF;&#x79CD;&#x8BB0;&#x53F7;&#x5BF9;&#x5E94;&#x7684;&#x679A;&#x4E3E;&#x7C7B;&#x578B;&#x3002;&#x5728;&#x4E24;&#x7EC4;<code>%%</code>&#x4E2D;&#x95F4;&#x7684;&#x90E8;&#x5206;&#x662F;&#x6BCF;&#x79CD;&#x8BB0;&#x53F7;&#x5BF9;&#x5E94;&#x7684;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#xFF0C;&#x5148;&#x51FA;&#x73B0;&#x7684;&#x4F18;&#x5148;&#x5339;&#x914D;&#xFF0C;&#x5982;&#x679C;&#x5339;&#x914D;&#x5931;&#x8D25;&#x5219;&#x7EE7;&#x7EED;&#x5C1D;&#x8BD5;&#x540E;&#x9762;&#x7684;&#x89C4;&#x5219;&#x3002;&#x6BCF;&#x4E2A;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#x540E;&#x9762;&#x8DDF;&#x7740;&#x4E00;&#x7EC4;&#x52A8;&#x4F5C;&#x4EE3;&#x7801;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x666E;&#x901A;&#x7684;C&#x8BED;&#x8A00;&#x4EE3;&#x7801;&#xFF0C;&#x8FD9;&#x91CC;&#x90FD;&#x662F;&#x8FD4;&#x56DE;&#x8BB0;&#x53F7;&#x7684;&#x7C7B;&#x578B;&#x3002;</p>
+<p>&#x7136;&#x540E;&#x901A;&#x8FC7;flex&#x5DE5;&#x5177;&#x751F;&#x6210;C&#x8BED;&#x8A00;&#x8BCD;&#x6CD5;&#x89E3;&#x6790;&#x5668;&#x6587;&#x4EF6;&#xFF1A;</p>
+<pre><code class="lang-shell">$ flex --prefix=yy --header-file=calc.lex.h -o calc.lex.c calc.l
+</code></pre>
+<p>&#x5176;&#x4E2D;<code>--prefix</code>&#x8868;&#x793A;&#x751F;&#x6210;&#x7684;&#x4EE3;&#x7801;&#x4E2D;&#x6807;&#x8BC6;&#x7B26;&#x90FD;&#x662F;&#x4EE5;<code>yy</code>&#x524D;&#x7F00;&#x3002;&#x5728;&#x4E00;&#x4E2A;&#x9879;&#x76EE;&#x6709;&#x591A;&#x4E2A;flex&#x751F;&#x6210;&#x4EE3;&#x7801;&#x65F6;&#xFF0C;&#x53EF;&#x901A;&#x8FC7;&#x524D;&#x7F00;&#x533A;&#x5206;&#x3002;<code>--header-file</code>&#x8868;&#x793A;&#x751F;&#x6210;&#x5934;&#x95EE;&#x9898;&#xFF0C;&#x8FD9;&#x6837;&#x65B9;&#x4FBF;&#x5728;&#x5176;&#x5B83;&#x4EE3;&#x7801;&#x4E2D;&#x5F15;&#x7528;&#x751F;&#x6210;&#x7684;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x51FD;&#x6570;&#x3002;<code>-o</code>&#x6307;&#x5B9A;&#x8F93;&#x51FA;&#x6E90;&#x4EE3;&#x7801;&#x6587;&#x4EF6;&#x7684;&#x540D;&#x5B57;&#x3002;</p>
+<p>&#x751F;&#x6210;&#x7684;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x4E2D;&#xFF0C;&#x6700;&#x91CD;&#x8981;&#x7684;&#x6709;&#x4EE5;&#x4E0B;&#x51E0;&#x4E2A;&#xFF1A;</p>
+<pre><code class="lang-c"><span class="hljs-keyword">extern</span> <span class="hljs-keyword">int</span> yylineno;
+<span class="hljs-keyword">extern</span> <span class="hljs-keyword">char</span> *yytext;
+
+<span class="hljs-function"><span class="hljs-keyword">extern</span> <span class="hljs-keyword">int</span> <span class="hljs-title">yylex</span> <span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>;
+</code></pre>
+<p>&#x5176;&#x4E2D;<code>yylineno</code>&#x8868;&#x793A;&#x5F53;&#x524D;&#x7684;&#x884C;&#x53F7;&#xFF0C;<code>yytext</code>&#x8868;&#x793A;&#x5F53;&#x524D;&#x8BB0;&#x53F7;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x3002;&#x800C;<code>yylex</code>&#x51FD;&#x6570;&#x6BCF;&#x6B21;&#x4ECE;&#x6807;&#x51C6;&#x8F93;&#x5165;&#x8BFB;&#x53D6;&#x4E00;&#x4E2A;&#x8BB0;&#x53F7;&#xFF0C;&#x8FD4;&#x56DE;&#x8BB0;&#x53F7;&#x7C7B;&#x578B;&#x7684;&#x503C;&#xFF08;&#x5728;<code>tok.h</code>&#x6587;&#x4EF6;&#x5B9A;&#x4E49;&#xFF09;&#xFF0C;&#x5982;&#x679C;&#x9047;&#x5230;&#x6587;&#x4EF6;&#x7ED3;&#x5C3E;&#x5219;&#x8FD4;&#x56DE;0&#x3002;</p>
+<p>&#x5982;&#x679C;&#x9700;&#x8981;&#x4ECE;&#x5B57;&#x7B26;&#x4E32;&#x89E3;&#x6790;&#xFF0C;&#x5219;&#x9700;&#x4F7F;&#x7528;&#x4EE5;&#x4E0B;&#x7684;&#x5BFC;&#x51FA;&#x51FD;&#x6570;&#xFF1A;</p>
+<pre><code class="lang-c"><span class="hljs-function">YY_BUFFER_STATE <span class="hljs-title">yy_scan_bytes</span> <span class="hljs-params">(yyconst <span class="hljs-keyword">char</span> *bytes,yy_size_t len  )</span></span>;
+</code></pre>
+<p>&#x901A;&#x8FC7;<code>yy_scan_bytes</code>&#x51FD;&#x6570;&#xFF0C;&#x53EF;&#x4EE5;&#x8BBE;&#x7F6E;&#x5B57;&#x7B26;&#x4E32;&#x4F5C;&#x4E3A;&#x8981;&#x89E3;&#x6790;&#x7684;&#x76EE;&#x6807;&#xFF0C;&#x7136;&#x540E;&#x6BCF;&#x6B21;&#x8C03;&#x7528;<code>yylex</code>&#x51FD;&#x6570;&#x5C31;&#x4F1A;&#x4ECE;&#x5B57;&#x7B26;&#x4E32;&#x8BFB;&#x53D6;&#x6570;&#x636E;&#x3002;&#x8FD9;&#x4E9B;&#x51FD;&#x6570;&#x90FD;&#x5728;<code>calc.lex.h</code>&#x6587;&#x4EF6;&#x4E2D;&#x58F0;&#x660E;&#x3002;</p>
+<h2 id="a4-&#x5C06;c&#x8BED;&#x8A00;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x5305;&#x88C5;&#x4E3A;go&#x51FD;&#x6570;">A.4 &#x5C06;C&#x8BED;&#x8A00;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x5305;&#x88C5;&#x4E3A;Go&#x51FD;&#x6570;</h2>
+<p>&#x521B;&#x5EFA;<code>lex.go</code>&#x6587;&#x4EF6;&#xFF0C;&#x5185;&#x5BB9;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">package</span> main
+
+<span class="hljs-comment">//#include &quot;tok.h&quot;</span>
+<span class="hljs-comment">//#include &quot;calc.lex.h&quot;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;C&quot;</span>
+
+<span class="hljs-keyword">type</span> calcLex <span class="hljs-keyword">struct</span> {}
+
+<span class="hljs-keyword">func</span> newCalcLexer(data []<span class="hljs-keyword">byte</span>) *calcLex {
+    p := <span class="hljs-built_in">new</span>(calcLex)
+    C.yy_scan_bytes((*C.char)(C.CBytes(data)), C.yy_size_t(<span class="hljs-built_in">len</span>(data)))
+    <span class="hljs-keyword">return</span> p
+}
+
+<span class="hljs-keyword">func</span> (p *calcLex) Lex(yylval *calcSymType) <span class="hljs-keyword">int</span> {
+    <span class="hljs-keyword">var</span> tok = C.yylex()
+    <span class="hljs-keyword">var</span> yylineno = <span class="hljs-keyword">int</span>(C.yylineno)
+    <span class="hljs-keyword">var</span> yytext = C.GoString(C.yytext)
+
+    <span class="hljs-keyword">switch</span> tok {
+    <span class="hljs-keyword">case</span> C.ID:
+        <span class="hljs-comment">// yylval.id = yytext</span>
+        <span class="hljs-keyword">return</span> ID
+
+    <span class="hljs-keyword">case</span> C.NUMBER:
+        <span class="hljs-comment">//yylval.value, _ = strconv.Atoi(yytext)</span>
+        <span class="hljs-keyword">return</span> NUMBER
+
+    <span class="hljs-keyword">case</span> C.ADD:
+        <span class="hljs-keyword">return</span> ADD
+    <span class="hljs-comment">// ...</span>
+
+    <span class="hljs-keyword">case</span> C.EOL:
+        <span class="hljs-keyword">return</span> EOL
+    }
+
+    <span class="hljs-keyword">if</span> tok == C.ILLEGAL {
+        log.Printf(<span class="hljs-string">&quot;lex: ILLEGAL token, yytext = %q, yylineno = %d&quot;</span>, yytext, yylineno)
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-comment">// eof</span>
+}
+</code></pre>
+<p>&#x65B0;&#x5EFA;&#x7684;<code>calcLex</code>&#x7C7B;&#x578B;&#x5BF9;&#x5E94;Go&#x8BED;&#x8A00;&#x7248;&#x672C;&#x7684;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#xFF0C;&#x5E95;&#x5C42;&#x5DE5;&#x4F5C;&#x901A;&#x8FC7;CGO&#x8C03;&#x7528;flex&#x751F;&#x6210;&#x7684;C&#x8BED;&#x8A00;&#x51FD;&#x6570;&#x5B8C;&#x6210;&#x3002;&#x9996;&#x5148;<code>newCalcLexer</code>&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#xFF0C;&#x53C2;&#x6570;&#x662F;&#x8981;&#x5206;&#x6790;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x901A;&#x8FC7;<code>C.yy_scan_bytes</code>&#x51FD;&#x6570;&#x8C03;&#x7528;&#x8868;&#x793A;&#x4ECE;&#x5B57;&#x7B26;&#x4E32;&#x89E3;&#x6790;&#x8BB0;&#x53F7;&#x3002;&#x7136;&#x540E;<code>calcLex</code>&#x7C7B;&#x578B;&#x7684;<code>Lex</code>&#x65B9;&#x6CD5;&#x8868;&#x793A;&#x6BCF;&#x6B21;&#x9700;&#x8981;&#x89E3;&#x6790;&#x4E00;&#x4E2A;&#x8BB0;&#x53F7;&#xFF08;&#x6682;&#x65F6;&#x5FFD;&#x7565;&#x65B9;&#x6CD5;&#x7684;<code>calcSymType</code>&#x53C2;&#x6570;&#xFF09;&#xFF0C;&#x5185;&#x90E8;&#x901A;&#x8FC7;&#x8C03;&#x7528;<code>C.yylex()</code>&#x8BFB;&#x53D6;&#x4E00;&#x4E2A;&#x8BB0;&#x53F7;&#xFF0C;&#x540C;&#x65F6;&#x8BB0;&#x5F55;&#x884C;&#x53F7;&#x548C;&#x8BB0;&#x53F7;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x3002;&#x6700;&#x540E;&#x5C06;C&#x8BED;&#x8A00;&#x7684;&#x8BB0;&#x53F7;&#x8F6C;&#x4E3A;Go&#x8BED;&#x8A00;&#x7684;&#x8BB0;&#x53F7;&#x503C;&#x8FD4;&#x56DE;&#xFF0C;&#x6BD4;&#x5982;<code>C.ID</code>&#x5BF9;&#x5E94;Go&#x8BED;&#x8A00;&#x7684;<code>ID</code>&#x3002;</p>
+<p>&#x5BF9;&#x5E94;<code>ID</code>&#x7C7B;&#x578B;&#xFF0C;<code>yytext</code>&#x8868;&#x793A;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x3002;&#x5BF9;&#x4E8E;<code>NUMBER</code>&#x7C7B;&#x578B;&#xFF0C;<code>yytext</code>&#x4FDD;&#x62A4;&#x6570;&#x5B57;&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x53EF;&#x4EE5;&#x4ECE;&#x5B57;&#x7B26;&#x4E32;&#x89E3;&#x6790;&#x51FA;&#x6570;&#x503C;&#x3002;&#x4F46;&#x662F;&#xFF0C;Go&#x8BED;&#x8A00;&#x7684;&#x8BCD;&#x6CD5;&#x5206;&#x6790;&#x5668;&#x5982;&#x4F55;&#x8FD4;&#x56DE;&#x53D8;&#x91CF;&#x7684;&#x540D;&#x5B57;&#x6216;&#x8005;&#x662F;&#x6570;&#x5B57;&#x7684;&#x503C;&#x5462;&#xFF1F;&#x7B54;&#x6848;&#x662F;&#x901A;&#x8FC7;<code>Lex</code>&#x7684;<code>*calcSymType</code>&#x7C7B;&#x578B;&#x7684;&#x53C2;&#x6570;&#x53EF;&#x4EE5;&#x8BB0;&#x5F55;&#x8BB0;&#x53F7;&#x989D;&#x5916;&#x7684;&#x5C5E;&#x6027;&#x503C;&#x3002;&#x800C;<code>calcSymType</code>&#x7C7B;&#x578B;&#x662F;&#x7531;<code>goyacc</code>&#x5DE5;&#x5177;&#x751F;&#x6210;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x5728;&#x4E0B;&#x9762;&#x6211;&#x4EEC;&#x5C06;&#x4ECB;&#x7ECD;yacc&#x7684;&#x5185;&#x5BB9;&#x3002;</p>
+<h2 id="a5-goyacc&#x751F;&#x6210;&#x8BED;&#x6CD5;&#x89E3;&#x6790;&#x5668;">A.5 <code>goyacc</code>&#x751F;&#x6210;&#x8BED;&#x6CD5;&#x89E3;&#x6790;&#x5668;</h2>
+<p><code>goyacc</code>&#x662F;Go&#x8BED;&#x8A00;&#x7248;&#x672C;&#x7684;yacc&#x5DE5;&#x5177;&#xFF0C;&#x662F;&#x7531;Go&#x8BED;&#x8A00;&#x5B98;&#x65B9;&#x56E2;&#x961F;&#x7EF4;&#x62A4;&#x7684;&#x6269;&#x5C55;&#x5305;&#x5DE5;&#x5177;&#x3002;</p>
+<p>&#x521B;&#x5EFA;<code>calc.y</code>&#x6587;&#x4EF6;&#xFF1A;</p>
+<pre><code class="lang-yacc">%{
+package main
+
+var idValueMap = map[string]int{}
+%}
+
+%union {
+    value int
+    id    string
+}
+
+%type  &lt;value&gt; exp factor term
+%token &lt;value&gt; NUMBER
+%token &lt;id&gt;    ID
+
+%token ADD SUB MUL DIV ABS
+%token LPAREN RPAREN ASSIGN
+%token EOL
+
+%%
+calclist
+    : // nothing
+    | calclist exp EOL {
+        idValueMap[&quot;_&quot;] = $2
+        fmt.Printf(&quot;= %v\n&quot;, $2)
+    }
+    | calclist ID ASSIGN exp EOL {
+        idValueMap[&quot;_&quot;] = $4
+        idValueMap[$2] = $4
+        fmt.Printf(&quot;= %v\n&quot;, $4)
+    }
+    ;
+
+exp
+    : factor         { $$ = $1 }
+    | exp ADD factor { $$ = $1 + $3 }
+    | exp SUB factor { $$ = $1 - $3 }
+    ;
+
+factor
+    : term            { $$ = $1 }
+    | factor MUL term { $$ = $1 * $3 }
+    | factor DIV term { $$ = $1 / $3 }
+    ;
+
+term
+    : NUMBER            { $$ = $1 }
+    | ID                { $$ = idValueMap[$1] }
+    ;
+
+%%
+</code></pre>
+<p>&#x548C;flex&#x5DE5;&#x5177;&#x7C7B;&#x578B;&#xFF0C;&#x9996;&#x5148;&#x5728;<code>%{</code>&#x548C;<code>%}</code>&#x4E2D;&#x95F4;&#x662F;&#x539F;&#x751F;&#x7684;Go&#x8BED;&#x8A00;&#x4EE3;&#x7801;&#x3002;&#x7136;&#x540E;<code>%union</code>&#x5B9A;&#x4E49;&#x4E86;&#x5C5E;&#x6027;&#x503C;&#xFF0C;&#x7528;&#x4E8E;&#x8BB0;&#x5F55;&#x8BED;&#x6CD5;&#x89E3;&#x6790;&#x4E2D;&#x6BCF;&#x4E2A;&#x89C4;&#x5219;&#x989D;&#x5916;&#x7684;&#x5C5E;&#x6027;&#x503C;&#x3002;&#x901A;&#x8FC7;<code>%type</code>&#x5B9A;&#x4E49;BNF&#x89C4;&#x5219;&#x4E2D;&#x975E;&#x7EC8;&#x7ED3;&#x7684;&#x540D;&#x5B57;&#xFF0C;<code>%token</code>&#x5B9A;&#x4E49;&#x7EC8;&#x7ED3;&#x8BB0;&#x53F7;&#x540D;&#x5B57;&#xFF08;&#x548C;flex&#x5B9A;&#x4E49;&#x7684;&#x8BB0;&#x53F7;&#x7C7B;&#x578B;&#x662F;&#x4E00;&#x81F4;&#x7684;&#xFF09;&#x3002;&#x800C;<code>%type</code>&#x548C;<code>%token</code>&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<code>&lt;value&gt;</code>&#x6216;<code>&lt;id&gt;</code>&#x7684;&#x53EF;&#x9009;&#x8BED;&#x6CD5;&#xFF0C;&#x5C06;&#x540E;&#x9762;&#x7684;&#x540D;&#x5B57;&#x7ED1;&#x5B9A;&#x5230;&#x5C5E;&#x6027;&#x3002;&#x5C31;&#x662F;&#x540E;&#x7EED;&#x4EE3;&#x7801;&#x4E2D;<code>$$</code>&#x5BF9;&#x5E94;&#x7684;&#x5C5E;&#x6027;&#xFF0C;&#x6BD4;&#x5982;<code>%token &lt;id&gt; ID</code>&#x8868;&#x793A;<code>ID</code>&#x5BF9;&#x5E94;&#x7684;&#x5C5E;&#x6027;&#x4E3A;<code>id</code>&#xFF0C;&#x56E0;&#x6B64;&#x5728;&#x540E;&#x9762;&#x7684;<code>ID { $$ = idValueMap[$1] }</code>&#x8868;&#x793A;&#x6570;&#x503C;<code>id</code>&#x5C5E;&#x6027;&#x7684;&#x503C;&#xFF0C;&#x5176;&#x4E2D;<code>idValueMap</code>&#x7528;&#x4E8E;&#x7BA1;&#x7406;&#x53D8;&#x91CF;&#x7684;&#x503C;&#x3002;</p>
+<p>&#x7136;&#x540E;&#x901A;&#x8FC7;goyacc&#x5DE5;&#x5177;&#x751F;&#x6210;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre><code class="lang-shell">$ goyacc -o calc.y.go -p &quot;calc&quot; calc.y
+</code></pre>
+<p>&#x5176;&#x4E2D;<code>-o</code>&#x6307;&#x5B9A;&#x8F93;&#x51FA;&#x7684;&#x6587;&#x4EF6;&#x540D;&#xFF0C;<code>-p</code>&#x6307;&#x5B9A;&#x6807;&#x8BC6;&#x7B26;&#x540D;&#x5B57;&#x524D;&#x7F00;&#xFF08;&#x548C;flex&#x7684;<code>--prefix</code>&#x7528;&#x6CD5;&#x7C7B;&#x4F3C;&#xFF09;&#x3002;&#x5728;&#x751F;&#x6210;&#x7684;<code>calc.y.go</code>&#x6587;&#x4EF6;&#x4E2D;&#x5C06;&#x5305;&#x542B;&#x6700;&#x91CD;&#x8981;&#x7684;<code>calcParse</code>&#x51FD;&#x6570;&#xFF0C;&#x8BE5;&#x51FD;&#x6570;&#x4ECE;&#x6307;&#x5B9A;&#x7684;&#x8BCD;&#x6CD5;&#x89E3;&#x6790;&#x5668;&#x4E2D;&#x8BFB;&#x53D6;&#x8BCD;&#x6CD5;&#xFF0C;&#x7136;&#x540E;&#x8FDB;&#x884C;&#x8BED;&#x6CD5;&#x5206;&#x6790;&#x3002;&#x540C;&#x65F6;&#x5C06;&#x5305;&#x542B;<code>calcSymType</code>&#x7C7B;&#x578B;&#x7684;&#x5B9A;&#x4E49;&#xFF0C;&#x5B83;&#x662F;<code>Lex</code>&#x8BCD;&#x6CD5;&#x51FD;&#x6570;&#x7684;&#x8F93;&#x51FA;&#x53C2;&#x6570;&#x7684;&#x7C7B;&#x578B;&#x3002;</p>
+<p>&#x5728;&#x7ED1;&#x5B9A;&#x4E86;&#x5C5E;&#x6027;&#x4E4B;&#x540E;&#xFF0C;&#x8FD8;&#x9700;&#x8981;&#x7EE7;&#x7EED;&#x5B8C;&#x5584;<code>Lex</code>&#x8BCD;&#x6CD5;&#x51FD;&#x6570;&#x7684;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> (p *calcLex) Lex(yylval *calcSymType) <span class="hljs-keyword">int</span> {
+    <span class="hljs-keyword">var</span> tok = C.yylex()
+    <span class="hljs-keyword">var</span> yylineno = <span class="hljs-keyword">int</span>(C.yylineno)
+    <span class="hljs-keyword">var</span> yytext = C.GoString(C.yytext)
+
+    <span class="hljs-keyword">switch</span> tok {
+    <span class="hljs-keyword">case</span> C.ID:
+        yylval.id = yytext
+        <span class="hljs-keyword">return</span> ID
+
+    <span class="hljs-keyword">case</span> C.NUMBER:
+        yylval.value, _ = strconv.Atoi(yytext)
+        <span class="hljs-keyword">return</span> NUMBER
+
+    ...
+}
+</code></pre>
+<p>&#x5176;&#x4E2D;<code>yylval.id = yytext</code>&#x8868;&#x793A;&#x8BCD;&#x6CD5;&#x5C06;&#x89E3;&#x6790;&#x5F97;&#x5230;&#x7684;&#x53D8;&#x91CF;&#x540D;&#x5B57;&#x586B;&#x5145;&#x5230;<code>id</code>&#x5C5E;&#x6027;&#x4E2D;&#x3002;&#x800C;&#x6570;&#x5B57;&#x90E8;&#x5206;&#x5219;&#x662F;&#x901A;&#x8FC7;<code>yylval.value</code>&#x5C5E;&#x6027;&#x4FDD;&#x5B58;&#x3002;</p>
+<h2 id="a6-&#x8FD0;&#x884C;&#x8BA1;&#x7B97;&#x5668;">A.6 &#x8FD0;&#x884C;&#x8BA1;&#x7B97;&#x5668;</h2>
+<p>&#x521B;&#x5EFA;main&#x51FD;&#x6570;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> main() {
+    calcParse(newCalcLexer([]<span class="hljs-keyword">byte</span>(<span class="hljs-string">&quot;1+2*3&quot;</span>)))
+}
+</code></pre>
+<p><code>newCalcLexer</code>&#x6784;&#x9020;&#x4E00;&#x4E2A;&#x8BCD;&#x6CD5;&#x89E3;&#x6790;&#x5668;&#xFF0C;&#x7136;&#x540E;<code>calcParse</code>&#x8BED;&#x6CD5;&#x89E3;&#x6790;&#x5668;&#x5C06;&#x4ECE;&#x8BCD;&#x6CD5;&#x89E3;&#x6790;&#x5668;&#x4F9D;&#x6B21;&#x8BFB;&#x53D6;&#x8BB0;&#x53F7;&#x5E76;&#x89E3;&#x6790;&#x8BED;&#x6CD5;&#xFF0C;&#x5728;&#x89E3;&#x6790;&#x8BED;&#x6CD5;&#x7684;&#x540C;&#x65F6;&#x5C06;&#x8FDB;&#x884C;&#x8868;&#x8FBE;&#x5F0F;&#x6C42;&#x503C;&#x8FD0;&#x7B97;&#xFF0C;&#x540C;&#x65F6;&#x66F4;&#x65B0;<code>idValueMap</code>&#x5168;&#x5C40;&#x7684;&#x53D8;&#x91CF;&#x3002;</p>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../../ch11/readme.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 第11章 类型检查">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"附录A goyacc","level":"1.13","depth":1,"previous":{"title":"第11章 类型检查","level":"1.12","depth":1,"path":"ch11/readme.md","ref":"ch11/readme.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"preface.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Go语法树入门——开启自制编程语言和编译器之旅！","language":"zh-hans","gitbook":"3.x","description":"Go语法树入门——开启自制编程语言和编译器之旅！"},"file":{"path":"appendix/a-goyacc/readme.md","mtime":"2021-08-30T04:46:44.132Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-08-30T11:01:23.791Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
